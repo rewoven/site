@@ -1,731 +1,947 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rewoven - Sustainability Survey</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rewoven — Sustainability Survey</title>
+  <meta name="description" content="Help us understand fashion sustainability in the UAE. Take our 3-minute survey." />
+  <link rel="icon" href="../assets/logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
-        :root {
-            --primary: #2E7D32;
-            --primary-light: #4CAF50;
-            --primary-dark: #1B5E20;
-            --accent: #81C784;
-            --bg: #F5FBF5;
-            --surface: #FFFFFF;
-            --text: #1A1A1A;
-            --text-secondary: #555;
-            --border: #C8E6C9;
-            --error: #D32F2F;
-            --radius: 12px;
-            --shadow: 0 2px 12px rgba(46,125,50,0.08);
-            --shadow-lg: 0 8px 32px rgba(46,125,50,0.12);
-        }
+    :root {
+      --green-50:  #ECFDF5;
+      --green-100: #D1FAE5;
+      --green-200: #A7F3D0;
+      --green-400: #34D399;
+      --green-500: #10B981;
+      --green-600: #059669;
+      --green-700: #047857;
+      --green-800: #065F46;
+      --green-900: #064E3B;
+      --gold:      #F59E0B;
+      --gold-dark: #D97706;
+      --dark:      #111827;
+      --gray-600:  #4B5563;
+      --gray-400:  #9CA3AF;
+      --gray-200:  #E5E7EB;
+      --white:     #FFFFFF;
+      --bg-cream:  #F0FDF4;
+      --radius:    16px;
+      --error:     #EF4444;
+    }
 
-        html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--dark);
+      background: var(--white);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            line-height: 1.6;
-        }
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(229,231,235,0.5);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 72px;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo img { width: 40px; height: 40px; border-radius: 10px; }
+    .nav-logo span {
+      font-family: 'Playfair Display', serif; font-size: 22px;
+      font-weight: 800; color: var(--green-800);
+    }
+    .nav-progress {
+      font-size: 14px; font-weight: 600; color: var(--gray-400);
+    }
 
-        /* Header */
-        .header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 24px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(12px);
-            background: rgba(255,255,255,0.95);
-        }
-        .header-inner {
-            max-width: 640px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .logo {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            letter-spacing: -0.02em;
-        }
-        .logo span { color: var(--primary-light); }
+    /* ── Progress Bar ── */
+    .progress-wrap {
+      position: fixed; top: 72px; left: 0; right: 0; z-index: 99;
+      background: var(--gray-200); height: 4px;
+    }
+    .progress-bar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--green-500), var(--green-400));
+      border-radius: 0 4px 4px 0;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-        /* Progress Bar */
-        .progress-container {
-            max-width: 640px;
-            margin: 0 auto;
-            padding: 20px 24px 0;
-        }
-        .progress-bar-wrap {
-            background: var(--border);
-            border-radius: 100px;
-            height: 6px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            border-radius: 100px;
-            width: 0%;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .progress-text {
-            text-align: right;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-top: 6px;
-            font-weight: 500;
-        }
+    /* ── Container ── */
+    .container {
+      max-width: 640px; margin: 0 auto; padding: 0 24px;
+    }
 
-        /* Hero / Intro */
-        .intro {
-            max-width: 640px;
-            margin: 0 auto;
-            padding: 48px 24px 32px;
-            text-align: center;
-        }
-        .intro h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-            letter-spacing: -0.03em;
-        }
-        .intro p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            max-width: 480px;
-            margin: 0 auto 24px;
-        }
-        .intro .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #E8F5E9;
-            color: var(--primary);
-            padding: 6px 14px;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
+    /* ── Intro Screen ── */
+    .intro {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 72px 24px 60px;
+      background: linear-gradient(135deg, var(--bg-cream) 0%, var(--white) 50%, var(--green-50) 100%);
+      position: relative; overflow: hidden; text-align: center;
+    }
+    .intro::before {
+      content: ''; position: absolute; top: -200px; right: -200px;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%);
+    }
+    .intro::after {
+      content: ''; position: absolute; bottom: -100px; left: -100px;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,158,11,0.06) 0%, transparent 70%);
+    }
+    .intro-content { position: relative; z-index: 1; max-width: 540px; }
+    .intro-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green-100); color: var(--green-700);
+      padding: 8px 18px; border-radius: 50px;
+      font-size: 13px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 28px;
+    }
+    .intro h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 5vw, 44px);
+      font-weight: 900; line-height: 1.15; color: var(--dark); margin-bottom: 20px;
+    }
+    .intro h1 .highlight {
+      background: linear-gradient(135deg, var(--green-500), var(--green-700));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .intro p {
+      font-size: 18px; line-height: 1.7; color: var(--gray-600); margin-bottom: 36px;
+    }
+    .intro-stats {
+      display: flex; gap: 40px; justify-content: center;
+      padding-top: 28px; border-top: 1px solid var(--gray-200); margin-top: 8px;
+    }
+    .intro-stat strong {
+      display: block; font-size: 28px; font-weight: 800; color: var(--green-600);
+    }
+    .intro-stat span { font-size: 13px; color: var(--gray-600); }
 
-        /* Survey Container */
-        .survey-container {
-            max-width: 640px;
-            margin: 0 auto;
-            padding: 0 24px 80px;
-        }
+    /* ── Name Input ── */
+    .name-input-wrap {
+      display: flex; gap: 12px; max-width: 400px; margin: 0 auto 32px;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .name-input {
+      flex: 1; min-width: 200px; padding: 16px 20px;
+      border: 2px solid var(--green-200); border-radius: 50px;
+      font-size: 16px; font-family: inherit; color: var(--dark);
+      background: var(--white); transition: border-color 0.2s;
+      text-align: center;
+    }
+    .name-input:focus { outline: none; border-color: var(--green-500); }
+    .name-input::placeholder { color: var(--gray-400); }
 
-        /* Question Slide */
-        .question-slide {
-            display: none;
-            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .question-slide.active { display: block; }
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 32px; border-radius: 50px; font-weight: 600;
+      font-size: 16px; text-decoration: none; transition: all 0.3s ease;
+      border: none; cursor: pointer; font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--green-500); color: var(--white);
+      box-shadow: 0 4px 14px rgba(16,185,129,0.4);
+    }
+    .btn-primary:hover {
+      background: var(--green-600); transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16,185,129,0.5);
+    }
+    .btn-primary:disabled {
+      background: var(--green-200); box-shadow: none;
+      cursor: not-allowed; transform: none;
+    }
+    .btn-secondary {
+      background: var(--white); color: var(--green-700);
+      border: 2px solid var(--green-200);
+    }
+    .btn-secondary:hover {
+      border-color: var(--green-500); background: var(--green-50);
+      transform: translateY(-2px);
+    }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    /* ── Survey Container ── */
+    .survey-wrap {
+      display: none; padding: 100px 24px 80px;
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--bg-cream) 0%, var(--white) 100%);
+    }
+    .survey-wrap.active { display: block; }
 
-        .question-card {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 32px 28px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-        .question-number {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--primary-light);
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-bottom: 8px;
-        }
-        .question-text {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
+    /* ── Question Card ── */
+    .question-slide {
+      display: none; max-width: 640px; margin: 0 auto;
+      animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .question-slide.active { display: block; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        /* Options */
-        .options { display: flex; flex-direction: column; gap: 10px; }
-        .option-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 18px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            background: var(--surface);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.95rem;
-            color: var(--text);
-            text-align: left;
-            width: 100%;
-            font-family: inherit;
-        }
-        .option-btn:hover {
-            border-color: var(--primary-light);
-            background: #F1F8F1;
-        }
-        .option-btn.selected {
-            border-color: var(--primary);
-            background: #E8F5E9;
-            font-weight: 500;
-        }
-        .option-btn .radio {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid var(--border);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-        .option-btn.selected .radio {
-            border-color: var(--primary);
-            background: var(--primary);
-        }
-        .option-btn.selected .radio::after {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-        }
+    .question-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 40px 36px; box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      border: 1px solid var(--green-100);
+    }
+    .question-label {
+      display: inline-block; font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 2px; color: var(--green-500);
+      margin-bottom: 12px;
+    }
+    .question-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 800; color: var(--dark); line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .question-subtitle {
+      font-size: 15px; color: var(--gray-600); margin-bottom: 28px; line-height: 1.6;
+    }
 
-        /* Checkbox variant */
-        .option-btn.checkbox .radio {
-            border-radius: 4px;
-        }
-        .option-btn.checkbox.selected .radio {
-            border-radius: 4px;
-        }
-        .option-btn.checkbox.selected .radio::after {
-            content: '';
-            width: 10px;
-            height: 6px;
-            background: none;
-            border-left: 2px solid white;
-            border-bottom: 2px solid white;
-            border-radius: 0;
-            transform: rotate(-45deg);
-            margin-bottom: 2px;
-        }
+    /* ── Personalised greeting in question ── */
+    .personalized {
+      color: var(--green-600); font-weight: 700;
+    }
 
-        /* Text Input */
-        .text-input {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-family: inherit;
-            background: var(--surface);
-            color: var(--text);
-            transition: border-color 0.2s;
-            resize: vertical;
-        }
-        .text-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        .text-input::placeholder {
-            color: #aaa;
-        }
+    /* ── Options ── */
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option-btn {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; border: 2px solid var(--green-100);
+      border-radius: 14px; background: var(--white);
+      cursor: pointer; transition: all 0.25s ease;
+      font-size: 15px; color: var(--dark); text-align: left;
+      width: 100%; font-family: inherit;
+    }
+    .option-btn:hover {
+      border-color: var(--green-400); background: var(--green-50);
+      transform: translateX(4px);
+    }
+    .option-btn.selected {
+      border-color: var(--green-500); background: var(--green-50);
+      font-weight: 600;
+      box-shadow: 0 0 0 1px var(--green-500);
+    }
+    .option-btn .indicator {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid var(--green-200); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .option-btn.selected .indicator {
+      border-color: var(--green-500); background: var(--green-500);
+    }
+    .option-btn.selected .indicator::after {
+      content: ''; width: 8px; height: 8px;
+      background: white; border-radius: 50%;
+    }
+    .option-btn.checkbox .indicator { border-radius: 6px; }
+    .option-btn.checkbox.selected .indicator { border-radius: 6px; }
+    .option-btn.checkbox.selected .indicator::after {
+      content: ''; width: 10px; height: 6px;
+      background: none; border-left: 2px solid white;
+      border-bottom: 2px solid white; border-radius: 0;
+      transform: rotate(-45deg); margin-bottom: 2px;
+    }
+    .option-emoji { font-size: 20px; flex-shrink: 0; }
 
-        /* Scale */
-        .scale-container {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .scale-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            border: 2px solid var(--border);
-            background: var(--surface);
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text);
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-        .scale-btn:hover {
-            border-color: var(--primary-light);
-            background: #F1F8F1;
-        }
-        .scale-btn.selected {
-            border-color: var(--primary);
-            background: var(--primary);
-            color: white;
-        }
-        .scale-labels {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
+    /* ── Scale ── */
+    .scale-container {
+      display: flex; gap: 10px; justify-content: center;
+    }
+    .scale-btn {
+      width: 56px; height: 56px; border-radius: 14px;
+      border: 2px solid var(--green-100); background: var(--white);
+      cursor: pointer; font-size: 18px; font-weight: 700;
+      color: var(--dark); transition: all 0.25s; font-family: inherit;
+    }
+    .scale-btn:hover {
+      border-color: var(--green-400); background: var(--green-50);
+      transform: translateY(-2px);
+    }
+    .scale-btn.selected {
+      border-color: var(--green-500); background: var(--green-500);
+      color: white; transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(16,185,129,0.4);
+    }
+    .scale-labels {
+      display: flex; justify-content: space-between;
+      margin-top: 10px; font-size: 13px; color: var(--gray-400); font-weight: 500;
+    }
 
-        /* Navigation */
-        .nav-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 24px;
-        }
-        .btn {
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            flex: 1;
-        }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-primary:disabled {
-            background: #A5D6A7;
-            cursor: not-allowed;
-        }
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text-secondary);
-            border: 2px solid var(--border);
-        }
-        .btn-secondary:hover { border-color: var(--primary-light); }
-        .btn-start {
-            padding: 16px 40px;
-            font-size: 1.05rem;
-            border-radius: 12px;
-        }
+    /* ── Text Input ── */
+    .text-input {
+      width: 100%; padding: 16px 20px;
+      border: 2px solid var(--green-100); border-radius: 14px;
+      font-size: 15px; font-family: inherit; background: var(--white);
+      color: var(--dark); transition: border-color 0.2s; resize: vertical;
+      line-height: 1.6;
+    }
+    .text-input:focus { outline: none; border-color: var(--green-500); }
+    .text-input::placeholder { color: var(--gray-400); }
 
-        /* Thank You */
-        .thank-you {
-            text-align: center;
-            padding: 60px 24px;
-        }
-        .thank-you .checkmark {
-            width: 72px;
-            height: 72px;
-            background: #E8F5E9;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            font-size: 2rem;
-        }
-        .thank-you h2 {
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-        }
-        .thank-you p {
-            color: var(--text-secondary);
-            max-width: 400px;
-            margin: 0 auto;
-        }
+    /* ── Nav Buttons ── */
+    .nav-buttons {
+      display: flex; gap: 12px; margin-top: 28px;
+    }
 
-        /* Submitting overlay */
-        .submitting-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(255,255,255,0.9);
-            z-index: 200;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .submitting-overlay.show { display: flex; }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── Insight Card ── */
+    .insight-card {
+      margin-top: 20px; padding: 16px 20px;
+      background: linear-gradient(135deg, var(--green-50), var(--green-100));
+      border-radius: 14px; border: 1px solid var(--green-200);
+      font-size: 14px; color: var(--green-800); line-height: 1.6;
+      display: none;
+    }
+    .insight-card.show { display: block; }
+    .insight-card strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--green-600); }
 
-        /* Error toast */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--error);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            z-index: 300;
-            transition: transform 0.3s ease;
-            max-width: 90%;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+    /* ── Thank You ── */
+    .thank-you {
+      display: none; min-height: 100vh;
+      background: linear-gradient(135deg, var(--green-900) 0%, var(--green-800) 100%);
+      color: var(--white); align-items: center; justify-content: center;
+      text-align: center; padding: 72px 24px 60px;
+      position: relative; overflow: hidden; flex-direction: column;
+    }
+    .thank-you.active { display: flex; }
+    .thank-you::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23ffffff' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+    }
+    .thank-you-content { position: relative; z-index: 1; max-width: 480px; }
+    .thank-you .checkmark {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px; font-size: 36px;
+    }
+    .thank-you h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 800; margin-bottom: 16px;
+    }
+    .thank-you p {
+      font-size: 17px; line-height: 1.7;
+      color: rgba(255,255,255,0.7); margin-bottom: 12px;
+    }
+    .thank-you .personal-impact {
+      margin-top: 32px; padding: 24px;
+      background: rgba(255,255,255,0.08); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius);
+    }
+    .thank-you .personal-impact h3 {
+      font-size: 14px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--green-400); margin-bottom: 16px;
+    }
+    .impact-row {
+      display: flex; justify-content: space-around; gap: 16px; flex-wrap: wrap;
+    }
+    .impact-item strong {
+      display: block; font-size: 28px; font-weight: 800; color: var(--white);
+    }
+    .impact-item span { font-size: 12px; color: rgba(255,255,255,0.6); }
+    .thank-you .cta-buttons {
+      margin-top: 32px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-white {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; border-radius: 50px; font-weight: 600;
+      font-size: 15px; text-decoration: none; transition: all 0.3s ease;
+      border: none; cursor: pointer; font-family: inherit;
+      background: var(--white); color: var(--green-800);
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+    .btn-outline-white {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 28px; border-radius: 50px; font-weight: 600;
+      font-size: 15px; text-decoration: none; transition: all 0.3s ease;
+      cursor: pointer; font-family: inherit;
+      background: transparent; color: var(--white);
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    .btn-outline-white:hover {
+      border-color: rgba(255,255,255,0.6); transform: translateY(-2px);
+    }
 
-        /* Responsive */
-        @media (max-width: 480px) {
-            .intro h1 { font-size: 1.4rem; }
-            .question-card { padding: 24px 20px; }
-            .scale-btn { width: 42px; height: 42px; font-size: 0.9rem; }
-        }
-    </style>
+    /* ── Submitting Overlay ── */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
+      z-index: 200; align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px;
+    }
+    .overlay.show { display: flex; }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 4px solid var(--green-100);
+      border-top-color: var(--green-500);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--error); color: white;
+      padding: 14px 28px; border-radius: 50px;
+      font-size: 14px; font-weight: 600; z-index: 300;
+      transition: transform 0.3s ease; max-width: 90%;
+      box-shadow: 0 8px 24px rgba(239,68,68,0.3);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .intro h1 { font-size: 28px; }
+      .question-card { padding: 28px 22px; }
+      .scale-btn { width: 48px; height: 48px; font-size: 16px; }
+      .intro-stats { gap: 24px; }
+      .intro-stats strong { font-size: 22px; }
+      .nav-inner { height: 60px; }
+      .progress-wrap { top: 60px; }
+      .survey-wrap { padding-top: 84px; }
+      .impact-row { flex-direction: column; gap: 8px; }
+    }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="/" class="logo">Re<span>woven</span></a>
-            <div class="progress-text" id="progressText"></div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="../assets/logo.png" alt="Rewoven" onerror="this.style.display='none'" />
+        <span>Rewoven</span>
+      </a>
+      <div class="nav-progress" id="navProgress"></div>
+    </div>
+  </nav>
+  <div class="progress-wrap" id="progressWrap" style="opacity:0;">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- ── Intro ── -->
+  <div class="intro" id="introScreen">
+    <div class="intro-content">
+      <div class="intro-badge">3 min survey</div>
+      <h1>Help Us <span class="highlight">Reshape Fashion</span> in the UAE</h1>
+      <p>Your answers help Rewoven build better tools to fight textile waste. It's quick, anonymous, and your voice genuinely matters.</p>
+      <div class="name-input-wrap">
+        <input type="text" class="name-input" id="userName" placeholder="Your first name (optional)" autocomplete="given-name" />
+      </div>
+      <button class="btn btn-primary" onclick="startSurvey()">Let's Go</button>
+      <div class="intro-stats">
+        <div class="intro-stat"><strong>92M</strong><span>tonnes of textile waste/year</span></div>
+        <div class="intro-stat"><strong>73%</strong><span>ends up in landfills</span></div>
+        <div class="intro-stat"><strong>3 min</strong><span>to make a difference</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Survey ── -->
+  <div class="survey-wrap" id="surveyWrap">
+    <div id="surveyContainer"></div>
+  </div>
+
+  <!-- ── Thank You ── -->
+  <div class="thank-you" id="thankYou">
+    <div class="thank-you-content">
+      <div class="checkmark">&#10003;</div>
+      <h2 id="thankTitle">Thank you!</h2>
+      <p id="thankMessage">Your response helps us understand how to tackle the textile waste crisis in the UAE.</p>
+      <div class="personal-impact" id="personalImpact"></div>
+      <div class="cta-buttons">
+        <a href="https://apps.apple.com/us/app/rewoven/id6759314001" class="btn-white">Download Rewoven</a>
+        <a href="/" class="btn-outline-white">Visit Website</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Overlay ── -->
+  <div class="overlay" id="overlay">
+    <div class="spinner"></div>
+    <p style="color:var(--gray-600);font-weight:600;">Submitting your responses...</p>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
+
+    let userName = '';
+    let currentQ = 0;
+    const answers = {};
+
+    // Insights shown after certain questions — makes it feel personal
+    const insights = {
+      clothing_frequency: {
+        'Weekly': 'That\'s about 52 shopping trips a year — the average garment is worn only 7 times before it\'s discarded.',
+        'Every 2 weeks': 'Around 26 shopping trips a year. Did you know the fashion industry uses 1.5 trillion litres of water annually?',
+        'Monthly': 'Monthly shopping is pretty common. Each new item has a hidden water and carbon cost most people never see.',
+        'Every few months': 'Less frequent shopping already helps! The most sustainable garment is the one you already own.',
+        'Rarely (a few times a year)': 'You\'re already ahead of the curve. Fewer purchases = significantly less textile waste.'
+      },
+      waste_awareness: {
+        1: 'No worries — that\'s exactly why Rewoven exists. We make sustainability easy to understand.',
+        2: 'You\'re starting to notice. The fashion industry is the 2nd largest polluter worldwide.',
+        3: 'Good awareness! With the right tools, you can turn that knowledge into real action.',
+        4: 'Strong awareness! The UAE alone generates thousands of tonnes of textile waste each year.',
+        5: 'You\'re well-informed! Help us spread this knowledge through the Rewoven community.'
+      },
+      uae_climate_concern: {
+        1: 'Climate events like the 2024 UAE floods show how interconnected our environment really is.',
+        2: 'The UAE experienced record flooding in 2024 — climate change is already affecting us locally.',
+        3: 'Climate concern is growing across the UAE. Sustainable choices in fashion can make a real difference.',
+        4: 'Your concern is shared by many. Fashion accounts for 10% of global carbon emissions.',
+        5: 'The UAE is investing billions in sustainability. Individual action on fashion waste matters too.'
+      }
+    };
+
+    function getQuestions() {
+      const greeting = userName ? `, ${userName}` : '';
+      const yourName = userName || 'there';
+
+      return [
+        {
+          id: 'age_range', type: 'single',
+          question: `First things first${greeting} — how old are you?`,
+          subtitle: 'This helps us tailor our content to the right audience.',
+          options: [
+            { text: 'Under 18', emoji: '🎒' },
+            { text: '18-24', emoji: '🎓' },
+            { text: '25-34', emoji: '💼' },
+            { text: '35-44', emoji: '🏡' },
+            { text: '45-54', emoji: '🌟' },
+            { text: '55+', emoji: '✨' }
+          ]
+        },
+        {
+          id: 'location', type: 'single',
+          question: 'Where in the UAE are you based?',
+          subtitle: 'Textile waste impacts vary by emirate — this helps us localise solutions.',
+          options: [
+            { text: 'Abu Dhabi', emoji: '🏛️' },
+            { text: 'Dubai', emoji: '🏙️' },
+            { text: 'Sharjah', emoji: '📚' },
+            { text: 'Ajman', emoji: '🌊' },
+            { text: 'Ras Al Khaimah', emoji: '⛰️' },
+            { text: 'Fujairah', emoji: '🏖️' },
+            { text: 'Umm Al Quwain', emoji: '🌴' },
+            { text: 'Outside UAE', emoji: '🌍' }
+          ]
+        },
+        {
+          id: 'clothing_frequency', type: 'single',
+          question: `How often do you buy new clothes${greeting}?`,
+          subtitle: 'Be honest — no judgement here.',
+          options: [
+            { text: 'Weekly', emoji: '🛍️' },
+            { text: 'Every 2 weeks', emoji: '📅' },
+            { text: 'Monthly', emoji: '🗓️' },
+            { text: 'Every few months', emoji: '🌱' },
+            { text: 'Rarely (a few times a year)', emoji: '♻️' }
+          ],
+          hasInsight: true
+        },
+        {
+          id: 'monthly_spend', type: 'single',
+          question: 'How much do you typically spend on clothing per month?',
+          subtitle: 'Approximate is fine — this helps us understand fashion consumption patterns in the UAE.',
+          options: [
+            { text: 'Under AED 200', emoji: '💰' },
+            { text: 'AED 200-500', emoji: '💳' },
+            { text: 'AED 500-1,000', emoji: '🛒' },
+            { text: 'AED 1,000-2,000', emoji: '💎' },
+            { text: 'Over AED 2,000', emoji: '👑' }
+          ]
+        },
+        {
+          id: 'discard_method', type: 'multi',
+          question: 'What do you do with clothes you no longer wear?',
+          subtitle: 'Select all that apply — most people do more than one thing.',
+          options: [
+            { text: 'Throw them away', emoji: '🗑️' },
+            { text: 'Donate to charity', emoji: '🤝' },
+            { text: 'Give to friends or family', emoji: '👨‍👩‍👧' },
+            { text: 'Sell online', emoji: '📱' },
+            { text: 'Upcycle or repurpose', emoji: '✂️' },
+            { text: 'They pile up in my closet', emoji: '👗' },
+            { text: 'Take to a recycling centre', emoji: '♻️' }
+          ]
+        },
+        {
+          id: 'waste_awareness', type: 'scale',
+          question: `How aware are you of textile waste${greeting}?`,
+          subtitle: 'The fashion industry produces over 92 million tonnes of waste every year.',
+          min_label: 'Not aware', max_label: 'Very aware',
+          hasInsight: true
+        },
+        {
+          id: 'uae_climate_concern', type: 'scale',
+          question: 'How concerned are you about environmental events in the UAE?',
+          subtitle: 'Think about recent flooding, rising temperatures, and sustainability initiatives.',
+          min_label: 'Not concerned', max_label: 'Very concerned',
+          hasInsight: true
+        },
+        {
+          id: 'fashion_climate_link', type: 'single',
+          question: 'Do you think fast fashion contributes to environmental crises?',
+          subtitle: 'The fashion industry accounts for ~10% of global carbon emissions — more than aviation and shipping combined.',
+          options: [
+            { text: 'Strongly agree', emoji: '💯' },
+            { text: 'Agree', emoji: '👍' },
+            { text: 'Neutral', emoji: '🤔' },
+            { text: 'Disagree', emoji: '👎' },
+            { text: 'Strongly disagree', emoji: '❌' },
+            { text: 'I\'m not sure', emoji: '❓' }
+          ]
+        },
+        {
+          id: 'sustainable_fashion_knowledge', type: 'single',
+          question: 'How would you rate your sustainability knowledge?',
+          subtitle: 'There\'s no wrong answer — we\'re here to help everyone learn.',
+          options: [
+            { text: 'Expert — I actively practice and advocate', emoji: '🏆' },
+            { text: 'Good — I know the basics', emoji: '📗' },
+            { text: 'Some awareness — I\'ve heard about it', emoji: '💡' },
+            { text: 'Very little — I don\'t know much', emoji: '🌱' },
+            { text: 'None — this is new to me', emoji: '🆕' }
+          ]
+        },
+        {
+          id: 'sustainability_barriers', type: 'multi',
+          question: `What stops you from being more sustainable with fashion${greeting}?`,
+          subtitle: 'Select all that apply — understanding barriers helps us remove them.',
+          options: [
+            { text: 'Sustainable options are too expensive', emoji: '💸' },
+            { text: 'I don\'t know where to find sustainable brands', emoji: '🔍' },
+            { text: 'It\'s not convenient', emoji: '⏰' },
+            { text: 'I don\'t know what to do with old clothes', emoji: '🤷' },
+            { text: 'I don\'t think my actions matter', emoji: '😔' },
+            { text: 'Lack of information or education', emoji: '📖' },
+            { text: 'Nothing — I already try to be sustainable', emoji: '🌿' }
+          ]
+        },
+        {
+          id: 'app_interest', type: 'scale',
+          question: 'How interested are you in an app that helps you live more sustainably?',
+          subtitle: 'Track your impact, find recycling options, learn through quizzes, and scan your clothes.',
+          min_label: 'Not interested', max_label: 'Very interested'
+        },
+        {
+          id: 'desired_features', type: 'multi',
+          question: 'Which features would you use most?',
+          subtitle: 'Select all that appeal to you — this directly shapes what we build next.',
+          options: [
+            { text: 'Scan clothing labels for sustainability info', emoji: '📸' },
+            { text: 'Track your environmental impact', emoji: '📊' },
+            { text: 'Nearby donation and recycling points', emoji: '📍' },
+            { text: 'Educational quizzes and challenges', emoji: '🧠' },
+            { text: 'Community leaderboard and rewards', emoji: '🏅' },
+            { text: 'Upcycle marketplace', emoji: '🛍️' },
+            { text: 'Clothing care tips', emoji: '👕' },
+            { text: 'Wardrobe tracking and outfit suggestions', emoji: '👗' }
+          ]
+        },
+        {
+          id: 'education_interest', type: 'single',
+          question: 'Would you engage with content linking textile waste to UAE environmental challenges?',
+          subtitle: 'Short articles, videos, and interactive lessons designed for the UAE context.',
+          options: [
+            { text: 'Yes, definitely', emoji: '🙌' },
+            { text: 'Probably, if it\'s well-made', emoji: '👍' },
+            { text: 'Maybe, depends on the format', emoji: '🤔' },
+            { text: 'Unlikely', emoji: '😐' },
+            { text: 'No', emoji: '👎' }
+          ]
+        },
+        {
+          id: 'additional_thoughts', type: 'text',
+          question: `Last one${greeting} — any thoughts you'd like to share?`,
+          subtitle: 'Anything about fashion, sustainability, the UAE, or what you\'d want from Rewoven. Totally optional.',
+          placeholder: 'Type your thoughts here...'
+        }
+      ];
+    }
+
+    let questions = [];
+
+    function startSurvey() {
+      userName = document.getElementById('userName').value.trim();
+      questions = getQuestions();
+      document.getElementById('introScreen').style.display = 'none';
+      document.getElementById('surveyWrap').classList.add('active');
+      document.getElementById('progressWrap').style.opacity = '1';
+      renderQuestion(0);
+    }
+
+    function renderQuestion(idx) {
+      currentQ = idx;
+      const q = questions[idx];
+      const total = questions.length;
+      const progress = (idx / total) * 100;
+
+      document.getElementById('progressBar').style.width = progress + '%';
+      document.getElementById('navProgress').textContent = `${idx + 1} / ${total}`;
+
+      const isLast = idx === total - 1;
+      const isFirst = idx === 0;
+      const existing = answers[q.id];
+
+      let html = `<div class="question-slide active">
+        <div class="question-card">
+          <div class="question-label">Question ${idx + 1} of ${total}</div>
+          <div class="question-text">${q.question}</div>
+          ${q.subtitle ? `<div class="question-subtitle">${q.subtitle}</div>` : ''}`;
+
+      if (q.type === 'single') {
+        html += `<div class="options">`;
+        q.options.forEach(opt => {
+          const sel = existing === opt.text ? ' selected' : '';
+          const escaped = opt.text.replace(/'/g, "\\'");
+          html += `<button class="option-btn${sel}" onclick="selectSingle('${q.id}', this, '${escaped}')">
+            <div class="indicator"></div>
+            <span class="option-emoji">${opt.emoji}</span>
+            <span>${opt.text}</span>
+          </button>`;
+        });
+        html += `</div>`;
+      } else if (q.type === 'multi') {
+        html += `<div class="options">`;
+        const selected = existing || [];
+        q.options.forEach(opt => {
+          const sel = selected.includes(opt.text) ? ' selected' : '';
+          const escaped = opt.text.replace(/'/g, "\\'");
+          html += `<button class="option-btn checkbox${sel}" onclick="selectMulti('${q.id}', this, '${escaped}')">
+            <div class="indicator"></div>
+            <span class="option-emoji">${opt.emoji}</span>
+            <span>${opt.text}</span>
+          </button>`;
+        });
+        html += `</div>`;
+      } else if (q.type === 'scale') {
+        html += `<div class="scale-container">`;
+        for (let i = 1; i <= 5; i++) {
+          const sel = existing === i ? ' selected' : '';
+          html += `<button class="scale-btn${sel}" onclick="selectScale('${q.id}', this, ${i})">${i}</button>`;
+        }
+        html += `</div><div class="scale-labels"><span>${q.min_label}</span><span>${q.max_label}</span></div>`;
+      } else if (q.type === 'text') {
+        html += `<textarea class="text-input" rows="4" placeholder="${q.placeholder || ''}"
+          oninput="answers['${q.id}'] = this.value">${existing || ''}</textarea>`;
+      }
+
+      // Insight card
+      if (q.hasInsight && existing && insights[q.id]) {
+        const insightText = insights[q.id][existing];
+        if (insightText) {
+          html += `<div class="insight-card show"><strong>Did you know?</strong>${insightText}</div>`;
+        }
+      }
+
+      html += `</div>
+        <div class="nav-buttons">
+          ${!isFirst ? '<button class="btn btn-secondary" onclick="prevQuestion()">Back</button>' : ''}
+          ${isLast
+            ? `<button class="btn btn-primary" onclick="submitSurvey()" id="nextBtn" style="flex:1;">Submit</button>`
+            : `<button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn" style="flex:1;" ${q.type !== 'text' && !existing ? 'disabled' : ''}>Next</button>`
+          }
         </div>
-    </header>
+      </div>`;
 
-    <div class="progress-container" id="progressContainer" style="display:none;">
-        <div class="progress-bar-wrap">
-            <div class="progress-bar" id="progressBar"></div>
+      document.getElementById('surveyContainer').innerHTML = html;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function selectSingle(id, el, value) {
+      answers[id] = value;
+      el.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('nextBtn').disabled = false;
+
+      // Show insight after a short delay
+      const q = questions[currentQ];
+      if (q.hasInsight && insights[id] && insights[id][value]) {
+        setTimeout(() => {
+          const existing = document.querySelector('.insight-card');
+          if (existing) {
+            existing.innerHTML = `<strong>Did you know?</strong>${insights[id][value]}`;
+            existing.classList.add('show');
+          } else {
+            const card = document.createElement('div');
+            card.className = 'insight-card show';
+            card.innerHTML = `<strong>Did you know?</strong>${insights[id][value]}`;
+            document.querySelector('.question-card').appendChild(card);
+          }
+        }, 300);
+      }
+    }
+
+    function selectMulti(id, el, value) {
+      if (!answers[id]) answers[id] = [];
+      const idx = answers[id].indexOf(value);
+      if (idx > -1) {
+        answers[id].splice(idx, 1);
+        el.classList.remove('selected');
+      } else {
+        answers[id].push(value);
+        el.classList.add('selected');
+      }
+      document.getElementById('nextBtn').disabled = answers[id].length === 0;
+    }
+
+    function selectScale(id, el, value) {
+      answers[id] = value;
+      el.parentElement.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('nextBtn').disabled = false;
+
+      // Show insight
+      const q = questions[currentQ];
+      if (q.hasInsight && insights[id] && insights[id][value]) {
+        setTimeout(() => {
+          const existing = document.querySelector('.insight-card');
+          if (existing) {
+            existing.innerHTML = `<strong>Did you know?</strong>${insights[id][value]}`;
+            existing.classList.add('show');
+          } else {
+            const card = document.createElement('div');
+            card.className = 'insight-card show';
+            card.innerHTML = `<strong>Did you know?</strong>${insights[id][value]}`;
+            document.querySelector('.question-card').appendChild(card);
+          }
+        }, 300);
+      }
+    }
+
+    function nextQuestion() {
+      if (currentQ < questions.length - 1) renderQuestion(currentQ + 1);
+    }
+
+    function prevQuestion() {
+      if (currentQ > 0) renderQuestion(currentQ - 1);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    function generatePersonalImpact() {
+      const name = userName || 'You';
+      const freq = answers.clothing_frequency || '';
+      const awareness = answers.waste_awareness || 3;
+
+      // Calculate a "sustainability score" based on answers
+      let score = 50;
+      if (freq === 'Rarely (a few times a year)') score += 20;
+      else if (freq === 'Every few months') score += 10;
+      else if (freq === 'Weekly') score -= 15;
+
+      if (awareness >= 4) score += 10;
+      if (answers.discard_method && answers.discard_method.includes('Donate to charity')) score += 5;
+      if (answers.discard_method && answers.discard_method.includes('Upcycle or repurpose')) score += 10;
+      if (answers.discard_method && answers.discard_method.includes('Throw them away')) score -= 10;
+
+      score = Math.max(10, Math.min(95, score));
+
+      const waterSaved = score >= 60 ? Math.round(score * 45) : 0;
+
+      document.getElementById('thankTitle').textContent = userName ? `Thank you, ${userName}!` : 'Thank you!';
+
+      const impactHtml = `
+        <h3>Your Sustainability Snapshot</h3>
+        <div class="impact-row">
+          <div class="impact-item">
+            <strong>${score}/100</strong>
+            <span>Sustainability Score</span>
+          </div>
+          <div class="impact-item">
+            <strong>${awareness}/5</strong>
+            <span>Awareness Level</span>
+          </div>
+          <div class="impact-item">
+            <strong>${answers.app_interest || '?'}/5</strong>
+            <span>App Interest</span>
+          </div>
         </div>
-    </div>
+      `;
+      document.getElementById('personalImpact').innerHTML = impactHtml;
+    }
 
-    <!-- Intro Screen -->
-    <div class="intro" id="introScreen">
-        <div class="badge">3 min survey</div>
-        <h1>Help Us Reshape Fashion Sustainability in the UAE</h1>
-        <p>Your responses will help Rewoven build better tools to combat textile waste and promote sustainable fashion. All answers are anonymous.</p>
-        <button class="btn btn-primary btn-start" onclick="startSurvey()">Start Survey</button>
-    </div>
-
-    <!-- Survey -->
-    <div class="survey-container" id="surveyContainer" style="display:none;"></div>
-
-    <!-- Thank You -->
-    <div class="thank-you" id="thankYou" style="display:none;">
-        <div class="checkmark">&#10003;</div>
-        <h2>Thank you for your response!</h2>
-        <p>Your input helps us understand how to better address the textile waste crisis in the UAE. Together, we can rewoven the future of fashion.</p>
-    </div>
-
-    <!-- Submitting Overlay -->
-    <div class="submitting-overlay" id="submittingOverlay">
-        <div class="spinner"></div>
-        <p style="color:var(--text-secondary);font-weight:500;">Submitting your responses...</p>
-    </div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // Supabase config
-        const SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
-
-        const questions = [
-            {
-                id: 'age_range',
-                type: 'single',
-                question: 'What is your age range?',
-                options: ['Under 18', '18-24', '25-34', '35-44', '45-54', '55+']
-            },
-            {
-                id: 'location',
-                type: 'single',
-                question: 'Where in the UAE are you based?',
-                options: ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Ras Al Khaimah', 'Fujairah', 'Umm Al Quwain', 'Outside UAE']
-            },
-            {
-                id: 'clothing_frequency',
-                type: 'single',
-                question: 'How often do you buy new clothing?',
-                options: ['Weekly', 'Every 2 weeks', 'Monthly', 'Every few months', 'Rarely (a few times a year)']
-            },
-            {
-                id: 'monthly_spend',
-                type: 'single',
-                question: 'How much do you typically spend on clothing per month?',
-                options: ['Under AED 200', 'AED 200-500', 'AED 500-1,000', 'AED 1,000-2,000', 'Over AED 2,000']
-            },
-            {
-                id: 'discard_method',
-                type: 'multi',
-                question: 'What do you typically do with clothes you no longer wear? (Select all that apply)',
-                options: ['Throw them in the trash', 'Donate to charity', 'Give to friends/family', 'Sell online', 'Upcycle or repurpose', 'They pile up in my closet', 'Take to a recycling center']
-            },
-            {
-                id: 'waste_awareness',
-                type: 'scale',
-                question: 'How aware are you of the environmental impact of textile waste?',
-                min_label: 'Not at all',
-                max_label: 'Very aware'
-            },
-            {
-                id: 'uae_climate_concern',
-                type: 'scale',
-                question: 'How concerned are you about climate change and environmental events (e.g., flooding) in the UAE?',
-                min_label: 'Not concerned',
-                max_label: 'Extremely concerned'
-            },
-            {
-                id: 'fashion_climate_link',
-                type: 'single',
-                question: 'Do you believe fast fashion contributes to climate change and environmental crises like the UAE flooding events?',
-                options: ['Strongly agree', 'Agree', 'Neutral', 'Disagree', 'Strongly disagree', 'I\'m not sure']
-            },
-            {
-                id: 'sustainable_fashion_knowledge',
-                type: 'single',
-                question: 'How would you rate your knowledge of sustainable fashion practices?',
-                options: ['Expert - I actively practice and advocate', 'Good - I know the basics and try to act on it', 'Some awareness - I\'ve heard about it', 'Very little - I don\'t know much', 'None - This is new to me']
-            },
-            {
-                id: 'sustainability_barriers',
-                type: 'multi',
-                question: 'What stops you from being more sustainable with fashion? (Select all that apply)',
-                options: ['Sustainable options are too expensive', 'I don\'t know where to find sustainable brands', 'It\'s not convenient', 'I don\'t know what to do with old clothes', 'I don\'t think my individual actions matter', 'Lack of information/education', 'Nothing - I already try to be sustainable']
-            },
-            {
-                id: 'app_interest',
-                type: 'scale',
-                question: 'How interested would you be in an app that helps you manage your wardrobe sustainably, track environmental impact, and find recycling options?',
-                min_label: 'Not interested',
-                max_label: 'Very interested'
-            },
-            {
-                id: 'desired_features',
-                type: 'multi',
-                question: 'Which features would you find most useful in a sustainable fashion app? (Select all that apply)',
-                options: ['Wardrobe tracking & outfit suggestions', 'Clothing care tips to extend garment life', 'Nearby donation/recycling drop-off points', 'Carbon footprint tracking for purchases', 'Educational content about textile waste', 'Community challenges & rewards', 'Marketplace to swap/sell clothes', 'Scan clothing labels for sustainability info']
-            },
-            {
-                id: 'education_interest',
-                type: 'single',
-                question: 'Would you engage with educational content about how textile waste connects to UAE environmental challenges?',
-                options: ['Yes, very much', 'Probably, if it\'s well-made', 'Maybe, depends on the format', 'Unlikely', 'No']
-            },
-            {
-                id: 'additional_thoughts',
-                type: 'text',
-                question: 'Any additional thoughts on fashion sustainability or what you\'d want from an app like Rewoven?',
-                placeholder: 'Share your thoughts here (optional)...'
-            }
-        ];
-
-        let currentQ = 0;
-        const answers = {};
-
-        function startSurvey() {
-            document.getElementById('introScreen').style.display = 'none';
-            document.getElementById('surveyContainer').style.display = 'block';
-            document.getElementById('progressContainer').style.display = 'block';
-            renderQuestion(0);
+    async function submitSurvey() {
+      for (const q of questions) {
+        if (q.type === 'text') continue;
+        if (!answers[q.id] || (Array.isArray(answers[q.id]) && answers[q.id].length === 0)) {
+          showToast(`Please answer: "${q.question.replace(/, \w+/, '')}"`);
+          renderQuestion(questions.indexOf(q));
+          return;
         }
+      }
 
-        function renderQuestion(idx) {
-            currentQ = idx;
-            const q = questions[idx];
-            const total = questions.length;
-            const progress = ((idx) / total) * 100;
+      document.getElementById('overlay').classList.add('show');
 
-            document.getElementById('progressBar').style.width = progress + '%';
-            document.getElementById('progressText').textContent = `${idx + 1} of ${total}`;
+      const payload = {
+        ...answers,
+        name: userName || null,
+        discard_method: (answers.discard_method || []).join(', '),
+        sustainability_barriers: (answers.sustainability_barriers || []).join(', '),
+        desired_features: (answers.desired_features || []).join(', '),
+        submitted_at: new Date().toISOString(),
+        user_agent: navigator.userAgent
+      };
 
-            const isLast = idx === total - 1;
-            const isFirst = idx === 0;
-            const existing = answers[q.id];
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/survey_responses`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(`Supabase: ${res.status}`);
+        showSuccess();
+      } catch (err) {
+        console.warn('Supabase failed, saving locally:', err);
+        const existing = JSON.parse(localStorage.getItem('rewoven_survey_responses') || '[]');
+        existing.push(payload);
+        localStorage.setItem('rewoven_survey_responses', JSON.stringify(existing));
+        showSuccess();
+      }
+    }
 
-            let html = `<div class="question-slide active">
-                <div class="question-card">
-                    <div class="question-number">Question ${idx + 1} of ${total}</div>
-                    <div class="question-text">${q.question}</div>`;
-
-            if (q.type === 'single') {
-                html += `<div class="options">`;
-                q.options.forEach((opt, i) => {
-                    const sel = existing === opt ? ' selected' : '';
-                    html += `<button class="option-btn${sel}" onclick="selectSingle('${q.id}', this, '${opt.replace(/'/g, "\\'")}')">
-                        <div class="radio"></div>
-                        <span>${opt}</span>
-                    </button>`;
-                });
-                html += `</div>`;
-            } else if (q.type === 'multi') {
-                html += `<div class="options">`;
-                const selected = existing || [];
-                q.options.forEach((opt, i) => {
-                    const sel = selected.includes(opt) ? ' selected' : '';
-                    html += `<button class="option-btn checkbox${sel}" onclick="selectMulti('${q.id}', this, '${opt.replace(/'/g, "\\'")}')">
-                        <div class="radio"></div>
-                        <span>${opt}</span>
-                    </button>`;
-                });
-                html += `</div>`;
-            } else if (q.type === 'scale') {
-                html += `<div class="scale-container">`;
-                for (let i = 1; i <= 5; i++) {
-                    const sel = existing === i ? ' selected' : '';
-                    html += `<button class="scale-btn${sel}" onclick="selectScale('${q.id}', this, ${i})">${i}</button>`;
-                }
-                html += `</div>
-                    <div class="scale-labels">
-                        <span>${q.min_label}</span>
-                        <span>${q.max_label}</span>
-                    </div>`;
-            } else if (q.type === 'text') {
-                html += `<textarea class="text-input" rows="4" placeholder="${q.placeholder || ''}"
-                    oninput="answers['${q.id}'] = this.value">${existing || ''}</textarea>`;
-            }
-
-            html += `</div>
-                <div class="nav-buttons">
-                    ${!isFirst ? '<button class="btn btn-secondary" onclick="prevQuestion()">Back</button>' : ''}
-                    ${isLast
-                        ? `<button class="btn btn-primary" onclick="submitSurvey()" id="nextBtn">${q.type === 'text' ? 'Submit' : 'Submit'}</button>`
-                        : `<button class="btn btn-primary" onclick="nextQuestion()" id="nextBtn" ${q.type !== 'text' && !existing ? 'disabled' : ''}>Next</button>`
-                    }
-                </div>
-            </div>`;
-
-            document.getElementById('surveyContainer').innerHTML = html;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function selectSingle(id, el, value) {
-            answers[id] = value;
-            el.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            el.classList.add('selected');
-            document.getElementById('nextBtn').disabled = false;
-        }
-
-        function selectMulti(id, el, value) {
-            if (!answers[id]) answers[id] = [];
-            const idx = answers[id].indexOf(value);
-            if (idx > -1) {
-                answers[id].splice(idx, 1);
-                el.classList.remove('selected');
-            } else {
-                answers[id].push(value);
-                el.classList.add('selected');
-            }
-            document.getElementById('nextBtn').disabled = answers[id].length === 0;
-        }
-
-        function selectScale(id, el, value) {
-            answers[id] = value;
-            el.parentElement.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
-            el.classList.add('selected');
-            document.getElementById('nextBtn').disabled = false;
-        }
-
-        function nextQuestion() {
-            if (currentQ < questions.length - 1) {
-                renderQuestion(currentQ + 1);
-            }
-        }
-
-        function prevQuestion() {
-            if (currentQ > 0) {
-                renderQuestion(currentQ - 1);
-            }
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 4000);
-        }
-
-        async function submitSurvey() {
-            // Validate required (all except text are required)
-            for (const q of questions) {
-                if (q.type === 'text') continue;
-                if (!answers[q.id] || (Array.isArray(answers[q.id]) && answers[q.id].length === 0)) {
-                    showToast(`Please answer: "${q.question}"`);
-                    renderQuestion(questions.indexOf(q));
-                    return;
-                }
-            }
-
-            document.getElementById('submittingOverlay').classList.add('show');
-
-            const payload = {
-                ...answers,
-                // Flatten arrays to comma-separated strings for storage
-                discard_method: (answers.discard_method || []).join(', '),
-                sustainability_barriers: (answers.sustainability_barriers || []).join(', '),
-                desired_features: (answers.desired_features || []).join(', '),
-                submitted_at: new Date().toISOString(),
-                user_agent: navigator.userAgent
-            };
-
-            try {
-                const res = await fetch(`${SUPABASE_URL}/rest/v1/survey_responses`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Prefer': 'return=minimal'
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!res.ok) {
-                    // If table doesn't exist or RLS blocks, fall back to localStorage
-                    throw new Error(`Supabase: ${res.status}`);
-                }
-
-                showSuccess();
-            } catch (err) {
-                console.warn('Supabase insert failed, saving locally:', err);
-                // Fallback: save to localStorage
-                const existing = JSON.parse(localStorage.getItem('rewoven_survey_responses') || '[]');
-                existing.push(payload);
-                localStorage.setItem('rewoven_survey_responses', JSON.stringify(existing));
-                showSuccess();
-            }
-        }
-
-        function showSuccess() {
-            document.getElementById('submittingOverlay').classList.remove('show');
-            document.getElementById('surveyContainer').style.display = 'none';
-            document.getElementById('progressContainer').style.display = 'none';
-            document.getElementById('progressText').textContent = '';
-            document.getElementById('thankYou').style.display = 'block';
-            document.getElementById('progressBar').style.width = '100%';
-        }
-    </script>
+    function showSuccess() {
+      document.getElementById('overlay').classList.remove('show');
+      document.getElementById('surveyWrap').classList.remove('active');
+      document.getElementById('progressWrap').style.opacity = '0';
+      document.getElementById('navProgress').textContent = '';
+      generatePersonalImpact();
+      document.getElementById('thankYou').classList.add('active');
+    }
+  </script>
 </body>
 </html>
