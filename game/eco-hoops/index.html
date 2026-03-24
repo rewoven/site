@@ -1,266 +1,1330 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
-    <link rel="stylesheet" href="assets/css/app.css" type="text/css" />
-    <link rel="icon" href="../../assets/logo.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <title>Eco Hoops | Rewoven Games</title>
-    <style>
-        /* Rewoven top bar */
-        .rw-bar {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 16px;
-            background: linear-gradient(180deg, rgba(6,78,59,0.95) 0%, rgba(6,78,59,0.7) 80%, transparent);
-            font-family: 'Inter', sans-serif; pointer-events: none;
-        }
-        .rw-bar > * { pointer-events: auto; }
-        .rw-bar a { color: #A7F3D0; text-decoration: none; font-weight: 700; font-size: 13px; }
-        .rw-bar a:hover { color: #34D399; }
-        .rw-bar .rw-title { color: #fff; font-weight: 800; font-size: 15px; text-shadow: 0 2px 6px rgba(0,0,0,0.5); }
-        .rw-back { padding: 4px 12px; border: 1px solid rgba(167,243,208,0.3); border-radius: 8px; }
-        .rw-back:hover { background: rgba(167,243,208,0.1); }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Eco Hoops | Rewoven Games</title>
+<link rel="icon" href="../../assets/logo.png" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0a0e1a; overflow: hidden; font-family: 'Inter', sans-serif; }
+canvas { display: block; }
 
-        /* Trivia overlay */
-        .trivia-overlay {
-            position: fixed; inset: 0; z-index: 99999;
-            display: none; align-items: center; justify-content: center;
-            background: rgba(10,14,26,0.92); backdrop-filter: blur(8px);
-            font-family: 'Inter', sans-serif;
-        }
-        .trivia-overlay.show { display: flex; }
-        .trivia-card {
-            background: linear-gradient(135deg, #1E293B, #0F172A);
-            border: 1px solid rgba(52,211,153,0.2); border-radius: 22px;
-            padding: 36px; max-width: 500px; width: 90%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            animation: trivPop 0.35s ease;
-            color: #fff;
-        }
-        @keyframes trivPop { from { transform: scale(0.92) translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
-        .trivia-badge {
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 1.5px; padding: 6px 14px; border-radius: 20px;
-            display: inline-block; margin-bottom: 18px;
-        }
-        .trivia-q { font-size: 19px; font-weight: 700; line-height: 1.45; margin-bottom: 22px; }
-        .trivia-opts { display: flex; flex-direction: column; gap: 10px; }
-        .t-opt {
-            padding: 14px 18px; border: 2px solid rgba(255,255,255,0.08);
-            border-radius: 12px; background: rgba(255,255,255,0.02);
-            color: #fff; font-size: 15px; cursor: pointer; text-align: left;
-            font-family: 'Inter', sans-serif; transition: all 0.2s;
-            display: flex; align-items: center; gap: 12px;
-        }
-        .t-opt:hover { border-color: #34D399; background: rgba(52,211,153,0.06); }
-        .t-opt.right { border-color: #10B981; background: rgba(16,185,129,0.18); color: #A7F3D0; pointer-events: none; }
-        .t-opt.wrong { border-color: #EF4444; background: rgba(239,68,68,0.12); color: #FCA5A5; pointer-events: none; }
-        .t-opt .letter {
-            width: 28px; height: 28px; border-radius: 8px;
-            background: rgba(255,255,255,0.06);
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 12px; flex-shrink: 0;
-        }
-        .trivia-res {
-            margin-top: 14px; padding: 14px 18px; border-radius: 12px;
-            font-size: 13px; line-height: 1.5; display: none;
-        }
-        .trivia-res.show { display: block; }
-        .trivia-res.ok { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #A7F3D0; }
-        .trivia-res.no { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); color: #FCA5A5; }
-        .trivia-skip {
-            margin-top: 14px; background: none; border: none;
-            color: #475569; font-size: 13px; cursor: pointer;
-            font-family: 'Inter', sans-serif; padding: 8px;
-        }
-        .trivia-skip:hover { color: #94A3B8; }
+/* Nav bar */
+.rw-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px;
+    background: linear-gradient(180deg, rgba(6,78,59,0.95), rgba(6,78,59,0.7) 80%, transparent);
+    pointer-events: none;
+}
+.rw-bar > * { pointer-events: auto; }
+.rw-bar a { color: #A7F3D0; text-decoration: none; font-weight: 700; font-size: 13px; }
+.rw-bar a:hover { color: #34D399; }
+.rw-bar .rw-title { color: #fff; font-weight: 800; font-size: 15px; }
+.rw-back { padding: 4px 12px; border: 1px solid rgba(167,243,208,0.3); border-radius: 8px; }
 
-        /* Rewoven branding watermark */
-        .rw-watermark {
-            position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
-            z-index: 9998; font-family: 'Inter', sans-serif;
-            font-size: 11px; font-weight: 700; color: rgba(167,243,208,0.3);
-            letter-spacing: 1px; text-transform: uppercase; pointer-events: none;
-        }
+/* Menu screen */
+#menu {
+    position: fixed; inset: 0; z-index: 50;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #0a0e1a 0%, #1a2332 100%);
+}
+#menu.hidden { display: none; }
+#menu h1 { font-size: 48px; font-weight: 900; color: #10B981; margin-bottom: 8px; }
+#menu .sub { color: #64748B; font-size: 14px; margin-bottom: 40px; }
+.player-select { display: flex; gap: 16px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+.player-card {
+    width: 160px; padding: 20px 16px; border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 16px; background: rgba(255,255,255,0.03); cursor: pointer;
+    text-align: center; transition: all 0.2s; color: #fff;
+}
+.player-card:hover { border-color: #34D399; background: rgba(52,211,153,0.06); }
+.player-card.selected { border-color: #10B981; background: rgba(16,185,129,0.15); }
+.player-card .avatar { font-size: 48px; margin-bottom: 8px; }
+.player-card .name { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+.player-card .arch { color: #10B981; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.player-card .desc { color: #94A3B8; font-size: 11px; margin-top: 6px; line-height: 1.4; }
+.play-btn {
+    padding: 14px 48px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #10B981, #059669); color: #fff;
+    font-size: 18px; font-weight: 800; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: transform 0.1s;
+}
+.play-btn:hover { transform: scale(1.05); }
+.play-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-        /* Eco score display */
-        .trivia-score {
-            position: fixed; bottom: 8px; right: 16px; z-index: 9998;
-            font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700;
-            color: rgba(167,243,208,0.5); pointer-events: none;
-        }
-    </style>
+/* Controls help */
+.controls-info {
+    margin-top: 20px; color: #475569; font-size: 12px; text-align: center; line-height: 1.8;
+}
+.controls-info kbd {
+    background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 4px;
+    font-family: 'Inter', sans-serif; color: #94A3B8;
+}
+
+/* HUD */
+#hud {
+    position: fixed; top: 44px; left: 0; right: 0; z-index: 40;
+    display: none; align-items: center; justify-content: center; gap: 30px;
+    padding: 8px 16px; pointer-events: none;
+}
+#hud.show { display: flex; }
+.hud-score {
+    font-size: 32px; font-weight: 900; min-width: 50px; text-align: center;
+}
+.hud-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+.hud-vs { color: #475569; font-size: 14px; font-weight: 700; }
+.hud-timer { color: #F59E0B; font-size: 18px; font-weight: 800; }
+.hud-special {
+    position: fixed; bottom: 16px; right: 16px; z-index: 40;
+    padding: 10px 20px; border-radius: 12px; display: none;
+    font-size: 13px; font-weight: 700; pointer-events: auto; cursor: pointer;
+    border: 2px solid #10B981; background: rgba(16,185,129,0.15); color: #A7F3D0;
+}
+.hud-special.show { display: block; }
+.hud-special.cooldown { border-color: #475569; background: rgba(71,85,105,0.15); color: #64748B; cursor: not-allowed; }
+
+/* Trivia overlay */
+.trivia-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(10,14,26,0.92); backdrop-filter: blur(8px);
+}
+.trivia-overlay.show { display: flex; }
+.trivia-card {
+    background: linear-gradient(135deg, #1E293B, #0F172A);
+    border: 1px solid rgba(52,211,153,0.2); border-radius: 22px;
+    padding: 36px; max-width: 500px; width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5); color: #fff;
+}
+.trivia-badge {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1.5px; padding: 6px 14px; border-radius: 20px;
+    display: inline-block; margin-bottom: 18px;
+}
+.trivia-q { font-size: 19px; font-weight: 700; line-height: 1.45; margin-bottom: 22px; }
+.trivia-opts { display: flex; flex-direction: column; gap: 10px; }
+.t-opt {
+    padding: 14px 18px; border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 12px; background: rgba(255,255,255,0.02);
+    color: #fff; font-size: 15px; cursor: pointer; text-align: left;
+    font-family: 'Inter', sans-serif; transition: all 0.2s;
+}
+.t-opt:hover { border-color: #34D399; }
+.t-opt.right { border-color: #10B981; background: rgba(16,185,129,0.18); color: #A7F3D0; pointer-events: none; }
+.t-opt.wrong { border-color: #EF4444; background: rgba(239,68,68,0.12); color: #FCA5A5; pointer-events: none; }
+.trivia-res { margin-top: 14px; padding: 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; display: none; }
+.trivia-res.show { display: block; }
+.trivia-res.ok { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #A7F3D0; }
+.trivia-res.no { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); color: #FCA5A5; }
+
+/* Game over */
+#gameover {
+    position: fixed; inset: 0; z-index: 150;
+    display: none; align-items: center; justify-content: center;
+    background: rgba(10,14,26,0.95); backdrop-filter: blur(12px);
+}
+#gameover.show { display: flex; }
+#gameover .go-card {
+    text-align: center; color: #fff;
+}
+#gameover h2 { font-size: 42px; font-weight: 900; margin-bottom: 8px; }
+#gameover .go-scores { font-size: 24px; color: #94A3B8; margin-bottom: 24px; }
+#gameover .go-eco { color: #10B981; font-size: 14px; margin-bottom: 24px; }
+
+/* Watermark */
+.rw-watermark {
+    position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
+    z-index: 30; font-size: 11px; font-weight: 700;
+    color: rgba(167,243,208,0.25); letter-spacing: 1px; text-transform: uppercase;
+    pointer-events: none;
+}
+</style>
 </head>
 <body>
-    <!-- Rewoven Nav Bar -->
-    <div class="rw-bar">
-        <a href="/game/">← Rewoven Games</a>
-        <span class="rw-title">🏀 Eco Hoops</span>
-        <a href="/game/" class="rw-back">Back</a>
-    </div>
 
-    <!-- Basketball Legends Game -->
-    <div id="content"></div>
-    <div id="orientation"></div>
-    <div id="loader">Loading ...</div>
+<div class="rw-bar">
+    <a href="/game/">← Rewoven Games</a>
+    <span class="rw-title">🏀 Eco Hoops</span>
+    <a href="/game/" class="rw-back">Back</a>
+</div>
 
-    <!-- Trivia Overlay -->
-    <div class="trivia-overlay" id="triviaOverlay">
-        <div class="trivia-card">
-            <div class="trivia-badge">♻️ Sustainability Trivia</div>
-            <div class="trivia-q" id="triviaQ"></div>
-            <div class="trivia-opts" id="triviaOpts"></div>
-            <div class="trivia-res" id="triviaRes"></div>
-            <button class="trivia-skip" id="triviaSkip" onclick="closeTrivia()">Skip →</button>
+<div id="menu">
+    <h1>🏀 Eco Hoops</h1>
+    <div class="sub">Choose your player</div>
+    <div class="player-select">
+        <div class="player-card" data-p="curry" onclick="selectPlayer(this)">
+            <div class="avatar">🎯</div>
+            <div class="name">Steph Curry</div>
+            <div class="arch">Shooter</div>
+            <div class="desc">Larger green zone on shot meter. Special: Auto 3-pointer</div>
+        </div>
+        <div class="player-card" data-p="carter" onclick="selectPlayer(this)">
+            <div class="avatar">🔥</div>
+            <div class="name">Vince Carter</div>
+            <div class="arch">Dunker</div>
+            <div class="desc">Higher jump + dunk range. Special: Auto slam dunk</div>
+        </div>
+        <div class="player-card" data-p="rodman" onclick="selectPlayer(this)">
+            <div class="avatar">🛡️</div>
+            <div class="name">Dennis Rodman</div>
+            <div class="arch">Defender</div>
+            <div class="desc">Faster steal + wider range. Special: Block all shots 8s</div>
         </div>
     </div>
+    <button class="play-btn" id="playBtn" disabled onclick="startGame()">SELECT A PLAYER</button>
+    <div class="controls-info">
+        <kbd>A</kbd> <kbd>D</kbd> Move &nbsp; <kbd>W</kbd> Jump &nbsp; <kbd>J</kbd> Shoot &nbsp; <kbd>K</kbd> Steal &nbsp; <kbd>L</kbd> Special
+    </div>
+</div>
 
-    <!-- Rewoven Watermark -->
-    <div class="rw-watermark">Powered by Rewoven</div>
-    <div class="trivia-score" id="triviaScoreDisplay"></div>
+<div id="hud">
+    <div>
+        <div class="hud-score" id="p1score" style="color:#10B981">0</div>
+        <div class="hud-label" style="color:#10B981">YOU</div>
+    </div>
+    <div>
+        <div class="hud-vs">VS</div>
+        <div class="hud-timer" id="timer">1:30</div>
+    </div>
+    <div>
+        <div class="hud-score" id="p2score" style="color:#EF4444">0</div>
+        <div class="hud-label" style="color:#EF4444">CPU</div>
+    </div>
+</div>
 
-    <!-- Game Scripts -->
-    <script src="patch/js/poki-sdk.js"></script>
-    <script type="text/javascript" src="assets/lib/nape.min.js">
-        var nape = "nape.min.js";
-    </script>
-    <script type="text/javascript" src="assets/lib/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="assets/lib/easeljs-0.8.2.combined.js"></script>
-    <script type="text/javascript" src="assets/lib/phaser.min.js"></script>
-    <script type="text/javascript" src="assets/lib/phaser-cachebuster.min.js"></script>
-    <script type="text/javascript" src="assets/lib/phaser-super-storage.min.js"></script>
-    <script type="text/javascript" src="assets/lib/dragonBones.min.js"></script>
-    <script type="text/javascript" src="assets/lib/pksl.js"></script>
-    <script type="text/javascript" src="basketball_legends_2020.min.js?94d98243d8a70da6700e"></script>
+<div class="hud-special" id="specialBtn" onclick="useSpecial()">
+    <span id="specialText">SPECIAL [L]</span>
+</div>
 
-    <!-- Sustainability Trivia System -->
-    <script>
-    (function() {
-        'use strict';
+<div class="trivia-overlay" id="triviaOverlay">
+    <div class="trivia-card">
+        <div class="trivia-badge">♻️ Sustainability Trivia</div>
+        <div class="trivia-q" id="triviaQ"></div>
+        <div class="trivia-opts" id="triviaOpts"></div>
+        <div class="trivia-res" id="triviaRes"></div>
+    </div>
+</div>
 
-        var TRIVIA = [
-            { q: "How much water does it take to make 1 cotton t-shirt?", o: ["700 litres", "2,700 litres", "500 litres", "10,000 litres"], c: 1, f: "~2,700 litres — enough drinking water for one person for 2.5 years." },
-            { q: "What percentage of textiles end up in landfills?", o: ["25%", "45%", "73%", "90%"], c: 2, f: "73% of the world's textiles end up in landfills or are incinerated." },
-            { q: "Fashion's share of global carbon emissions?", o: ["2%", "5%", "10%", "20%"], c: 2, f: "~10% — more than international flights and shipping combined." },
-            { q: "How many times is a garment worn on average?", o: ["7 times", "20 times", "50 times", "100 times"], c: 0, f: "Just 7 times on average before being discarded." },
-            { q: "Which material takes the longest to decompose?", o: ["Cotton", "Wool", "Polyester", "Linen"], c: 2, f: "Polyester can take up to 200 years, releasing microplastics the entire time." },
-            { q: "What is circular fashion?", o: ["Round-shaped clothes", "Clothes recycled into new ones", "Wearing clothes in rotation", "Repeating fashion trends"], c: 1, f: "Designing clothes to be reused, repaired, and recycled — keeping materials in use." },
-            { q: "What is greenwashing?", o: ["Eco-friendly laundry", "Misleading eco claims by brands", "Using green dye", "Recycling green clothes"], c: 1, f: "When brands make misleading claims about how eco-friendly their products are." },
-            { q: "How much textile waste is produced globally per year?", o: ["10 million tonnes", "50 million tonnes", "92 million tonnes", "200 million tonnes"], c: 2, f: "Over 92 million tonnes of textile waste annually — and growing." },
-            { q: "What is upcycling?", o: ["Throwing clothes away", "Donating old clothes", "Turning waste into better products", "Buying more clothes"], c: 2, f: "Transforming waste materials into new, higher-value products." },
-            { q: "What do synthetic clothes release when washed?", o: ["Vitamins", "Microplastics", "Fragrance", "Oxygen"], c: 1, f: "~700,000 microplastic fibres are released in a single wash load." },
-            { q: "Which fibre has the lowest water footprint?", o: ["Cotton", "Polyester", "Linen", "Nylon"], c: 2, f: "Linen uses far less water than cotton and can grow in poor soil." },
-            { q: "How many garments are produced globally each year?", o: ["10 billion", "50 billion", "100 billion", "150 billion"], c: 2, f: "100 billion garments — about 14 for every person on Earth." },
-            { q: "What percentage of clothes are recycled globally?", o: ["Less than 1%", "12%", "25%", "40%"], c: 0, f: "Less than 1% of clothing is recycled into new clothing." },
-            { q: "How many litres of water to produce one pair of jeans?", o: ["1,000", "3,500", "7,500", "15,000"], c: 2, f: "About 7,500 litres — equivalent to running a garden hose for 2 days." },
-            { q: "The UAE generates how much textile waste annually?", o: ["100K tonnes", "500K tonnes", "1.5M tonnes", "5M tonnes"], c: 2, f: "The UAE generates over 1.5 million tonnes of textile waste every year." }
-        ];
+<div id="gameover">
+    <div class="go-card">
+        <h2 id="goTitle">GAME OVER</h2>
+        <div class="go-scores" id="goScores"></div>
+        <div class="go-eco" id="goEco"></div>
+        <button class="play-btn" onclick="backToMenu()">PLAY AGAIN</button>
+    </div>
+</div>
 
-        var triviaUsed = [];
-        var triviaScore = 0;
-        var triviaTotal = 0;
-        var triviaInterval = null;
+<div class="rw-watermark">Powered by Rewoven</div>
 
-        // Show trivia every 90 seconds during gameplay
-        function startTriviaTimer() {
-            if (triviaInterval) clearInterval(triviaInterval);
-            triviaInterval = setInterval(function() {
-                var canvas = document.querySelector('canvas');
-                if (canvas && canvas.offsetParent !== null && !document.getElementById('triviaOverlay').classList.contains('show')) {
-                    showTrivia();
+<canvas id="game"></canvas>
+
+<script>
+(function() {
+'use strict';
+
+// ─── CANVAS SETUP ───
+var canvas = document.getElementById('game');
+var ctx = canvas.getContext('2d');
+var W, H, GROUND, SCALE;
+
+function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    GROUND = H - 60;
+    SCALE = Math.min(W / 1200, H / 700);
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ─── GAME CONSTANTS ───
+var GRAVITY = 0.55;
+var PLAYER_W = 36, PLAYER_H = 60;
+var BALL_R = 12;
+var RIM_Y_OFFSET = 0.38; // rim at 38% from top
+var HOOP_WIDTH = 40;
+var NET_DEPTH = 30;
+var GAME_TIME = 90; // seconds
+
+// ─── COURT DIMENSIONS ───
+function getLeftHoopX() { return 100 * SCALE + 40; }
+function getRightHoopX() { return W - 100 * SCALE - 40; }
+function getRimY() { return H * RIM_Y_OFFSET; }
+function get3ptRadius() { return 160 * SCALE; }
+
+// ─── PLAYERS & ARCHETYPES ───
+var ARCHETYPES = {
+    curry:  { name: 'Steph Curry',   color: '#10B981', shotBonus: 0.18, jumpBoost: 0, stealRange: 0, dunkRange: 0,   specialName: 'Auto 3PT' },
+    carter: { name: 'Vince Carter',  color: '#F59E0B', shotBonus: 0,    jumpBoost: 3, stealRange: 0, dunkRange: 40,  specialName: 'Slam Dunk' },
+    rodman: { name: 'Dennis Rodman', color: '#8B5CF6', shotBonus: 0,    jumpBoost: 0, stealRange: 30, dunkRange: 0,  specialName: 'Block All' }
+};
+
+var selectedArchetype = null;
+var gameRunning = false;
+var gamePaused = false;
+var timeLeft = GAME_TIME;
+var timerInterval = null;
+var totalBaskets = 0;
+var triviaScore = 0, triviaTotal = 0;
+var triviaUsed = [];
+
+// ─── GAME OBJECTS ───
+var player, cpu, ball;
+var shotMeter = { active: false, power: 0, dir: 1, released: false };
+var specialCooldown = 0;
+var specialActive = false;
+var specialTimer = 0;
+var blockAllActive = false;
+var scoreFlash = { text: '', x: 0, y: 0, alpha: 0 };
+var shotInFlight = 0; // frames to prevent pickup after shot
+
+// ─── INPUT ───
+var keys = {};
+window.addEventListener('keydown', function(e) { keys[e.key.toLowerCase()] = true; });
+window.addEventListener('keyup', function(e) { keys[e.key.toLowerCase()] = false; });
+
+// ─── TOUCH CONTROLS ───
+var touchMove = 0; // -1 left, 0 none, 1 right
+var touchJump = false, touchShoot = false, touchSteal = false, touchSpecial = false;
+
+// ─── PLAYER SELECT ───
+window.selectPlayer = function(el) {
+    document.querySelectorAll('.player-card').forEach(function(c) { c.classList.remove('selected'); });
+    el.classList.add('selected');
+    selectedArchetype = el.dataset.p;
+    var btn = document.getElementById('playBtn');
+    btn.disabled = false;
+    btn.textContent = 'PLAY AS ' + ARCHETYPES[selectedArchetype].name.toUpperCase();
+};
+
+window.startGame = function() {
+    if (!selectedArchetype) return;
+    document.getElementById('menu').classList.add('hidden');
+    document.getElementById('hud').classList.add('show');
+    initGame();
+};
+
+window.backToMenu = function() {
+    document.getElementById('gameover').classList.remove('show');
+    document.getElementById('hud').classList.remove('show');
+    document.getElementById('specialBtn').classList.remove('show');
+    document.getElementById('menu').classList.remove('hidden');
+    gameRunning = false;
+};
+
+// ─── INIT GAME ───
+function initGame() {
+    var arch = ARCHETYPES[selectedArchetype];
+
+    player = {
+        x: W * 0.3, y: GROUND - PLAYER_H,
+        vx: 0, vy: 0,
+        w: PLAYER_W, h: PLAYER_H,
+        color: arch.color,
+        score: 0,
+        hasBall: true,
+        facing: 1, // 1 = right, -1 = left
+        onGround: true,
+        shootCooldown: 0,
+        stealCooldown: 0,
+        arch: selectedArchetype,
+        isPlayer: true
+    };
+
+    // CPU always picks a random different archetype
+    var cpuTypes = Object.keys(ARCHETYPES).filter(function(k) { return k !== selectedArchetype; });
+    var cpuArch = cpuTypes[Math.floor(Math.random() * cpuTypes.length)];
+
+    cpu = {
+        x: W * 0.7, y: GROUND - PLAYER_H,
+        vx: 0, vy: 0,
+        w: PLAYER_W, h: PLAYER_H,
+        color: '#EF4444',
+        score: 0,
+        hasBall: false,
+        facing: -1,
+        onGround: true,
+        shootCooldown: 0,
+        stealCooldown: 0,
+        arch: cpuArch,
+        isPlayer: false,
+        aiState: 'chase', // chase, shoot, defend, retreat
+        aiTimer: 0,
+        aiShootCharge: 0
+    };
+
+    ball = {
+        x: player.x + PLAYER_W / 2, y: player.y - BALL_R,
+        vx: 0, vy: 0,
+        owner: player,
+        free: false,
+        scored: false,
+        scoreTimer: 0
+    };
+
+    shotMeter = { active: false, power: 0, dir: 1, released: false };
+    specialCooldown = 0;
+    specialActive = false;
+    specialTimer = 0;
+    blockAllActive = false;
+    timeLeft = GAME_TIME;
+    totalBaskets = 0;
+    shotInFlight = 0;
+    scoreFlash = { text: '', x: 0, y: 0, alpha: 0 };
+
+    document.getElementById('p1score').textContent = '0';
+    document.getElementById('p2score').textContent = '0';
+    document.getElementById('specialBtn').classList.add('show');
+    updateSpecialBtn();
+
+    gameRunning = true;
+    gamePaused = false;
+
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(function() {
+        if (!gameRunning || gamePaused) return;
+        timeLeft--;
+        var m = Math.floor(timeLeft / 60);
+        var s = timeLeft % 60;
+        document.getElementById('timer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        if (timeLeft <= 0) endGame();
+    }, 1000);
+
+    requestAnimationFrame(loop);
+}
+
+// ─── MAIN LOOP ───
+function loop() {
+    if (!gameRunning) return;
+    if (!gamePaused) {
+        update();
+    }
+    draw();
+    requestAnimationFrame(loop);
+}
+
+// ─── UPDATE ───
+function update() {
+    updatePlayer();
+    updateCPU();
+    updateBall();
+    updateSpecials();
+    updateScoreFlash();
+}
+
+function updatePlayer() {
+    // Movement
+    var moveLeft = keys['a'] || keys['arrowleft'] || touchMove < 0;
+    var moveRight = keys['d'] || keys['arrowright'] || touchMove > 0;
+    var jump = keys['w'] || keys['arrowup'] || keys[' '] || touchJump;
+    var shoot = keys['j'] || touchShoot;
+    var steal = keys['k'] || touchSteal;
+
+    if (moveLeft) { player.vx = -5; player.facing = -1; }
+    else if (moveRight) { player.vx = 5; player.facing = 1; }
+    else { player.vx *= 0.7; }
+
+    if (jump && player.onGround) {
+        var jumpPower = -13;
+        if (selectedArchetype === 'carter') jumpPower = -16;
+        player.vy = jumpPower;
+        player.onGround = false;
+    }
+
+    // Shooting
+    if (shoot && player.hasBall && !shotMeter.active && player.shootCooldown <= 0) {
+        shotMeter.active = true;
+        shotMeter.power = 0;
+        shotMeter.dir = 1;
+        shotMeter.released = false;
+    }
+
+    if (shotMeter.active && !shotMeter.released) {
+        shotMeter.power += shotMeter.dir * 2.5;
+        if (shotMeter.power >= 100) { shotMeter.power = 100; shotMeter.dir = -1; }
+        if (shotMeter.power <= 0) { shotMeter.power = 0; shotMeter.dir = 1; }
+
+        if (!shoot && shotMeter.power > 0) {
+            shotMeter.released = true;
+            shootBall(player);
+        }
+    }
+
+    // Stealing
+    if (steal && player.stealCooldown <= 0) {
+        trySteal(player, cpu);
+        player.stealCooldown = 30;
+    }
+
+    // Special
+    if ((keys['l'] || touchSpecial) && specialCooldown <= 0 && !specialActive) {
+        useSpecial();
+        keys['l'] = false;
+        touchSpecial = false;
+    }
+
+    // Physics
+    player.vy += GRAVITY;
+    player.x += player.vx;
+    player.y += player.vy;
+
+    // Ground collision
+    if (player.y >= GROUND - PLAYER_H) {
+        player.y = GROUND - PLAYER_H;
+        player.vy = 0;
+        player.onGround = true;
+    }
+
+    // Wall collision
+    if (player.x < 10) player.x = 10;
+    if (player.x > W - PLAYER_W - 10) player.x = W - PLAYER_W - 10;
+
+    if (player.shootCooldown > 0) player.shootCooldown--;
+    if (player.stealCooldown > 0) player.stealCooldown--;
+
+    // Auto-dunk for Carter near opponent hoop
+    if (selectedArchetype === 'carter' && player.hasBall && !player.onGround) {
+        var hoopX = getRightHoopX();
+        var hoopY = getRimY();
+        var dunkRange = 70 + ARCHETYPES.carter.dunkRange;
+        var dx = Math.abs(player.x + PLAYER_W/2 - hoopX);
+        var dy = Math.abs(player.y - hoopY);
+        if (dx < dunkRange && dy < dunkRange && player.vy < 0) {
+            // Dunk! Teleport ball into hoop
+            ball.x = hoopX;
+            ball.y = hoopY + 10;
+            ball.vx = 0;
+            ball.vy = 2;
+            ball.owner = null;
+            ball.free = true;
+            player.hasBall = false;
+            scoredBasket(player, true);
+        }
+    }
+}
+
+function updateCPU() {
+    // AI Logic
+    cpu.aiTimer++;
+
+    var rimY = getRimY();
+    var leftHoopX = getLeftHoopX(); // CPU shoots at player's hoop (left)
+    var rightHoopX = getRightHoopX();
+
+    if (cpu.hasBall) {
+        // Move toward player's hoop (left side) to shoot
+        var targetX = leftHoopX + 120;
+        var dist = targetX - cpu.x;
+
+        if (Math.abs(dist) > 30) {
+            cpu.vx = dist > 0 ? 3.5 : -3.5;
+            cpu.facing = dist > 0 ? 1 : -1;
+        } else {
+            cpu.vx *= 0.7;
+            // In range, try to shoot
+            cpu.aiShootCharge += 2;
+            if (cpu.aiShootCharge > 60 + Math.random() * 40) {
+                cpuShoot();
+                cpu.aiShootCharge = 0;
+            }
+        }
+
+        // Sometimes jump before shooting
+        if (cpu.onGround && Math.abs(dist) < 80 && Math.random() < 0.02) {
+            cpu.vy = -12;
+            cpu.onGround = false;
+        }
+    } else if (ball.free) {
+        // Chase loose ball
+        var bdx = ball.x - cpu.x;
+        cpu.vx = bdx > 0 ? 4 : -4;
+        cpu.facing = bdx > 0 ? 1 : -1;
+
+        // Pick up ball
+        if (Math.abs(bdx) < 40 && Math.abs(ball.y - cpu.y) < 50 && ball.owner === null && shotInFlight <= 0) {
+            ball.owner = cpu;
+            ball.free = false;
+            cpu.hasBall = true;
+        }
+    } else {
+        // Defend - move toward player
+        var pdx = player.x - cpu.x;
+        if (Math.abs(pdx) > 60) {
+            cpu.vx = pdx > 0 ? 3 : -3;
+        } else {
+            cpu.vx *= 0.7;
+        }
+        cpu.facing = pdx > 0 ? 1 : -1;
+
+        // Try to steal
+        if (Math.abs(pdx) < 50 && player.hasBall && cpu.stealCooldown <= 0 && Math.random() < 0.015) {
+            trySteal(cpu, player);
+            cpu.stealCooldown = 60;
+        }
+    }
+
+    // Physics
+    cpu.vy += GRAVITY;
+    cpu.x += cpu.vx;
+    cpu.y += cpu.vy;
+
+    if (cpu.y >= GROUND - PLAYER_H) {
+        cpu.y = GROUND - PLAYER_H;
+        cpu.vy = 0;
+        cpu.onGround = true;
+    }
+    if (cpu.x < 10) cpu.x = 10;
+    if (cpu.x > W - PLAYER_W - 10) cpu.x = W - PLAYER_W - 10;
+
+    if (cpu.stealCooldown > 0) cpu.stealCooldown--;
+}
+
+function cpuShoot() {
+    if (!cpu.hasBall) return;
+    cpu.hasBall = false;
+    ball.owner = null;
+    ball.free = true;
+
+    var hoopX = getLeftHoopX();
+    var hoopY = getRimY();
+
+    var dx = hoopX - ball.x;
+    var dy = hoopY - ball.y;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+
+    // Calculate trajectory to reach hoop
+    var t = Math.max(dist / 5, 15);
+    if (t > 60) t = 60;
+    var bvx = dx / t;
+    var bvy = (dy - 0.5 * GRAVITY * t * t) / t;
+
+    // Add slight randomness (CPU isn't perfect)
+    var accuracy = 0.88 + Math.random() * 0.12;
+    ball.vx = bvx * accuracy;
+    ball.vy = bvy + (Math.random() - 0.5) * 1;
+    ball.scored = false;
+
+    cpu.shootCooldown = 40;
+    shotInFlight = 30;
+}
+
+function shootBall(shooter) {
+    shooter.hasBall = false;
+    ball.owner = null;
+    ball.free = true;
+
+    // Player shoots at right hoop, CPU at left
+    var hoopX = shooter.isPlayer ? getRightHoopX() : getLeftHoopX();
+    var hoopY = getRimY();
+
+    var dx = hoopX - ball.x;
+    var dy = hoopY - ball.y;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+
+    // Shot quality based on meter
+    var greenZoneCenter = 72;
+    var greenZoneSize = selectedArchetype === 'curry' ? 24 : 14;
+    var diff = Math.abs(shotMeter.power - greenZoneCenter);
+    var quality = Math.max(0, 1 - diff / 50);
+
+    if (diff <= greenZoneSize) quality = 1; // Perfect if in green zone
+
+    var t = Math.max(dist / 5, 15);
+    if (t > 60) t = 60;
+    var bvx = dx / t;
+    var bvy = (dy - 0.5 * GRAVITY * t * t) / t;
+
+    // Apply accuracy based on shot quality
+    var spread = (1 - quality) * 3;
+    ball.vx = bvx + (Math.random() - 0.5) * spread;
+    ball.vy = bvy + (Math.random() - 0.5) * spread * 0.5;
+    ball.scored = false;
+
+    shotMeter.active = false;
+    shotMeter.released = false;
+    shooter.shootCooldown = 30;
+    shotInFlight = 30; // prevent pickup for 30 frames
+}
+
+function updateBall() {
+    if (ball.owner) {
+        // Ball follows owner
+        var owner = ball.owner;
+        ball.x = owner.x + (owner.facing > 0 ? PLAYER_W + 5 : -BALL_R * 2 - 5);
+        ball.y = owner.y + 8;
+        ball.vx = 0;
+        ball.vy = 0;
+        ball.scored = false;
+        return;
+    }
+
+    // Physics
+    ball.vy += GRAVITY;
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // Bounce off walls
+    if (ball.x < BALL_R) { ball.x = BALL_R; ball.vx *= -0.6; }
+    if (ball.x > W - BALL_R) { ball.x = W - BALL_R; ball.vx *= -0.6; }
+
+    // Bounce off ground
+    if (ball.y > GROUND - BALL_R) {
+        ball.y = GROUND - BALL_R;
+        ball.vy *= -0.5;
+        ball.vx *= 0.8;
+        if (Math.abs(ball.vy) < 1) ball.vy = 0;
+    }
+
+    // Bounce off ceiling
+    if (ball.y < BALL_R) { ball.y = BALL_R; ball.vy *= -0.5; }
+
+    // ─── HOOP COLLISION & SCORING ───
+    checkHoopCollision(getRightHoopX(), getRimY(), player); // Player scores at right hoop
+    checkHoopCollision(getLeftHoopX(), getRimY(), cpu);     // CPU scores at left hoop
+
+    if (shotInFlight > 0) shotInFlight--;
+
+    // ─── PICKUP ───
+    if (ball.free && ball.owner === null && ball.scoreTimer <= 0 && shotInFlight <= 0) {
+        // Player pickup
+        if (Math.abs(ball.x - player.x - PLAYER_W/2) < 35 && Math.abs(ball.y - player.y - PLAYER_H/2) < 45) {
+            ball.owner = player;
+            ball.free = false;
+            player.hasBall = true;
+        }
+        // CPU pickup
+        if (Math.abs(ball.x - cpu.x - PLAYER_W/2) < 35 && Math.abs(ball.y - cpu.y - PLAYER_H/2) < 45) {
+            ball.owner = cpu;
+            ball.free = false;
+            cpu.hasBall = true;
+        }
+    }
+
+    if (ball.scoreTimer > 0) ball.scoreTimer--;
+}
+
+function checkHoopCollision(hoopX, rimY, scorer) {
+    var rimLeft = hoopX - HOOP_WIDTH / 2;
+    var rimRight = hoopX + HOOP_WIDTH / 2;
+
+    // Check if ball passes through the net (from above, going down)
+    if (ball.vy > 0 && !ball.scored) {
+        var prevY = ball.y - ball.vy;
+
+        // Ball crossed rim level going downward, or is very close to rim level
+        if (prevY <= rimY + 5 && ball.y >= rimY - 5) {
+            if (ball.x > rimLeft - 2 && ball.x < rimRight + 2) {
+                // Rodman special only blocks CPU scoring at player's hoop
+                if (blockAllActive && !scorer.isPlayer) {
+                    ball.vy *= -0.8;
+                    showFlash('BLOCKED!', ball.x, ball.y, '#8B5CF6');
+                    return;
                 }
-            }, 90000);
-        }
 
-        function showTrivia() {
-            if (triviaUsed.length >= TRIVIA.length) triviaUsed = [];
-            var avail = TRIVIA.filter(function(_, i) { return triviaUsed.indexOf(i) === -1; });
-            var ri = Math.floor(Math.random() * avail.length);
-            var q = avail[ri];
-            triviaUsed.push(TRIVIA.indexOf(q));
-
-            document.getElementById('triviaQ').textContent = q.q;
-            var oc = document.getElementById('triviaOpts');
-            var rc = document.getElementById('triviaRes');
-            rc.className = 'trivia-res'; rc.style.display = 'none';
-            document.getElementById('triviaSkip').style.display = '';
-
-            var letters = ['A', 'B', 'C', 'D'];
-            oc.innerHTML = q.o.map(function(o, i) {
-                return '<button class="t-opt" data-i="' + i + '"><span class="letter">' + letters[i] + '</span><span>' + o + '</span></button>';
-            }).join('');
-
-            oc.querySelectorAll('.t-opt').forEach(function(b) {
-                b.onclick = function() {
-                    var i = parseInt(b.dataset.i);
-                    var ok = i === q.c;
-                    triviaTotal++;
-                    oc.querySelectorAll('.t-opt').forEach(function(x, j) {
-                        x.style.pointerEvents = 'none';
-                        if (j === q.c) x.classList.add('right');
-                        if (j === i && !ok) x.classList.add('wrong');
-                    });
-                    document.getElementById('triviaSkip').style.display = 'none';
-                    if (ok) {
-                        triviaScore++;
-                        rc.className = 'trivia-res show ok';
-                        rc.innerHTML = '<strong>Correct! ✅</strong><br>' + q.f;
-                    } else {
-                        rc.className = 'trivia-res show no';
-                        rc.innerHTML = '<strong>Not quite ❌</strong><br>' + q.f;
-                    }
-                    updateTriviaDisplay();
-                    setTimeout(closeTrivia, 2800);
-                };
-            });
-
-            document.getElementById('triviaOverlay').classList.add('show');
-        }
-
-        function updateTriviaDisplay() {
-            var el = document.getElementById('triviaScoreDisplay');
-            if (triviaTotal > 0) {
-                el.textContent = '♻️ Eco Score: ' + triviaScore + '/' + triviaTotal;
+                ball.scored = true;
+                scoredBasket(scorer, false);
+                return;
             }
         }
+    }
 
-        window.closeTrivia = function() {
-            document.getElementById('triviaOverlay').classList.remove('show');
-        };
+    // Rim collision — only bounce off if ball is NOT going through the hoop
+    var inHoop = (ball.x > rimLeft + 2 && ball.x < rimRight - 2);
+    if (!inHoop) {
+        var dxL = ball.x - rimLeft;
+        var dyL = ball.y - rimY;
+        var distL = Math.sqrt(dxL * dxL + dyL * dyL);
+        if (distL < BALL_R + 3) {
+            var angle = Math.atan2(dyL, dxL);
+            ball.x = rimLeft + Math.cos(angle) * (BALL_R + 3);
+            ball.y = rimY + Math.sin(angle) * (BALL_R + 3);
+            var speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            ball.vx = Math.cos(angle) * speed * 0.45;
+            ball.vy = Math.sin(angle) * speed * 0.45;
+        }
 
-        window.showTrivia = showTrivia;
+        var dxR = ball.x - rimRight;
+        var dyR = ball.y - rimY;
+        var distR = Math.sqrt(dxR * dxR + dyR * dyR);
+        if (distR < BALL_R + 3) {
+            var angle2 = Math.atan2(dyR, dxR);
+            ball.x = rimRight + Math.cos(angle2) * (BALL_R + 3);
+            ball.y = rimY + Math.sin(angle2) * (BALL_R + 3);
+            var speed2 = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            ball.vx = Math.cos(angle2) * speed2 * 0.45;
+            ball.vy = Math.sin(angle2) * speed2 * 0.45;
+        }
+    }
 
-        // Start trivia timer when game canvas appears
-        var observer = new MutationObserver(function() {
-            if (document.querySelector('canvas')) {
-                startTriviaTimer();
-                observer.disconnect();
-            }
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
+    // Backboard collision
+    var bbX = (hoopX < W / 2) ? hoopX - HOOP_WIDTH / 2 - 8 : hoopX + HOOP_WIDTH / 2 + 8;
+    var bbTop = rimY - 50;
+    var bbBottom = rimY + 10;
+    if (ball.y > bbTop && ball.y < bbBottom) {
+        if (Math.abs(ball.x - bbX) < BALL_R + 4) {
+            ball.vx *= -0.6;
+            ball.x = bbX + (ball.x > bbX ? 1 : -1) * (BALL_R + 5);
+        }
+    }
+}
 
-        // Mute all audio — user requested no sound
-        var OrigAudio = window.Audio;
-        window.Audio = function(src) {
-            var a = new OrigAudio(src);
-            a.volume = 0;
-            a.muted = true;
-            return a;
-        };
-        // Mute any audio/video elements that get created
-        setInterval(function() {
-            document.querySelectorAll('audio, video').forEach(function(el) {
-                el.volume = 0;
-                el.muted = true;
+function scoredBasket(scorer, isDunk) {
+    // Check if 3-pointer
+    var shooterX = scorer.isPlayer ? player.x + PLAYER_W / 2 : cpu.x + PLAYER_W / 2;
+    var hoopX = scorer.isPlayer ? getRightHoopX() : getLeftHoopX();
+    var dist = Math.abs(shooterX - hoopX);
+    var is3pt = dist > get3ptRadius();
+
+    var points = isDunk ? 2 : (is3pt ? 3 : 2);
+    scorer.score += points;
+    totalBaskets++;
+
+    var label = isDunk ? 'DUNK! +2' : (is3pt ? '3-POINTER! +3' : '+2');
+    var color = scorer.isPlayer ? '#10B981' : '#EF4444';
+    showFlash(label, ball.x, ball.y - 30, color);
+
+    document.getElementById('p1score').textContent = player.score;
+    document.getElementById('p2score').textContent = cpu.score;
+
+    // Reset ball after score
+    ball.scoreTimer = 40;
+    ball.scored = true;
+
+    // Give ball to the other team after score
+    setTimeout(function() {
+        var receiver = scorer.isPlayer ? cpu : player;
+        ball.owner = receiver;
+        ball.free = false;
+        receiver.hasBall = true;
+        ball.scored = false;
+
+        // Reset positions
+        player.x = W * 0.3;
+        cpu.x = W * 0.7;
+    }, 800);
+
+    // Trivia every 3 baskets
+    if (totalBaskets % 3 === 0) {
+        setTimeout(function() { showTrivia(); }, 1000);
+    }
+}
+
+function trySteal(stealer, target) {
+    var range = 55;
+    if (stealer.isPlayer && selectedArchetype === 'rodman') range += ARCHETYPES.rodman.stealRange;
+
+    var dx = Math.abs(stealer.x - target.x);
+    var dy = Math.abs(stealer.y - target.y);
+
+    if (dx < range && dy < 50 && target.hasBall) {
+        var chance = stealer.isPlayer ? 0.45 : 0.25;
+        if (selectedArchetype === 'rodman' && stealer.isPlayer) chance = 0.65;
+
+        if (Math.random() < chance) {
+            target.hasBall = false;
+            stealer.hasBall = true;
+            ball.owner = stealer;
+            ball.free = false;
+            showFlash('STEAL!', stealer.x + PLAYER_W / 2, stealer.y - 10, '#F59E0B');
+        }
+    }
+}
+
+// ─── SPECIAL MOVES ───
+window.useSpecial = function() {
+    if (specialCooldown > 0 || specialActive) return;
+
+    if (selectedArchetype === 'curry') {
+        // Auto 3-pointer
+        if (player.hasBall) {
+            player.hasBall = false;
+            ball.owner = null;
+            ball.free = true;
+
+            var hoopX = getRightHoopX();
+            var hoopY = getRimY();
+            var dx = hoopX - ball.x;
+            var dy = hoopY - ball.y;
+            var dist = Math.sqrt(dx*dx + dy*dy);
+            var t = Math.max(dist / 6, 15);
+            if (t > 50) t = 50;
+            ball.vx = dx / t;
+            ball.vy = (dy - 0.5 * GRAVITY * t * t) / t;
+            ball.scored = false;
+
+            shotInFlight = 40;
+            showFlash('🎯 CURRY RANGE!', player.x, player.y - 30, '#10B981');
+            specialCooldown = 30 * 60; // 30 seconds at 60fps
+            updateSpecialBtn();
+        }
+    } else if (selectedArchetype === 'carter') {
+        // Auto slam dunk
+        if (player.hasBall) {
+            var hoopX2 = getRightHoopX();
+            var hoopY2 = getRimY();
+
+            player.hasBall = false;
+            ball.owner = null;
+            ball.free = true;
+            ball.x = hoopX2;
+            ball.y = hoopY2 + 5;
+            ball.vx = 0;
+            ball.vy = 3;
+            ball.scored = false;
+
+            // Teleport player near hoop for visual
+            player.x = hoopX2 - PLAYER_W / 2;
+            player.y = hoopY2 - PLAYER_H;
+            player.vy = 0;
+
+            showFlash('🔥 VINSANITY!', hoopX2, hoopY2 - 40, '#F59E0B');
+            specialCooldown = 30 * 60;
+            updateSpecialBtn();
+
+            // Score immediately
+            setTimeout(function() {
+                scoredBasket(player, true);
+            }, 100);
+        }
+    } else if (selectedArchetype === 'rodman') {
+        // Block all shots for 8 seconds
+        blockAllActive = true;
+        specialActive = true;
+        specialTimer = 8 * 60;
+        showFlash('🛡️ WORM DEFENSE!', player.x, player.y - 30, '#8B5CF6');
+        specialCooldown = 30 * 60;
+        updateSpecialBtn();
+    }
+};
+
+function updateSpecials() {
+    if (specialCooldown > 0) specialCooldown--;
+    if (specialTimer > 0) {
+        specialTimer--;
+        if (specialTimer <= 0) {
+            specialActive = false;
+            blockAllActive = false;
+        }
+    }
+    updateSpecialBtn();
+}
+
+function updateSpecialBtn() {
+    var btn = document.getElementById('specialBtn');
+    var txt = document.getElementById('specialText');
+    if (!selectedArchetype) return;
+
+    if (specialCooldown > 0) {
+        var secs = Math.ceil(specialCooldown / 60);
+        txt.textContent = ARCHETYPES[selectedArchetype].specialName + ' (' + secs + 's)';
+        btn.classList.add('cooldown');
+    } else if (specialActive) {
+        var secs2 = Math.ceil(specialTimer / 60);
+        txt.textContent = 'ACTIVE (' + secs2 + 's)';
+        btn.classList.remove('cooldown');
+    } else {
+        txt.textContent = ARCHETYPES[selectedArchetype].specialName + ' [L]';
+        btn.classList.remove('cooldown');
+    }
+}
+
+function showFlash(text, x, y, color) {
+    scoreFlash = { text: text, x: x, y: y, alpha: 1.5, color: color };
+}
+
+function updateScoreFlash() {
+    if (scoreFlash.alpha > 0) {
+        scoreFlash.alpha -= 0.02;
+        scoreFlash.y -= 0.8;
+    }
+}
+
+// ─── DRAW ───
+function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    drawCourt();
+    drawHoop(getLeftHoopX(), getRimY(), true);
+    drawHoop(getRightHoopX(), getRimY(), false);
+    drawPlayer(player);
+    drawPlayer(cpu);
+    drawBall();
+    drawShotMeter();
+    drawFlash();
+
+    if (blockAllActive) {
+        // Draw shield effect around player's hoop
+        ctx.save();
+        ctx.strokeStyle = 'rgba(139,92,246,0.4)';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 4]);
+        ctx.beginPath();
+        ctx.arc(getRightHoopX(), getRimY(), 60, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+    }
+}
+
+function drawCourt() {
+    // Floor
+    ctx.fillStyle = '#1a3a2a';
+    ctx.fillRect(0, GROUND, W, H - GROUND);
+
+    // Court line
+    ctx.strokeStyle = 'rgba(167,243,208,0.15)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, GROUND);
+    ctx.lineTo(W, GROUND);
+    ctx.stroke();
+
+    // Center line
+    ctx.beginPath();
+    ctx.moveTo(W / 2, GROUND);
+    ctx.lineTo(W / 2, GROUND - 8);
+    ctx.stroke();
+
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(W / 2, GROUND, 50 * SCALE, Math.PI, 0);
+    ctx.stroke();
+
+    // 3-point arcs
+    var r3 = get3ptRadius();
+    ctx.strokeStyle = 'rgba(167,243,208,0.2)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 6]);
+
+    // Left 3pt arc
+    ctx.beginPath();
+    ctx.arc(getLeftHoopX(), GROUND, r3, Math.PI, 0);
+    ctx.stroke();
+
+    // Right 3pt arc
+    ctx.beginPath();
+    ctx.arc(getRightHoopX(), GROUND, r3, Math.PI, 0);
+    ctx.stroke();
+
+    ctx.setLineDash([]);
+
+    // "3PT" labels
+    ctx.fillStyle = 'rgba(167,243,208,0.12)';
+    ctx.font = (12 * SCALE) + 'px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('3PT', getLeftHoopX(), GROUND - r3 + 20);
+    ctx.fillText('3PT', getRightHoopX(), GROUND - r3 + 20);
+}
+
+function drawHoop(x, y, isLeft) {
+    // Backboard
+    var bbX = isLeft ? x - HOOP_WIDTH / 2 - 6 : x + HOOP_WIDTH / 2 + 6;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(bbX - 2, y - 40, 4, 55);
+
+    // Backboard square
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(bbX - 14, y - 30, 28, 22);
+
+    // Pole
+    ctx.fillStyle = '#666';
+    ctx.fillRect(bbX - 2, y + 15, 4, GROUND - y - 15);
+
+    // Rim
+    ctx.strokeStyle = '#FF6B35';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x - HOOP_WIDTH / 2, y);
+    ctx.lineTo(x + HOOP_WIDTH / 2, y);
+    ctx.stroke();
+
+    // Rim dots (endpoints)
+    ctx.fillStyle = '#FF6B35';
+    ctx.beginPath();
+    ctx.arc(x - HOOP_WIDTH / 2, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x + HOOP_WIDTH / 2, y, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Net
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 1;
+    for (var i = 0; i < 5; i++) {
+        var nx = x - HOOP_WIDTH / 2 + (HOOP_WIDTH / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(nx, y);
+        ctx.lineTo(nx + (i < 2 ? 3 : -3), y + NET_DEPTH);
+        ctx.stroke();
+    }
+}
+
+function drawPlayer(p) {
+    ctx.save();
+
+    var cx = p.x + PLAYER_W / 2;
+    var cy = p.y + PLAYER_H / 2;
+
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    ctx.beginPath();
+    ctx.ellipse(cx, GROUND, PLAYER_W * 0.6, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Body
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.roundRect(p.x + 4, p.y + 16, PLAYER_W - 8, PLAYER_H - 28, 6);
+    ctx.fill();
+
+    // Shorts
+    ctx.fillStyle = p.isPlayer ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)';
+    ctx.fillRect(p.x + 6, p.y + PLAYER_H - 26, PLAYER_W - 12, 14);
+
+    // Head
+    ctx.fillStyle = '#F5D0A9';
+    ctx.beginPath();
+    ctx.arc(cx, p.y + 10, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eyes
+    ctx.fillStyle = '#333';
+    var eyeOff = p.facing > 0 ? 3 : -3;
+    ctx.beginPath();
+    ctx.arc(cx + eyeOff - 3, p.y + 8, 1.5, 0, Math.PI * 2);
+    ctx.arc(cx + eyeOff + 3, p.y + 8, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Jersey number
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = 'bold 11px Inter';
+    ctx.textAlign = 'center';
+    var num = p.isPlayer ? '30' : '00';
+    if (p.arch === 'carter') num = p.isPlayer ? '15' : '00';
+    if (p.arch === 'rodman') num = p.isPlayer ? '91' : '00';
+    ctx.fillText(num, cx, p.y + 36);
+
+    // Legs
+    ctx.strokeStyle = '#F5D0A9';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(cx - 6, p.y + PLAYER_H - 12);
+    ctx.lineTo(cx - 8, p.y + PLAYER_H);
+    ctx.moveTo(cx + 6, p.y + PLAYER_H - 12);
+    ctx.lineTo(cx + 8, p.y + PLAYER_H);
+    ctx.stroke();
+
+    // Shoes
+    ctx.fillStyle = p.isPlayer ? '#10B981' : '#EF4444';
+    ctx.fillRect(cx - 12, p.y + PLAYER_H - 4, 8, 4);
+    ctx.fillRect(cx + 4, p.y + PLAYER_H - 4, 8, 4);
+
+    // Arms
+    ctx.strokeStyle = '#F5D0A9';
+    ctx.lineWidth = 3;
+    var armAngle = p.hasBall ? (p.facing > 0 ? -0.5 : 0.5) : 0;
+    ctx.beginPath();
+    ctx.moveTo(cx - 14, p.y + 22);
+    ctx.lineTo(cx - 20, p.y + 36 + Math.sin(Date.now() / 200) * 2);
+    ctx.moveTo(cx + 14, p.y + 22);
+    ctx.lineTo(cx + 20, p.y + 36 + Math.sin(Date.now() / 200 + 1) * 2);
+    ctx.stroke();
+
+    // Name tag
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '9px Inter';
+    ctx.textAlign = 'center';
+    var name = p.isPlayer ? ARCHETYPES[selectedArchetype].name.split(' ')[1] : 'CPU';
+    ctx.fillText(name, cx, p.y - 4);
+
+    ctx.restore();
+}
+
+function drawBall() {
+    ctx.save();
+
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath();
+    ctx.ellipse(ball.x, GROUND, BALL_R * 0.8, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ball
+    ctx.fillStyle = '#FF6B35';
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ball lines
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(ball.x - BALL_R, ball.y);
+    ctx.lineTo(ball.x + BALL_R, ball.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, BALL_R * 0.6, -Math.PI * 0.5, Math.PI * 0.5);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, BALL_R * 0.6, Math.PI * 0.5, Math.PI * 1.5);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawShotMeter() {
+    if (!shotMeter.active) return;
+
+    var mx = player.x + PLAYER_W / 2;
+    var my = player.y - 20;
+    var mw = 8, mh = 60;
+
+    // Background
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(mx - mw / 2 - 1, my - mh - 1, mw + 2, mh + 2);
+
+    // Red zone
+    ctx.fillStyle = '#EF4444';
+    ctx.fillRect(mx - mw / 2, my - mh, mw, mh);
+
+    // Green zone
+    var greenCenter = 0.72;
+    var greenSize = selectedArchetype === 'curry' ? 0.24 : 0.14;
+    var greenTop = my - mh * (greenCenter + greenSize / 2);
+    var greenH = mh * greenSize;
+    ctx.fillStyle = '#10B981';
+    ctx.fillRect(mx - mw / 2, greenTop, mw, greenH);
+
+    // Power indicator
+    var powerY = my - (shotMeter.power / 100) * mh;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(mx - mw / 2 - 3, powerY - 2, mw + 6, 4);
+}
+
+function drawFlash() {
+    if (scoreFlash.alpha <= 0) return;
+    ctx.save();
+    ctx.globalAlpha = Math.min(scoreFlash.alpha, 1);
+    ctx.fillStyle = scoreFlash.color || '#fff';
+    ctx.font = 'bold 24px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText(scoreFlash.text, scoreFlash.x, scoreFlash.y);
+    ctx.restore();
+}
+
+// ─── TRIVIA ───
+var TRIVIA = [
+    { q: "How much water to make 1 cotton t-shirt?", o: ["700L", "2,700L", "500L", "10,000L"], c: 1, f: "~2,700 litres — enough for one person for 2.5 years." },
+    { q: "What % of textiles end up in landfills?", o: ["25%", "45%", "73%", "90%"], c: 2, f: "73% end up in landfills or are incinerated." },
+    { q: "Fashion's share of global carbon emissions?", o: ["2%", "5%", "10%", "20%"], c: 2, f: "~10% — more than flights and shipping combined." },
+    { q: "How many times is a garment worn on average?", o: ["7", "20", "50", "100"], c: 0, f: "Just 7 times on average before being thrown away." },
+    { q: "Which material takes longest to decompose?", o: ["Cotton", "Wool", "Polyester", "Linen"], c: 2, f: "Polyester takes up to 200 years." },
+    { q: "What is circular fashion?", o: ["Round clothes", "Recycled into new", "Wearing in rotation", "Trend cycles"], c: 1, f: "Designing clothes to be reused, repaired, recycled." },
+    { q: "What is greenwashing?", o: ["Eco laundry", "Misleading eco claims", "Green dye", "Recycling green clothes"], c: 1, f: "Brands making misleading sustainability claims." },
+    { q: "Global textile waste per year?", o: ["10M tonnes", "50M tonnes", "92M tonnes", "200M tonnes"], c: 2, f: "Over 92 million tonnes annually." },
+    { q: "What do synthetic clothes release when washed?", o: ["Vitamins", "Microplastics", "Fragrance", "Oxygen"], c: 1, f: "~700,000 microplastic fibres per wash." },
+    { q: "Which fibre has lowest water footprint?", o: ["Cotton", "Polyester", "Linen", "Nylon"], c: 2, f: "Linen uses far less water than cotton." },
+    { q: "How many garments produced yearly?", o: ["10B", "50B", "100B", "150B"], c: 2, f: "100 billion — 14 for every person on Earth." },
+    { q: "What % of clothes are recycled?", o: ["<1%", "12%", "25%", "40%"], c: 0, f: "Less than 1% is recycled into new clothing." },
+    { q: "Litres of water for one pair of jeans?", o: ["1,000", "3,500", "7,500", "15,000"], c: 2, f: "About 7,500 litres." },
+    { q: "UAE textile waste annually?", o: ["100K tonnes", "500K tonnes", "1.5M tonnes", "5M tonnes"], c: 2, f: "Over 1.5 million tonnes every year." }
+];
+
+function showTrivia() {
+    gamePaused = true;
+
+    if (triviaUsed.length >= TRIVIA.length) triviaUsed = [];
+    var avail = TRIVIA.filter(function(_, i) { return triviaUsed.indexOf(i) === -1; });
+    var q = avail[Math.floor(Math.random() * avail.length)];
+    triviaUsed.push(TRIVIA.indexOf(q));
+
+    document.getElementById('triviaQ').textContent = q.q;
+    var oc = document.getElementById('triviaOpts');
+    var rc = document.getElementById('triviaRes');
+    rc.className = 'trivia-res';
+
+    var letters = ['A', 'B', 'C', 'D'];
+    oc.innerHTML = q.o.map(function(o, i) {
+        return '<button class="t-opt" data-i="' + i + '">' + letters[i] + '. ' + o + '</button>';
+    }).join('');
+
+    oc.querySelectorAll('.t-opt').forEach(function(b) {
+        b.onclick = function() {
+            var i = parseInt(b.dataset.i);
+            var ok = i === q.c;
+            triviaTotal++;
+            oc.querySelectorAll('.t-opt').forEach(function(x, j) {
+                x.style.pointerEvents = 'none';
+                if (j === q.c) x.classList.add('right');
+                if (j === i && !ok) x.classList.add('wrong');
             });
-        }, 500);
+            if (ok) {
+                triviaScore++;
+                rc.className = 'trivia-res show ok';
+                rc.innerHTML = '<strong>Correct! ✅</strong> ' + q.f;
+            } else {
+                rc.className = 'trivia-res show no';
+                rc.innerHTML = '<strong>Not quite ❌</strong> ' + q.f;
+            }
+            setTimeout(function() {
+                document.getElementById('triviaOverlay').classList.remove('show');
+                gamePaused = false;
+            }, 2500);
+        };
+    });
 
-        document.title = 'Eco Hoops | Rewoven Games';
-    })();
-    </script>
+    document.getElementById('triviaOverlay').classList.add('show');
+}
+
+// ─── GAME OVER ───
+function endGame() {
+    gameRunning = false;
+    if (timerInterval) clearInterval(timerInterval);
+
+    var title = player.score > cpu.score ? 'YOU WIN! 🏆' : (player.score < cpu.score ? 'CPU WINS' : 'TIE GAME');
+    document.getElementById('goTitle').textContent = title;
+    document.getElementById('goTitle').style.color = player.score >= cpu.score ? '#10B981' : '#EF4444';
+    document.getElementById('goScores').textContent = player.score + ' - ' + cpu.score;
+    document.getElementById('goEco').textContent = triviaTotal > 0
+        ? '♻️ Eco Score: ' + triviaScore + '/' + triviaTotal + ' trivia correct'
+        : '';
+    document.getElementById('gameover').classList.add('show');
+    document.getElementById('hud').classList.remove('show');
+    document.getElementById('specialBtn').classList.remove('show');
+}
+
+// ─── MOBILE TOUCH ───
+(function setupTouch() {
+    if (!('ontouchstart' in window)) return;
+
+    var pad = document.createElement('div');
+    pad.style.cssText = 'position:fixed;bottom:0;left:0;right:0;height:120px;z-index:60;display:flex;justify-content:space-between;align-items:center;padding:0 16px;pointer-events:none;';
+    pad.innerHTML = '<div style="display:flex;gap:10px;pointer-events:auto">' +
+        '<button id="tl" style="width:56px;height:56px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-size:20px">←</button>' +
+        '<button id="tr" style="width:56px;height:56px;border-radius:50%;border:2px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-size:20px">→</button>' +
+        '</div><div style="display:flex;gap:10px;pointer-events:auto">' +
+        '<button id="tj" style="width:56px;height:56px;border-radius:50%;border:2px solid rgba(16,185,129,0.3);background:rgba(16,185,129,0.08);color:#A7F3D0;font-size:11px;font-weight:700">JUMP</button>' +
+        '<button id="ts" style="width:56px;height:56px;border-radius:50%;border:2px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.08);color:#FCD34D;font-size:11px;font-weight:700">SHOOT</button>' +
+        '<button id="tk" style="width:46px;height:46px;border-radius:50%;border:2px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.08);color:#FCA5A5;font-size:10px;font-weight:700">STEAL</button>' +
+        '</div>';
+    document.body.appendChild(pad);
+
+    function bind(id, downFn, upFn) {
+        var el = document.getElementById(id);
+        el.addEventListener('touchstart', function(e) { e.preventDefault(); downFn(); });
+        el.addEventListener('touchend', function(e) { e.preventDefault(); upFn(); });
+    }
+    bind('tl', function() { touchMove = -1; }, function() { touchMove = 0; });
+    bind('tr', function() { touchMove = 1; }, function() { touchMove = 0; });
+    bind('tj', function() { touchJump = true; }, function() { touchJump = false; });
+    bind('ts', function() { touchShoot = true; }, function() { touchShoot = false; });
+    bind('tk', function() { touchSteal = true; }, function() { touchSteal = false; });
+})();
+
+})();
+</script>
 </body>
 </html>
