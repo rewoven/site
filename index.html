@@ -42,12 +42,25 @@
       --radius:    16px;
     }
 
+    /* ── Dark Mode Variables ── */
+    [data-theme="dark"] {
+      --white:     #0F172A;
+      --bg-cream:  #0F172A;
+      --dark:      #F1F5F9;
+      --gray-600:  #94A3B8;
+      --gray-400:  #64748B;
+      --gray-200:  #334155;
+      --green-50:  #0F2A1F;
+      --green-100: #14332A;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--dark);
       background: var(--white);
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     /* ── Utility ── */
@@ -487,6 +500,110 @@
     }
     .footer-social a:hover { background: var(--green-600); color: var(--white); }
 
+    /* ── Dark Mode Toggle ── */
+    .theme-toggle {
+      width: 40px; height: 40px; border-radius: 50%; border: none;
+      background: var(--green-50); cursor: pointer; font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s ease; flex-shrink: 0;
+    }
+    .theme-toggle:hover {
+      background: var(--green-100); transform: scale(1.1);
+    }
+
+    /* ── Dark Mode Section Overrides ── */
+    [data-theme="dark"] nav {
+      background: rgba(15,23,42,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(51,65,85,0.5);
+    }
+    [data-theme="dark"] .nav-hamburger span {
+      background: var(--dark);
+    }
+    [data-theme="dark"] .nav-logo span {
+      color: var(--green-400);
+    }
+    [data-theme="dark"] .hero {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F2A1F 100%);
+    }
+    [data-theme="dark"] .hero::before {
+      background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%);
+    }
+    [data-theme="dark"] .hero::after {
+      background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+    }
+    [data-theme="dark"] .hero-stats {
+      border-top-color: #334155;
+    }
+    [data-theme="dark"] .phone-mockup {
+      background: #1E293B;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.05);
+    }
+    [data-theme="dark"] .phone-screen {
+      background: linear-gradient(180deg, #1E293B 0%, #0F172A 30%);
+    }
+    [data-theme="dark"] .phone-feature-item {
+      background: #1E293B; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    [data-theme="dark"] .floating-badge {
+      background: #1E293B; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    [data-theme="dark"] .problem {
+      background: #0F172A;
+    }
+    [data-theme="dark"] .problem-card {
+      background: linear-gradient(135deg, #1E293B, #0F172A);
+      border-color: #334155;
+    }
+    [data-theme="dark"] .problem-card:hover {
+      box-shadow: 0 12px 40px rgba(16,185,129,0.15);
+    }
+    [data-theme="dark"] .features {
+      background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+    }
+    [data-theme="dark"] .feature-visual {
+      background: linear-gradient(135deg, #1E293B, #0F2A1F) !important;
+    }
+    [data-theme="dark"] .feature-demo {
+      background: #0F172A !important; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    [data-theme="dark"] .feature-demo-header {
+      border-bottom-color: #334155;
+    }
+    [data-theme="dark"] .how-it-works {
+      background: #0F172A;
+    }
+    [data-theme="dark"] .audience {
+      background: linear-gradient(180deg, #0F172A, #1E293B);
+    }
+    [data-theme="dark"] .audience-card {
+      background: #1E293B; border-color: #334155;
+    }
+    [data-theme="dark"] .audience-card:hover {
+      box-shadow: 0 12px 40px rgba(16,185,129,0.15);
+    }
+    [data-theme="dark"] .btn-secondary {
+      background: #1E293B; color: var(--green-400);
+      border-color: #334155;
+    }
+    [data-theme="dark"] .btn-secondary:hover {
+      border-color: var(--green-500); background: #0F2A1F;
+    }
+    [data-theme="dark"] footer {
+      background: #0B1120;
+    }
+    [data-theme="dark"] .nav-links.open {
+      background: #0F172A; border-bottom-color: #334155;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Smooth transitions for theme switch */
+    nav, .hero, .problem, .problem-card, .features, .feature-visual,
+    .feature-demo, .how-it-works, .audience, .audience-card,
+    .btn-secondary, .phone-mockup, .phone-screen, .phone-feature-item,
+    .floating-badge, footer {
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+    }
+
     /* ── Animations ── */
     .fade-in {
       opacity: 0; transform: translateY(30px);
@@ -545,6 +662,7 @@
         <li><a href="#impact">Impact</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
         <li><a href="/game/">Games</a></li>
+        <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">&#127769;</button></li>
         <li><a href="https://apps.apple.com/us/app/rewoven/id6759314001" class="btn btn-primary nav-cta">Download App</a></li>
       </ul>
       <button class="nav-hamburger" id="hamburger" aria-label="Menu">
@@ -980,6 +1098,38 @@
   </footer>
 
   <script>
+    // Dark mode toggle
+    (function() {
+      const toggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+
+      function setTheme(theme) {
+        html.setAttribute('data-theme', theme);
+        toggle.innerHTML = theme === 'dark' ? '&#9728;&#65039;' : '&#127769;';
+        localStorage.setItem('theme', theme);
+      }
+
+      // Determine initial theme: localStorage > system preference > light
+      const saved = localStorage.getItem('theme');
+      if (saved) {
+        setTheme(saved);
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setTheme('dark');
+      }
+
+      toggle.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme');
+        setTheme(current === 'dark' ? 'light' : 'dark');
+      });
+
+      // Listen for system preference changes
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+          setTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    })();
+
     // Mobile nav toggle
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
