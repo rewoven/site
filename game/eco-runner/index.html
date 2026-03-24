@@ -407,9 +407,9 @@ let distance = 0;
 let itemsCollected = 0;
 let waterSaved = 0;
 let energySaved = 0;
-let speed = 7;
-let baseSpeed = 7;
-let maxSpeed = 16;
+let speed = 6;
+let baseSpeed = 6;
+let maxSpeed = 15;
 let frameCount = 0;
 let lastFactMilestone = 0;
 let groundY;
@@ -778,7 +778,7 @@ function update() {
   distance += speed * 0.05;
 
   // Increase speed over time
-  speed = Math.min(maxSpeed, baseSpeed + distance * 0.005);
+  speed = Math.min(maxSpeed, baseSpeed + distance * 0.002);
 
   // Background change every 500 pts
   const newBg = Math.min(3, Math.floor(score / 500));
