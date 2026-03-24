@@ -407,9 +407,9 @@ let distance = 0;
 let itemsCollected = 0;
 let waterSaved = 0;
 let energySaved = 0;
-let speed = 15;
-let baseSpeed = 15;
-let maxSpeed = 25;
+let speed = 10;
+let baseSpeed = 10;
+let maxSpeed = 20;
 let frameCount = 0;
 let lastFactMilestone = 0;
 let groundY;
@@ -553,8 +553,6 @@ function startGame() {
   navInfo.classList.add('active');
   updateNavInfo();
   gameState = 'playing';
-  lastFrameTime = 0;
-  accumulatedTime = 0;
   requestAnimationFrame(gameLoop);
 }
 
@@ -768,22 +766,9 @@ function spawnParticles(x, y, color, count) {
 }
 
 // ============ GAME LOOP ============
-var lastFrameTime = 0;
-var TARGET_FPS = 60;
-var FRAME_INTERVAL = 1000 / TARGET_FPS;
-
-function gameLoop(timestamp) {
+function gameLoop() {
   if (gameState !== 'playing') return;
-
-  if (!lastFrameTime) lastFrameTime = timestamp;
-  var elapsed = timestamp - lastFrameTime;
-
-  // Only update at ~60fps — skip frames on high refresh rate monitors
-  if (elapsed >= FRAME_INTERVAL) {
-    lastFrameTime = timestamp - (elapsed % FRAME_INTERVAL);
-    update();
-  }
-
+  update();
   draw();
   requestAnimationFrame(gameLoop);
 }
