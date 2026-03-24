@@ -244,7 +244,7 @@ window.addEventListener('resize', resize);
 var GRAVITY = 0.55;
 var PLAYER_W = 36, PLAYER_H = 60;
 var BALL_R = 12;
-var RIM_Y_OFFSET = 0.38; // rim at 38% from top
+var RIM_Y_OFFSET = 0.52; // rim at 52% from top (lower hoops)
 var HOOP_WIDTH = 40;
 var NET_DEPTH = 30;
 var GAME_TIME = 90; // seconds
@@ -320,7 +320,7 @@ function initGame() {
     var arch = ARCHETYPES[selectedArchetype];
 
     player = {
-        x: W * 0.3, y: GROUND - PLAYER_H,
+        x: W * 0.4, y: GROUND - PLAYER_H,
         vx: 0, vy: 0,
         w: PLAYER_W, h: PLAYER_H,
         color: arch.color,
@@ -339,7 +339,7 @@ function initGame() {
     var cpuArch = cpuTypes[Math.floor(Math.random() * cpuTypes.length)];
 
     cpu = {
-        x: W * 0.7, y: GROUND - PLAYER_H,
+        x: W * 0.6, y: GROUND - PLAYER_H,
         vx: 0, vy: 0,
         w: PLAYER_W, h: PLAYER_H,
         color: '#EF4444',
@@ -516,19 +516,26 @@ function updateCPU() {
 
     if (cpu.hasBall) {
         // Move toward player's hoop (left side) to shoot
-        var targetX = leftHoopX + 120;
+        var targetX = leftHoopX + 180; // CPU positions further from hoop
         var dist = targetX - cpu.x;
 
         if (Math.abs(dist) > 30) {
-            cpu.vx = dist > 0 ? 3.5 : -3.5;
+            cpu.vx = dist > 0 ? 2.8 : -2.8;
             cpu.facing = dist > 0 ? 1 : -1;
         } else {
             cpu.vx *= 0.7;
-            // In range, try to shoot
-            cpu.aiShootCharge += 2;
-            if (cpu.aiShootCharge > 60 + Math.random() * 40) {
-                cpuShoot();
-                cpu.aiShootCharge = 0;
+            // In range, try to shoot (slower charge)
+            // Don't shoot if too close to hoop
+            var distToHoop = Math.abs(cpu.x - leftHoopX);
+            if (distToHoop > 80) {
+                cpu.aiShootCharge += 1.2;
+                if (cpu.aiShootCharge > 90 + Math.random() * 60) {
+                    cpuShoot();
+                    cpu.aiShootCharge = 0;
+                }
+            } else {
+                // Too close, back up
+                cpu.vx = 2;
             }
         }
 
@@ -548,6 +555,7 @@ function updateCPU() {
             ball.owner = cpu;
             ball.free = false;
             cpu.hasBall = true;
+            cpu.aiShootCharge = -60; // delay before CPU can shoot after pickup
         }
     } else {
         // Defend - move toward player
@@ -601,14 +609,14 @@ function cpuShoot() {
     var bvx = dx / t;
     var bvy = (dy - 0.5 * GRAVITY * t * t) / t;
 
-    // Add slight randomness (CPU isn't perfect)
-    var accuracy = 0.88 + Math.random() * 0.12;
-    ball.vx = bvx * accuracy;
-    ball.vy = bvy + (Math.random() - 0.5) * 1;
+    // CPU misses often — only ~40% make rate
+    var accuracy = 0.6 + Math.random() * 0.3;
+    ball.vx = bvx * accuracy + (Math.random() - 0.5) * 4;
+    ball.vy = bvy + (Math.random() - 0.5) * 4;
     ball.scored = false;
 
     cpu.shootCooldown = 40;
-    shotInFlight = 30;
+    shotInFlight = 45;
 }
 
 function shootBall(shooter) {
@@ -646,7 +654,7 @@ function shootBall(shooter) {
     shotMeter.active = false;
     shotMeter.released = false;
     shooter.shootCooldown = 30;
-    shotInFlight = 30; // prevent pickup for 30 frames
+    shotInFlight = 45; // prevent pickup while ball flies to hoop
 }
 
 function updateBall() {
@@ -801,9 +809,9 @@ function scoredBasket(scorer, isDunk) {
         receiver.hasBall = true;
         ball.scored = false;
 
-        // Reset positions
-        player.x = W * 0.3;
-        cpu.x = W * 0.7;
+        // Reset positions to center court
+        player.x = W * 0.4;
+        cpu.x = W * 0.6;
     }, 800);
 
     // Trivia every 3 baskets
@@ -838,7 +846,7 @@ window.useSpecial = function() {
     if (specialCooldown > 0 || specialActive) return;
 
     if (selectedArchetype === 'curry') {
-        // Auto 3-pointer
+        // Auto 3-pointer — guaranteed score
         if (player.hasBall) {
             player.hasBall = false;
             ball.owner = null;
@@ -846,16 +854,14 @@ window.useSpecial = function() {
 
             var hoopX = getRightHoopX();
             var hoopY = getRimY();
-            var dx = hoopX - ball.x;
-            var dy = hoopY - ball.y;
-            var dist = Math.sqrt(dx*dx + dy*dy);
-            var t = Math.max(dist / 6, 15);
-            if (t > 50) t = 50;
-            ball.vx = dx / t;
-            ball.vy = (dy - 0.5 * GRAVITY * t * t) / t;
+            // Place ball above hoop, let it drop in
+            ball.x = hoopX;
+            ball.y = hoopY - 80;
+            ball.vx = 0;
+            ball.vy = 2;
             ball.scored = false;
 
-            shotInFlight = 40;
+            shotInFlight = 50;
             showFlash('🎯 CURRY RANGE!', player.x, player.y - 30, '#10B981');
             specialCooldown = 30 * 60; // 30 seconds at 60fps
             updateSpecialBtn();
