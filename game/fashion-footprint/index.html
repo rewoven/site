@@ -615,6 +615,7 @@ function togglePause() {
   } else if (gameState === 'paused') {
     gameState = 'playing';
     pauseOverlay.classList.remove('active');
+    lastFrameTime = 0;
     requestAnimationFrame(gameLoop);
   }
 }
@@ -768,25 +769,19 @@ function spawnParticles(x, y, color, count) {
 
 // ============ GAME LOOP ============
 var lastFrameTime = 0;
-var accumulatedTime = 0;
-var FIXED_STEP = 1000 / 60; // Target 60fps
+var TARGET_FPS = 60;
+var FRAME_INTERVAL = 1000 / TARGET_FPS;
 
 function gameLoop(timestamp) {
   if (gameState !== 'playing') return;
 
   if (!lastFrameTime) lastFrameTime = timestamp;
-  var delta = timestamp - lastFrameTime;
-  lastFrameTime = timestamp;
+  var elapsed = timestamp - lastFrameTime;
 
-  // Cap delta to prevent spiral of death
-  if (delta > 100) delta = 100;
-
-  accumulatedTime += delta;
-
-  // Run fixed updates at 60fps regardless of monitor refresh rate
-  while (accumulatedTime >= FIXED_STEP) {
+  // Only update at ~60fps — skip frames on high refresh rate monitors
+  if (elapsed >= FRAME_INTERVAL) {
+    lastFrameTime = timestamp - (elapsed % FRAME_INTERVAL);
     update();
-    accumulatedTime -= FIXED_STEP;
   }
 
   draw();
