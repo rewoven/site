@@ -5,2095 +5,928 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Eco Hoops | Rewoven Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --green-50: #ECFDF5;
-  --green-100: #D1FAE5;
-  --green-200: #A7F3D0;
-  --green-400: #34D399;
-  --green-500: #10B981;
-  --green-600: #059669;
-  --green-700: #047857;
-  --green-800: #065F46;
-  --green-900: #064E3B;
-  --dark: #111827;
-  --gray-600: #4B5563;
-  --gray-700: #374151;
-  --gray-800: #1F2937;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0a0e1a;color:#fff;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;height:100vh;width:100vw}
+canvas{display:block}
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── Screens ── */
+.screen{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.screen.hidden{display:none}
+#startScreen{background:linear-gradient(135deg,#064E3B 0%,#0a0e1a 60%,#111827 100%)}
+.start-title{font-size:clamp(36px,7vw,56px);font-weight:900;background:linear-gradient(135deg,#10B981,#34D399,#A7F3D0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.start-sub{font-size:16px;color:#94A3B8;margin-bottom:32px;max-width:400px;line-height:1.6}
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--dark);
-  color: #fff;
-  min-height: 100vh;
-  overflow: hidden;
-  touch-action: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
+/* Archetype Selection */
+.arch-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#34D399;margin-bottom:16px}
+.arch-grid{display:flex;gap:14px;margin-bottom:32px;flex-wrap:wrap;justify-content:center}
+.arch-card{width:150px;padding:20px 16px;background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.08);border-radius:16px;cursor:pointer;transition:all .25s;text-align:center}
+.arch-card:hover{border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.05)}
+.arch-card.selected{border-color:#10B981;background:rgba(16,185,129,0.1);box-shadow:0 0 24px rgba(16,185,129,0.15)}
+.arch-icon{font-size:36px;margin-bottom:8px}
+.arch-name{font-size:15px;font-weight:800;margin-bottom:4px}
+.arch-role{font-size:11px;color:#64748B;margin-bottom:12px}
+.arch-stats{display:flex;flex-direction:column;gap:4px}
+.stat-row{display:flex;align-items:center;gap:6px;font-size:11px}
+.stat-label{width:40px;text-align:right;color:#94A3B8;font-weight:600}
+.stat-bar-bg{flex:1;height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden}
+.stat-bar{height:100%;border-radius:3px;transition:width .3s}
 
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-  background: rgba(17,24,39,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(52,211,153,0.15);
-  padding: 0 24px;
-  height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-nav a.logo {
-  font-family: 'Playfair Display', serif;
-  font-weight: 700; font-size: 22px;
-  color: var(--green-400);
-  text-decoration: none;
-}
-nav a.logo:hover { color: var(--green-200); }
-nav .nav-links { display: flex; gap: 16px; align-items: center; }
-nav .nav-links a {
-  color: var(--green-200); text-decoration: none; font-size: 14px; font-weight: 500;
-}
+.play-btn{background:linear-gradient(135deg,#10B981,#059669);border:none;border-radius:50px;padding:18px 48px;font-size:18px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;transition:all .3s;box-shadow:0 4px 20px rgba(16,185,129,0.4)}
+.play-btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(16,185,129,0.6)}
+.play-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none}
+.back-link{margin-top:20px;font-size:14px;color:#64748B;text-decoration:none}
+.back-link:hover{color:#94A3B8}
 
-#game-container {
-  position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--dark);
-}
+/* Controls overlay */
+.controls-overlay{position:fixed;bottom:12px;left:12px;z-index:10;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:11px;color:#94A3B8;pointer-events:none;display:none}
+.controls-overlay.show{display:block}
+.controls-overlay .row{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+.controls-overlay .row:last-child{margin-bottom:0}
+.controls-overlay kbd{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:1px 6px;font-weight:700;font-family:inherit;color:#fff;font-size:10px}
 
-canvas {
-  display: block;
-  background: #111827;
-  image-rendering: pixelated;
-}
-
-/* Overlays */
-.overlay {
-  position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(17,24,39,0.95);
-  z-index: 100;
-  backdrop-filter: blur(8px);
-  transition: opacity 0.3s;
-}
-.overlay.hidden { display: none; }
-
-/* Title Screen */
-#title-screen .title-content {
-  text-align: center;
-  max-width: 520px;
-  padding: 32px;
-}
-#title-screen h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 56px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--green-400), var(--green-200));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
-}
-#title-screen .subtitle {
-  font-size: 18px;
-  color: var(--green-200);
-  margin-bottom: 32px;
-  font-weight: 500;
-}
-#title-screen .tagline {
-  font-size: 14px;
-  color: var(--gray-600);
-  margin-bottom: 40px;
-  line-height: 1.6;
-}
-
-.btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 36px;
-  border-radius: 50px;
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 16px rgba(16,185,129,0.3);
-}
-.btn-primary {
-  background: linear-gradient(135deg, var(--green-500), var(--green-600));
-  color: #fff;
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(16,185,129,0.45);
-}
-.btn-secondary {
-  background: var(--gray-800);
-  color: var(--green-400);
-  border: 1px solid var(--green-800);
-  box-shadow: none;
-}
-.btn-secondary:hover {
-  background: var(--gray-700);
-}
-
-/* Character Select */
-#select-screen .select-content {
-  text-align: center;
-  max-width: 800px;
-  padding: 24px;
-  width: 100%;
-}
-#select-screen h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  color: var(--green-400);
-  margin-bottom: 24px;
-}
-.archetype-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-@media (max-width: 700px) {
-  .archetype-grid { grid-template-columns: repeat(2, 1fr); }
-  #select-screen h2 { font-size: 24px; }
-}
-
-.archetype-card {
-  background: var(--gray-800);
-  border: 2px solid var(--green-900);
-  border-radius: 16px;
-  padding: 20px 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-}
-.archetype-card:hover, .archetype-card.selected {
-  border-color: var(--green-400);
-  background: rgba(16,185,129,0.1);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(16,185,129,0.2);
-}
-.archetype-card .icon {
-  font-size: 40px;
-  margin-bottom: 8px;
-}
-.archetype-card .name {
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--green-400);
-  margin-bottom: 4px;
-}
-.archetype-card .desc {
-  font-size: 11px;
-  color: var(--green-200);
-  margin-bottom: 10px;
-  line-height: 1.4;
-}
-.archetype-card .special {
-  font-size: 10px;
-  color: var(--green-500);
-  font-weight: 600;
-  background: rgba(16,185,129,0.1);
-  padding: 4px 8px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  display: inline-block;
-}
-.stat-row {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 11px; margin-bottom: 3px;
-}
-.stat-row .label { color: var(--green-200); }
-.stat-row .stars { color: var(--green-400); font-size: 10px; letter-spacing: 1px; }
-
-/* Trivia overlay */
-#trivia-screen .trivia-content {
-  text-align: center;
-  max-width: 500px;
-  padding: 32px;
-  background: var(--gray-800);
-  border-radius: 24px;
-  border: 2px solid var(--green-800);
-  box-shadow: 0 16px 64px rgba(0,0,0,0.5);
-}
-#trivia-screen h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  color: var(--green-400);
-  margin-bottom: 20px;
-}
-#trivia-question {
-  font-size: 16px;
-  line-height: 1.6;
-  color: var(--green-100);
-  margin-bottom: 24px;
-}
-.trivia-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.trivia-option {
-  padding: 12px 16px;
-  background: var(--gray-700);
-  border: 2px solid var(--green-900);
-  border-radius: 12px;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Inter', sans-serif;
-}
-.trivia-option:hover {
-  border-color: var(--green-400);
-  background: rgba(16,185,129,0.15);
-}
-.trivia-option.correct {
-  border-color: var(--green-400);
-  background: rgba(16,185,129,0.3);
-  color: var(--green-200);
-}
-.trivia-option.wrong {
-  border-color: #EF4444;
-  background: rgba(239,68,68,0.2);
-  color: #FCA5A5;
-}
-
-#trivia-result {
-  margin-top: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  min-height: 20px;
-}
+/* HUD */
+#hud{position:fixed;top:0;left:0;right:0;display:none;justify-content:space-between;align-items:center;padding:12px 20px;z-index:10;background:linear-gradient(180deg,rgba(10,14,26,0.92) 0%,transparent 100%);pointer-events:none}
+#hud>*{pointer-events:auto}
+.hud-score{font-size:36px;font-weight:900;background:linear-gradient(135deg,#10B981,#34D399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hud-streak{font-size:14px;font-weight:700;color:#F59E0B;opacity:0;transition:opacity .3s;margin-left:12px}
+.hud-streak.active{opacity:1}
+.hud-timer{font-size:28px;font-weight:800;color:#fff}
+.hud-timer.warning{color:#EF4444;animation:pulse .5s ease infinite}
+@keyframes pulse{50%{opacity:.5}}
+.hud-left,.hud-right{display:flex;align-items:center;gap:12px}
 
 /* Game Over */
-#gameover-screen .gameover-content {
-  text-align: center;
-  max-width: 480px;
-  padding: 32px;
-  background: var(--gray-800);
-  border-radius: 24px;
-  border: 2px solid var(--green-800);
-}
-#gameover-screen h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 36px;
-  margin-bottom: 8px;
-}
-#gameover-screen .final-score {
-  font-size: 48px;
-  font-weight: 900;
-  color: var(--green-400);
-  margin-bottom: 16px;
-}
-#gameover-screen .stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-.stat-box {
-  background: var(--gray-700);
-  border-radius: 12px;
-  padding: 12px;
-}
-.stat-box .val {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--green-400);
-}
-.stat-box .lbl {
-  font-size: 11px;
-  color: var(--green-200);
-  margin-top: 2px;
-}
-#gameover-screen .facts-learned {
-  text-align: left;
-  background: var(--gray-700);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 24px;
-  max-height: 120px;
-  overflow-y: auto;
-}
-#gameover-screen .facts-learned h4 {
-  font-size: 13px;
-  color: var(--green-400);
-  margin-bottom: 8px;
-}
-#gameover-screen .facts-learned p {
-  font-size: 11px;
-  color: var(--green-200);
-  margin-bottom: 4px;
-  line-height: 1.4;
-}
-.btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+#gameOverScreen{background:rgba(10,14,26,0.95);backdrop-filter:blur(16px)}
+.go-title{font-size:48px;font-weight:900;margin-bottom:8px}
+.go-score{font-size:72px;font-weight:900;background:linear-gradient(135deg,#10B981,#34D399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.go-detail{font-size:16px;color:#94A3B8;margin-bottom:4px}
+.go-fact{margin-top:20px;padding:18px 24px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:14px;max-width:420px;font-size:14px;color:#A7F3D0;line-height:1.6}
+.go-fact strong{color:#34D399;display:block;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:1px}
+.go-buttons{margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.hud-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:14px 24px;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.hud-btn:hover{background:rgba(255,255,255,0.2)}
 
-/* Record display */
-.record { font-size: 12px; color: var(--gray-600); margin-top: 16px; }
+/* Trivia */
+#triviaPopup{position:fixed;inset:0;z-index:50;background:rgba(10,14,26,0.88);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:24px}
+#triviaPopup.active{display:flex}
+.trivia-card{background:#1E293B;border:1px solid rgba(52,211,153,0.2);border-radius:20px;padding:36px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.trivia-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#34D399;margin-bottom:16px}
+.trivia-question{font-size:20px;font-weight:700;line-height:1.4;margin-bottom:24px}
+.trivia-options{display:flex;flex-direction:column;gap:10px}
+.trivia-opt{padding:14px 18px;border:2px solid rgba(255,255,255,0.1);border-radius:12px;background:rgba(255,255,255,0.03);color:#fff;font-size:15px;font-weight:500;cursor:pointer;text-align:left;font-family:inherit;transition:all .2s;display:flex;align-items:center;gap:12px}
+.trivia-opt:hover{border-color:#34D399;background:rgba(52,211,153,0.08)}
+.trivia-opt.correct{border-color:#10B981;background:rgba(16,185,129,0.2);color:#A7F3D0}
+.trivia-opt.wrong{border-color:#EF4444;background:rgba(239,68,68,0.15);color:#FCA5A5}
+.trivia-opt .opt-letter{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.trivia-result{margin-top:16px;padding:14px 18px;border-radius:12px;font-size:14px;line-height:1.5;display:none}
+.trivia-result.show{display:block}
+.trivia-result.correct-r{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:#A7F3D0}
+.trivia-result.wrong-r{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#FCA5A5}
 
-/* Mobile touch controls */
-#touch-controls {
-  display: none;
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  height: 180px;
-  z-index: 50;
-  pointer-events: none;
-}
-#touch-controls > * { pointer-events: auto; }
+/* Mobile */
+.mobile-controls{position:fixed;bottom:0;left:0;right:0;display:none;z-index:10;padding:12px;background:linear-gradient(0deg,rgba(10,14,26,0.9) 0%,transparent 100%)}
+.mc-row{display:flex;justify-content:space-between;align-items:center}
+.mc-btn{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mc-btn:active{background:rgba(52,211,153,0.3);border-color:#34D399}
+.mc-btn.shoot{width:72px;height:72px;font-size:12px;font-weight:800;background:rgba(16,185,129,0.2);border-color:rgba(16,185,129,0.4)}
+.mc-btn.steal{width:58px;height:58px;font-size:11px;font-weight:700;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.3)}
 
-.touch-joystick {
-  position: absolute;
-  bottom: 30px; left: 30px;
-  width: 120px; height: 120px;
-  background: rgba(52,211,153,0.15);
-  border: 2px solid rgba(52,211,153,0.3);
-  border-radius: 50%;
-}
-.touch-joystick .knob {
-  position: absolute;
-  width: 44px; height: 44px;
-  background: rgba(52,211,153,0.5);
-  border-radius: 50%;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  transition: none;
-}
-
-.touch-btn {
-  position: absolute;
-  width: 64px; height: 64px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800;
-  color: #fff;
-  border: 2px solid rgba(255,255,255,0.3);
-}
-#btn-shoot {
-  bottom: 50px; right: 30px;
-  background: rgba(52,211,153,0.4);
-}
-#btn-special {
-  bottom: 130px; right: 30px;
-  background: rgba(234,179,8,0.4);
-  width: 52px; height: 52px;
-  font-size: 10px;
-}
-#btn-steal {
-  bottom: 50px; right: 110px;
-  background: rgba(239,68,68,0.3);
-  width: 52px; height: 52px;
-  font-size: 10px;
-}
-
-@media (hover: none) and (pointer: coarse) {
-  #touch-controls { display: block; }
-}
-
-/* HUD overlay */
-#hud {
-  position: fixed; top: 56px; left: 0; right: 0;
-  z-index: 30;
-  display: none;
-  padding: 8px 16px;
-  pointer-events: none;
-}
-#hud.active { display: flex; justify-content: space-between; align-items: flex-start; }
-
-.score-panel {
-  background: rgba(17,24,39,0.85);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  padding: 10px 20px;
-  border: 1px solid rgba(52,211,153,0.2);
-  text-align: center;
-  min-width: 200px;
-}
-.score-panel .team-scores {
-  display: flex; gap: 24px; justify-content: center; align-items: center;
-}
-.score-panel .team {
-  text-align: center;
-}
-.score-panel .team .name {
-  font-size: 10px;
-  color: var(--green-200);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.score-panel .team .pts {
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--green-400);
-}
-.score-panel .vs {
-  font-size: 14px;
-  color: var(--gray-600);
-  font-weight: 700;
-}
-.score-panel .timer {
-  font-size: 12px;
-  color: var(--green-200);
-  margin-top: 4px;
-  font-weight: 600;
-}
-.score-panel .round-info {
-  font-size: 10px;
-  color: var(--gray-600);
-  margin-top: 2px;
-}
-
-.special-meter-wrap {
-  background: rgba(17,24,39,0.85);
-  backdrop-filter: blur(8px);
-  border-radius: 12px;
-  padding: 8px 16px;
-  border: 1px solid rgba(52,211,153,0.2);
-  min-width: 160px;
-}
-.special-meter-wrap .label {
-  font-size: 10px;
-  color: var(--green-200);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 4px;
-}
-.special-bar-bg {
-  width: 100%;
-  height: 10px;
-  background: var(--gray-700);
-  border-radius: 5px;
-  overflow: hidden;
-}
-.special-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--green-500), #EAB308);
-  border-radius: 5px;
-  width: 0%;
-  transition: width 0.3s;
-}
-.special-ready {
-  font-size: 10px;
-  color: #EAB308;
-  font-weight: 700;
-  margin-top: 3px;
-  display: none;
-}
-
-/* Powerup indicator */
-.powerup-indicator {
-  position: fixed;
-  top: 130px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 40;
-  background: rgba(17,24,39,0.9);
-  border: 1px solid var(--green-600);
-  border-radius: 20px;
-  padding: 6px 16px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--green-400);
-  display: none;
-  pointer-events: none;
-}
-.powerup-indicator.active { display: block; }
-
-/* Controls hint */
-.controls-hint {
-  position: fixed;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 30;
-  font-size: 10px;
-  color: var(--gray-600);
-  text-align: center;
-  pointer-events: none;
-}
-@media (hover: none) and (pointer: coarse) {
-  .controls-hint { display: none; }
-}
+@media(max-width:768px){.mobile-controls{display:block}.controls-overlay{display:none!important}}
+@media(max-width:480px){.start-title{font-size:32px}.arch-card{width:130px;padding:14px 10px}.go-score{font-size:56px}}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="/" class="logo">Rewoven</a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/game">Games</a>
-  </div>
-</nav>
+<!-- ═══ START SCREEN ═══ -->
+<div class="screen" id="startScreen">
+  <div style="font-size:56px;margin-bottom:12px">🏀</div>
+  <div class="start-title">Eco Hoops</div>
+  <div class="start-sub">Choose your archetype. Shoot hoops with 2K-style timing. Sink threes, dunk, steal, and answer sustainability trivia for bonus points.</div>
 
-<div id="game-container">
-  <canvas id="court"></canvas>
+  <div class="arch-title">Choose Your Archetype</div>
+  <div class="arch-grid" id="archGrid"></div>
+
+  <button class="play-btn" id="playBtn" disabled onclick="startGame()">Select an Archetype</button>
+  <a href="/game/" class="back-link">Back to Games</a>
 </div>
 
-<!-- HUD -->
+<!-- ═══ GAME OVER ═══ -->
+<div class="screen hidden" id="gameOverScreen">
+  <div class="go-title">Game Over</div>
+  <div class="go-score" id="finalScore">0</div>
+  <div class="go-detail" id="finalBaskets">Baskets: 0</div>
+  <div class="go-detail" id="finalStreak">Best streak: 0</div>
+  <div class="go-detail" id="finalTrivia">Trivia bonus: 0</div>
+  <div class="go-detail" id="finalSteals">Steals: 0</div>
+  <div class="go-fact"><strong>Eco Fact</strong><span id="finalFactText"></span></div>
+  <div class="go-buttons">
+    <button class="play-btn" onclick="startGame()">Play Again</button>
+    <button class="hud-btn" onclick="location.href='/game/'">Back to Games</button>
+  </div>
+</div>
+
+<!-- ═══ HUD ═══ -->
 <div id="hud">
-  <div class="special-meter-wrap">
-    <div class="label">Special Move</div>
-    <div class="special-bar-bg"><div class="special-bar-fill" id="special-fill"></div></div>
-    <div class="special-ready" id="special-ready">PRESS Q - READY!</div>
+  <div class="hud-left">
+    <div class="hud-score" id="scoreDisplay">0</div>
+    <div class="hud-streak" id="streakDisplay">🔥 x0</div>
   </div>
-  <div class="score-panel">
-    <div class="team-scores">
-      <div class="team"><div class="name" id="p1-name">YOU</div><div class="pts" id="p1-score">0</div></div>
-      <div class="vs">VS</div>
-      <div class="team"><div class="name" id="p2-name">CPU</div><div class="pts" id="p2-score">0</div></div>
+  <div class="hud-right">
+    <div class="hud-timer" id="timerDisplay">60</div>
+  </div>
+</div>
+
+<!-- ═══ Controls Overlay ═══ -->
+<div class="controls-overlay" id="controlsOverlay">
+  <div class="row"><kbd>A</kbd> <kbd>D</kbd> Move</div>
+  <div class="row"><kbd>W</kbd> Jump</div>
+  <div class="row"><kbd>SPACE</kbd> Shoot (hold = power, release on green)</div>
+  <div class="row"><kbd>S</kbd> Steal (near opponent)</div>
+  <div class="row"><kbd>E</kbd> Dunk (near hoop + ball)</div>
+</div>
+
+<!-- ═══ Trivia ═══ -->
+<div id="triviaPopup">
+  <div class="trivia-card">
+    <div class="trivia-label">Sustainability Trivia — 2x Points for 10s!</div>
+    <div class="trivia-question" id="triviaQ"></div>
+    <div class="trivia-options" id="triviaOpts"></div>
+    <div class="trivia-result" id="triviaRes"></div>
+  </div>
+</div>
+
+<!-- ═══ Mobile Controls ═══ -->
+<div class="mobile-controls" id="mobileControls">
+  <div class="mc-row">
+    <div style="display:flex;gap:10px">
+      <button class="mc-btn" ontouchstart="mk('a',1)" ontouchend="mk('a',0)">◀</button>
+      <button class="mc-btn" ontouchstart="mk('d',1)" ontouchend="mk('d',0)">▶</button>
     </div>
-    <div class="timer" id="timer">2:00</div>
-    <div class="round-info" id="round-info">Round 1 / 5</div>
-  </div>
-  <div style="min-width:160px"></div>
-</div>
-
-<div class="powerup-indicator" id="powerup-indicator"></div>
-<div class="controls-hint" id="controls-hint">WASD/Arrows: Move | SPACE: Shoot | S/Down: Steal | Q: Special</div>
-
-<!-- Title Screen -->
-<div class="overlay" id="title-screen">
-  <div class="title-content">
-    <h1>Eco Hoops</h1>
-    <div class="subtitle">Basketball Legends x Sustainability</div>
-    <div class="tagline">Choose your archetype. Outscore the AI. Answer sustainability questions to power up. First to 7 baskets or best of 5 rounds wins.</div>
-    <button class="btn btn-primary" onclick="showScreen('select')">Play Now</button>
-    <div class="record" id="title-record"></div>
+    <button class="mc-btn" ontouchstart="mk('w',1)" ontouchend="mk('w',0)">▲</button>
+    <button class="mc-btn steal" ontouchstart="mk('s',1)" ontouchend="mk('s',0)">STEAL</button>
+    <button class="mc-btn shoot" ontouchstart="mk(' ',1)" ontouchend="mk(' ',0)">SHOOT</button>
   </div>
 </div>
 
-<!-- Character Select -->
-<div class="overlay hidden" id="select-screen">
-  <div class="select-content">
-    <h2>Choose Your Archetype</h2>
-    <div class="archetype-grid" id="archetype-grid"></div>
-    <button class="btn btn-primary" id="start-btn" onclick="startGame()" style="opacity:0.4;pointer-events:none">Start Game</button>
-  </div>
-</div>
-
-<!-- Trivia -->
-<div class="overlay hidden" id="trivia-screen">
-  <div class="trivia-content">
-    <h3>Sustainability Challenge</h3>
-    <div id="trivia-question"></div>
-    <div class="trivia-options" id="trivia-options"></div>
-    <div id="trivia-result"></div>
-  </div>
-</div>
-
-<!-- Game Over -->
-<div class="overlay hidden" id="gameover-screen">
-  <div class="gameover-content">
-    <h2 id="gameover-title">Game Over</h2>
-    <div class="final-score" id="final-score">0 - 0</div>
-    <div class="stats-grid" id="stats-grid"></div>
-    <div class="facts-learned" id="facts-learned">
-      <h4>Sustainability Facts Learned</h4>
-    </div>
-    <div class="btn-group">
-      <button class="btn btn-primary" onclick="showScreen('select')">Play Again</button>
-      <button class="btn btn-secondary" onclick="showScreen('title')">Menu</button>
-    </div>
-    <div class="record" id="gameover-record"></div>
-  </div>
-</div>
-
-<!-- Touch Controls -->
-<div id="touch-controls">
-  <div class="touch-joystick" id="joystick">
-    <div class="knob" id="joystick-knob"></div>
-  </div>
-  <div class="touch-btn" id="btn-shoot">SHOOT</div>
-  <div class="touch-btn" id="btn-steal">STEAL</div>
-  <div class="touch-btn" id="btn-special">SPL</div>
-</div>
+<canvas id="c"></canvas>
 
 <script>
-// ==================== GAME ENGINE ====================
-const canvas = document.getElementById('court');
-const ctx = canvas.getContext('2d');
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+addEventListener('resize',resize);resize();
 
-// Archetypes
-const ARCHETYPES = [
-  {
-    id: 'shooter', icon: '\u{1F3C0}', name: 'Shooter',
-    desc: 'High 3-point accuracy, lower speed',
-    special: 'Green Shot',
-    specialDesc: 'Guaranteed 3-pointer',
-    stats: { speed: 2, shooting: 5, defense: 2, power: 2 },
-    color: '#34D399', color2: '#059669'
-  },
-  {
-    id: 'speedster', icon: '\u{1F4A8}', name: 'Speedster',
-    desc: 'Fast movement, good steals',
-    special: 'Eco Sprint',
-    specialDesc: 'Unstoppable drive to basket',
-    stats: { speed: 5, shooting: 3, defense: 2, power: 2 },
-    color: '#60A5FA', color2: '#2563EB'
-  },
-  {
-    id: 'defender', icon: '\u{1F6E1}\u{FE0F}', name: 'Defender',
-    desc: 'Great blocks, rebounds',
-    special: 'Recycled Wall',
-    specialDesc: 'Blocks everything for 5 sec',
-    stats: { speed: 2, shooting: 2, defense: 5, power: 3 },
-    color: '#A78BFA', color2: '#7C3AED'
-  },
-  {
-    id: 'dunker', icon: '\u{1F525}', name: 'Dunker',
-    desc: 'Powerful dunks, strong inside game',
-    special: 'Upcycle Slam',
-    specialDesc: 'Unblockable dunk',
-    stats: { speed: 3, shooting: 2, defense: 2, power: 5 },
-    color: '#F87171', color2: '#DC2626'
-  }
+// ══════════════════════════════════════
+// ARCHETYPES
+// ══════════════════════════════════════
+const ARCHETYPES=[
+  {id:'sharp',name:'Sharpshooter',icon:'🎯',role:'3PT Specialist',
+   speed:4,three:95,mid:85,dunk:30,steal:40,block:35,
+   color:'#3B82F6',desc:'Elite 3-point shooting, slow but deadly from range'},
+  {id:'slash',name:'Slasher',icon:'⚡',role:'Inside Scorer',
+   speed:6.5,three:45,mid:65,dunk:95,steal:55,block:45,
+   color:'#EF4444',desc:'Fast with monster dunks, weak from deep'},
+  {id:'lock',name:'Lockdown',icon:'🛡️',role:'Defensive Beast',
+   speed:5.5,three:55,mid:70,dunk:60,steal:95,block:85,
+   color:'#8B5CF6',desc:'Elite steals and blocks, balanced scoring'},
+  {id:'play',name:'Playmaker',icon:'🧠',role:'All-Around',
+   speed:5.5,three:72,mid:78,dunk:65,steal:65,block:50,
+   color:'#F59E0B',desc:'Jack of all trades, master of none — but consistent'}
 ];
 
-// Sustainability questions
-const QUESTIONS = [
-  { q: "How many litres of water does it take to make one cotton t-shirt?", a: "2,700", opts: ["500", "2,700", "10,000", "50"] },
-  { q: "What percentage of textiles end up in landfills globally?", a: "73%", opts: ["73%", "25%", "50%", "90%"] },
-  { q: "Which material takes the longest to decompose?", a: "Polyester", opts: ["Cotton", "Polyester", "Wool", "Silk"] },
-  { q: "What percentage of global carbon emissions come from fashion?", a: "10%", opts: ["2%", "5%", "10%", "25%"] },
-  { q: "On average, how many times is a garment worn before being discarded?", a: "7", opts: ["3", "7", "15", "25"] },
-  { q: "What does a circular economy prioritize?", a: "Reuse, repair, recycle", opts: ["Mass production", "Reuse, repair, recycle", "Cheaper materials", "Faster shipping"] },
-  { q: "How much textile waste is generated annually worldwide?", a: "92 million tonnes", opts: ["10 million tonnes", "92 million tonnes", "500 million tonnes", "1 billion tonnes"] },
-  { q: "What is upcycling?", a: "Transforming waste into higher-value products", opts: ["Throwing waste away", "Transforming waste into higher-value products", "Burning old clothes", "Exporting trash"] },
-  { q: "What is greenwashing?", a: "False sustainability claims", opts: ["Eco-friendly laundry", "False sustainability claims", "Green-dyed fabric", "Recycled packaging"] },
-  { q: "What year did the UAE host COP28?", a: "2023", opts: ["2021", "2022", "2023", "2024"] },
-  { q: "Which UAE city hosted COP28?", a: "Dubai", opts: ["Abu Dhabi", "Dubai", "Sharjah", "Doha"] },
-  { q: "What is fast fashion?", a: "Cheap, trendy clothing produced rapidly", opts: ["Luxury fashion", "Cheap, trendy clothing produced rapidly", "Athletic wear", "Vintage clothing"] },
-  { q: "How long does nylon take to decompose?", a: "30-40 years", opts: ["1-2 years", "5-10 years", "30-40 years", "200+ years"] },
-  { q: "What percentage of clothes can theoretically be recycled?", a: "Up to 95%", opts: ["Up to 30%", "Up to 50%", "Up to 95%", "100%"] },
-  { q: "Which fabric is considered most eco-friendly?", a: "Organic linen", opts: ["Polyester", "Nylon", "Organic linen", "Acrylic"] },
-  { q: "How many garments are produced globally each year?", a: "Over 100 billion", opts: ["10 billion", "50 billion", "Over 100 billion", "1 trillion"] },
-  { q: "What is the most recycled fabric worldwide?", a: "Polyester", opts: ["Cotton", "Polyester", "Wool", "Linen"] },
-  { q: "Which country exports the most used clothing?", a: "USA", opts: ["China", "USA", "India", "UK"] },
-  { q: "How much water can recycling one t-shirt save?", a: "Up to 2,700 litres", opts: ["100 litres", "Up to 2,700 litres", "500 litres", "50 litres"] },
-  { q: "What is the Higg Index?", a: "Tool measuring environmental impact of apparel", opts: ["Fashion trend tracker", "Tool measuring environmental impact of apparel", "Clothing size standard", "Fabric quality rating"] },
-];
-
-// Game state
-let G = {};
-let keys = {};
-let touchInput = { x: 0, y: 0, shoot: false, steal: false, special: false };
-let selectedArchetype = null;
-let gameRunning = false;
-let animFrame = null;
-let factsLearned = [];
-let usedQuestions = [];
-
-// Audio context
-let audioCtx = null;
-function initAudio() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-}
-function playSound(freq, dur, type='square', vol=0.1) {
-  if (!audioCtx) return;
-  try {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    gain.gain.value = vol;
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + dur);
-  } catch(e) {}
-}
-function sfxScore() { playSound(523, 0.1); setTimeout(() => playSound(659, 0.1), 100); setTimeout(() => playSound(784, 0.15), 200); }
-function sfxBounce() { playSound(200, 0.05, 'sine', 0.08); }
-function sfxShoot() { playSound(440, 0.08, 'sine', 0.06); }
-function sfxBlock() { playSound(150, 0.15, 'triangle', 0.12); }
-function sfxSteal() { playSound(330, 0.06, 'sine', 0.08); setTimeout(() => playSound(440, 0.06, 'sine', 0.08), 60); }
-function sfxSpecial() { playSound(523, 0.1, 'sine', 0.15); setTimeout(() => playSound(784, 0.1, 'sine', 0.15), 100); setTimeout(() => playSound(1047, 0.2, 'sine', 0.15), 200); }
-function sfxWhistle() { playSound(880, 0.3, 'sine', 0.1); setTimeout(() => playSound(660, 0.3, 'sine', 0.1), 300); }
-
-// localStorage record
-function getRecord() {
-  try { return JSON.parse(localStorage.getItem('ecohoops_record')) || { w: 0, l: 0 }; } catch { return { w: 0, l: 0 }; }
-}
-function saveRecord(won) {
-  const r = getRecord();
-  if (won) r.w++; else r.l++;
-  localStorage.setItem('ecohoops_record', JSON.stringify(r));
-}
-function showRecord(el) {
-  const r = getRecord();
-  el.textContent = `Record: ${r.w}W - ${r.l}L`;
-}
-
-// Screen management
-function showScreen(name) {
-  ['title-screen','select-screen','trivia-screen','gameover-screen'].forEach(id => {
-    document.getElementById(id).classList.add('hidden');
-  });
-  document.getElementById('hud').classList.remove('active');
-  document.getElementById('touch-controls').style.display = 'none';
-  document.getElementById('powerup-indicator').classList.remove('active');
-  document.getElementById('controls-hint').style.display = 'none';
-  gameRunning = false;
-  if (animFrame) cancelAnimationFrame(animFrame);
-
-  if (name === 'title') {
-    document.getElementById('title-screen').classList.remove('hidden');
-    showRecord(document.getElementById('title-record'));
-  } else if (name === 'select') {
-    document.getElementById('select-screen').classList.remove('hidden');
-    selectedArchetype = null;
-    const btn = document.getElementById('start-btn');
-    btn.style.opacity = '0.4';
-    btn.style.pointerEvents = 'none';
-    buildArchetypeGrid();
-  } else if (name === 'game') {
-    document.getElementById('hud').classList.add('active');
-    document.getElementById('controls-hint').style.display = '';
-    if ('ontouchstart' in window) document.getElementById('touch-controls').style.display = 'block';
-    gameRunning = true;
-    gameLoop();
-  } else if (name === 'trivia') {
-    document.getElementById('trivia-screen').classList.remove('hidden');
-  } else if (name === 'gameover') {
-    document.getElementById('gameover-screen').classList.remove('hidden');
-    showRecord(document.getElementById('gameover-record'));
-  }
-}
-
-// Build archetype cards
-function buildArchetypeGrid() {
-  const grid = document.getElementById('archetype-grid');
-  grid.innerHTML = '';
-  ARCHETYPES.forEach((a, i) => {
-    const card = document.createElement('div');
-    card.className = 'archetype-card';
-    card.onclick = () => selectArchetype(i);
-    const stars = (n) => '\u2605'.repeat(n) + '\u2606'.repeat(5 - n);
-    card.innerHTML = `
-      <div class="icon">${a.icon}</div>
-      <div class="name">${a.name}</div>
-      <div class="desc">${a.desc}</div>
-      <div class="special">${a.special}</div>
-      <div class="stat-row"><span class="label">Speed</span><span class="stars">${stars(a.stats.speed)}</span></div>
-      <div class="stat-row"><span class="label">Shooting</span><span class="stars">${stars(a.stats.shooting)}</span></div>
-      <div class="stat-row"><span class="label">Defense</span><span class="stars">${stars(a.stats.defense)}</span></div>
-      <div class="stat-row"><span class="label">Power</span><span class="stars">${stars(a.stats.power)}</span></div>
-    `;
-    grid.appendChild(card);
-  });
-}
-
-function selectArchetype(i) {
-  initAudio();
-  selectedArchetype = ARCHETYPES[i];
-  document.querySelectorAll('.archetype-card').forEach((c, j) => {
-    c.classList.toggle('selected', j === i);
-  });
-  const btn = document.getElementById('start-btn');
-  btn.style.opacity = '1';
-  btn.style.pointerEvents = 'auto';
-  playSound(440, 0.05, 'sine', 0.05);
-}
-
-// ==================== GAME INIT ====================
-function startGame() {
-  if (!selectedArchetype) return;
-  initAudio();
-  factsLearned = [];
-  usedQuestions = [];
-  resizeCanvas();
-
-  const W = canvas.width;
-  const H = canvas.height;
-  const courtFloor = H * 0.72;
-  const playerH = H * 0.12;
-  const playerW = playerH * 0.4;
-
-  // Pick AI archetype (different from player)
-  const aiPool = ARCHETYPES.filter(a => a.id !== selectedArchetype.id);
-  const aiArch = aiPool[Math.floor(Math.random() * aiPool.length)];
-
-  G = {
-    W, H,
-    courtFloor,
-    playerW, playerH,
-    // Court
-    hoopLeftX: W * 0.08,
-    hoopRightX: W * 0.92,
-    hoopY: courtFloor - H * 0.28,
-    hoopW: W * 0.04,
-    rimRadius: W * 0.025,
-    backboardH: H * 0.15,
-    // Player
-    p1: {
-      x: W * 0.3, y: courtFloor,
-      vx: 0, vy: 0,
-      arch: selectedArchetype,
-      hasBall: true,
-      shooting: false,
-      shootTimer: 0,
-      dunking: false,
-      dunkTimer: 0,
-      facing: 1,
-      animFrame: 0,
-      animTimer: 0,
-      stunTimer: 0,
-      specialActive: false,
-      specialTimer: 0,
-    },
-    // AI
-    p2: {
-      x: W * 0.7, y: courtFloor,
-      vx: 0, vy: 0,
-      arch: aiArch,
-      hasBall: false,
-      shooting: false,
-      shootTimer: 0,
-      dunking: false,
-      dunkTimer: 0,
-      facing: -1,
-      animFrame: 0,
-      animTimer: 0,
-      stunTimer: 0,
-      specialActive: false,
-      specialTimer: 0,
-    },
-    // Ball
-    ball: {
-      x: W * 0.3, y: courtFloor - playerH * 0.4,
-      vx: 0, vy: 0,
-      holder: 'p1', // 'p1', 'p2', 'free', 'air'
-      airTimer: 0,
-      targetX: 0, targetY: 0,
-      scored: false,
-      bounceCount: 0,
-    },
-    // Scores
-    score1: 0,
-    score2: 0,
-    targetScore: 7,
-    round: 1,
-    maxRounds: 5,
-    roundTime: 120, // seconds
-    roundTimer: 120,
-    // Possession
-    offense: 'p1', // who's on offense
-    resetTimer: 0,
-    // Special meter
-    specialMeter: 0,
-    specialMax: 100,
-    // AI
-    aiDifficulty: 0.3,
-    aiDecisionTimer: 0,
-    aiTarget: { x: 0, y: 0 },
-    // Powerups
-    powerup: null,
-    powerupTimer: 0,
-    // Particles
-    particles: [],
-    // Messages
-    message: '',
-    messageTimer: 0,
-    // Shot clock
-    shotClock: 24,
-    // Game flags
-    paused: false,
-    gameOver: false,
-    roundOver: false,
-    roundScores: [],
-    // Stats
-    stats: { shots: 0, makes: 0, steals: 0, blocks: 0, dunks: 0, threes: 0, specials: 0, triviaCorrect: 0, triviaTotal: 0 },
-  };
-
-  document.getElementById('p1-name').textContent = selectedArchetype.name.toUpperCase();
-  document.getElementById('p2-name').textContent = aiArch.name.toUpperCase();
-
-  updateHUD();
-  showScreen('game');
-}
-
-function resizeCanvas() {
-  const container = document.getElementById('game-container');
-  const maxW = container.clientWidth;
-  const maxH = container.clientHeight;
-  const ratio = 16 / 9;
-  let w = maxW;
-  let h = w / ratio;
-  if (h > maxH) { h = maxH; w = h * ratio; }
-  canvas.width = Math.floor(w);
-  canvas.height = Math.floor(h);
-}
-
-window.addEventListener('resize', () => {
-  if (gameRunning) {
-    const oldW = G.W;
-    const oldH = G.H;
-    resizeCanvas();
-    const scaleX = canvas.width / oldW;
-    const scaleY = canvas.height / oldH;
-    G.W = canvas.width;
-    G.H = canvas.height;
-    G.courtFloor = G.H * 0.72;
-    G.playerH = G.H * 0.12;
-    G.playerW = G.playerH * 0.4;
-    G.hoopLeftX = G.W * 0.08;
-    G.hoopRightX = G.W * 0.92;
-    G.hoopY = G.courtFloor - G.H * 0.28;
-    G.hoopW = G.W * 0.04;
-    G.rimRadius = G.W * 0.025;
-    G.backboardH = G.H * 0.15;
-    G.p1.x *= scaleX;
-    G.p1.y = G.courtFloor;
-    G.p2.x *= scaleX;
-    G.p2.y = G.courtFloor;
-    if (G.ball.holder === 'free' || G.ball.holder === 'air') {
-      G.ball.x *= scaleX;
-      G.ball.y *= scaleY;
-    }
-  }
-});
-
-// ==================== INPUT ====================
-document.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; e.preventDefault(); });
-document.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
-
-// Touch joystick
-(function() {
-  const joystick = document.getElementById('joystick');
-  const knob = document.getElementById('joystick-knob');
-  let joyActive = false;
-  let joyCenter = { x: 0, y: 0 };
-
-  function startJoy(e) {
-    joyActive = true;
-    const r = joystick.getBoundingClientRect();
-    joyCenter = { x: r.left + r.width/2, y: r.top + r.height/2 };
-    moveJoy(e);
-  }
-  function moveJoy(e) {
-    if (!joyActive) return;
-    const t = e.touches ? e.touches[0] : e;
-    let dx = t.clientX - joyCenter.x;
-    let dy = t.clientY - joyCenter.y;
-    const maxR = 40;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    if (dist > maxR) { dx = dx/dist*maxR; dy = dy/dist*maxR; }
-    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-    touchInput.x = dx / maxR;
-    touchInput.y = dy / maxR;
-  }
-  function endJoy() {
-    joyActive = false;
-    knob.style.transform = 'translate(-50%, -50%)';
-    touchInput.x = 0;
-    touchInput.y = 0;
-  }
-
-  joystick.addEventListener('touchstart', startJoy, { passive: true });
-  joystick.addEventListener('touchmove', moveJoy, { passive: true });
-  joystick.addEventListener('touchend', endJoy);
-  joystick.addEventListener('touchcancel', endJoy);
-
-  // Touch buttons
-  const shootBtn = document.getElementById('btn-shoot');
-  const stealBtn = document.getElementById('btn-steal');
-  const specialBtn = document.getElementById('btn-special');
-
-  shootBtn.addEventListener('touchstart', () => { touchInput.shoot = true; initAudio(); }, { passive: true });
-  shootBtn.addEventListener('touchend', () => { touchInput.shoot = false; });
-  stealBtn.addEventListener('touchstart', () => { touchInput.steal = true; }, { passive: true });
-  stealBtn.addEventListener('touchend', () => { touchInput.steal = false; });
-  specialBtn.addEventListener('touchstart', () => { touchInput.special = true; }, { passive: true });
-  specialBtn.addEventListener('touchend', () => { touchInput.special = false; });
-})();
-
-function getInput() {
-  let mx = 0;
-  if (keys['arrowleft'] || keys['a']) mx -= 1;
-  if (keys['arrowright'] || keys['d']) mx += 1;
-  if (touchInput.x !== 0) mx = touchInput.x;
-
-  const shoot = keys[' '] || keys['arrowup'] || keys['w'] || touchInput.shoot;
-  const steal = keys['arrowdown'] || keys['s'] || touchInput.steal;
-  const special = keys['q'] || touchInput.special;
-
-  return { mx, shoot, steal, special };
-}
-
-// ==================== UPDATE ====================
-let lastTime = 0;
-function gameLoop(timestamp) {
-  if (!gameRunning) return;
-  if (!lastTime) lastTime = timestamp;
-  const rawDt = (timestamp - lastTime) / 1000;
-  const dt = Math.min(rawDt, 0.05);
-  lastTime = timestamp;
-
-  if (!G.paused && !G.gameOver && !G.roundOver) {
-    update(dt);
-  }
-  render();
-  animFrame = requestAnimationFrame(gameLoop);
-}
-
-function update(dt) {
-  const { W, H, courtFloor, playerW, playerH } = G;
-  const p1 = G.p1;
-  const p2 = G.p2;
-  const ball = G.ball;
-
-  // Timer
-  G.roundTimer -= dt;
-  if (G.roundTimer <= 0) {
-    G.roundTimer = 0;
-    endRound();
-    return;
-  }
-
-  // Shot clock
-  G.shotClock -= dt;
-  if (G.shotClock <= 0) {
-    // Turnover
-    G.shotClock = 24;
-    switchPossession();
-    showMessage('SHOT CLOCK!');
-    return;
-  }
-
-  // Reset timer after score
-  if (G.resetTimer > 0) {
-    G.resetTimer -= dt;
-    if (G.resetTimer <= 0) {
-      resetAfterScore();
-    }
-    updateParticles(dt);
-    return;
-  }
-
-  // Message timer
-  if (G.messageTimer > 0) G.messageTimer -= dt;
-
-  // Powerup timer
-  if (G.powerupTimer > 0) {
-    G.powerupTimer -= dt;
-    if (G.powerupTimer <= 0) {
-      G.powerup = null;
-      document.getElementById('powerup-indicator').classList.remove('active');
-    }
-  }
-
-  // Special timers
-  if (p1.specialTimer > 0) {
-    p1.specialTimer -= dt;
-    if (p1.specialTimer <= 0) p1.specialActive = false;
-  }
-  if (p2.specialTimer > 0) {
-    p2.specialTimer -= dt;
-    if (p2.specialTimer <= 0) p2.specialActive = false;
-  }
-
-  // Stun timers
-  if (p1.stunTimer > 0) p1.stunTimer -= dt;
-  if (p2.stunTimer > 0) p2.stunTimer -= dt;
-
-  // -- Player 1 movement --
-  const input = getInput();
-  const baseSpeed = W * 0.004;
-  let p1Speed = baseSpeed * (0.6 + p1.arch.stats.speed * 0.16);
-  if (G.powerup === 'speed') p1Speed *= 1.5;
-  if (p1.specialActive && p1.arch.id === 'speedster') p1Speed *= 2;
-
-  if (p1.stunTimer <= 0 && !p1.shooting && !p1.dunking) {
-    p1.vx = input.mx * p1Speed;
-    p1.x += p1.vx;
-    if (input.mx !== 0) p1.facing = input.mx > 0 ? 1 : -1;
-  }
-
-  // Player animation
-  if (Math.abs(p1.vx) > 0.5) {
-    p1.animTimer += dt;
-    if (p1.animTimer > 0.15) { p1.animTimer = 0; p1.animFrame = (p1.animFrame + 1) % 4; }
-  } else {
-    p1.animFrame = 0;
-  }
-
-  // Clamp player positions
-  p1.x = Math.max(playerW, Math.min(W - playerW, p1.x));
-  p1.y = courtFloor;
-
-  // -- Shooting --
-  if (input.shoot && !p1.shooting && !p1.dunking && ball.holder === 'p1' && p1.stunTimer <= 0) {
-    const hoopX = G.offense === 'p1' ? G.hoopRightX : G.hoopLeftX;
-    const distToHoop = Math.abs(p1.x - hoopX);
-
-    // Check for dunk
-    if (distToHoop < W * 0.08 && p1.arch.stats.power >= 3) {
-      startDunk(p1, 'p1', hoopX);
-    } else if (distToHoop < W * 0.5) {
-      startShot(p1, 'p1', hoopX, distToHoop);
-    }
-  }
-
-  // Special move
-  if (input.special && G.specialMeter >= G.specialMax && !p1.specialActive && p1.stunTimer <= 0) {
-    activateSpecial(p1, 'p1');
-  }
-
-  // Steal attempt
-  if (input.steal && ball.holder === 'p2' && p1.stunTimer <= 0) {
-    const dist = Math.abs(p1.x - p2.x);
-    if (dist < playerW * 3) {
-      attemptSteal(p1, p2, 'p1');
-    }
-  }
-
-  // -- Shot animation --
-  if (p1.shooting) {
-    p1.shootTimer -= dt;
-    if (p1.shootTimer <= 0) {
-      p1.shooting = false;
-    }
-  }
-  if (p1.dunking) {
-    p1.dunkTimer -= dt;
-    if (p1.dunkTimer <= 0) {
-      p1.dunking = false;
-      p1.y = courtFloor;
-    } else {
-      // Move toward hoop during dunk
-      const hoopX = G.offense === 'p1' ? G.hoopRightX : G.hoopLeftX;
-      p1.x += (hoopX - p1.x) * 0.15;
-      p1.y = courtFloor - Math.sin(p1.dunkTimer / 0.6 * Math.PI) * playerH * 1.5;
-    }
-  }
-
-  // -- AI movement --
-  updateAI(dt);
-
-  // AI animation
-  if (Math.abs(p2.vx) > 0.5) {
-    p2.animTimer += dt;
-    if (p2.animTimer > 0.15) { p2.animTimer = 0; p2.animFrame = (p2.animFrame + 1) % 4; }
-  } else {
-    p2.animFrame = 0;
-  }
-
-  if (p2.shooting) {
-    p2.shootTimer -= dt;
-    if (p2.shootTimer <= 0) p2.shooting = false;
-  }
-  if (p2.dunking) {
-    p2.dunkTimer -= dt;
-    if (p2.dunkTimer <= 0) {
-      p2.dunking = false;
-      p2.y = courtFloor;
-    } else {
-      const hoopX = G.offense === 'p2' ? G.hoopLeftX : G.hoopRightX;
-      p2.x += (hoopX - p2.x) * 0.15;
-      p2.y = courtFloor - Math.sin(p2.dunkTimer / 0.6 * Math.PI) * playerH * 1.5;
-    }
-  }
-
-  p2.x = Math.max(playerW, Math.min(W - playerW, p2.x));
-
-  // -- Ball physics --
-  if (ball.holder === 'p1') {
-    ball.x = p1.x + p1.facing * playerW * 0.5;
-    ball.y = p1.y - playerH * 0.4;
-  } else if (ball.holder === 'p2') {
-    ball.x = p2.x + p2.facing * playerW * 0.5;
-    ball.y = p2.y - playerH * 0.4;
-  } else if (ball.holder === 'air') {
-    ball.airTimer -= dt;
-    // Animate ball in arc
-    const progress = 1 - ball.airTimer / ball.totalAirTime;
-    ball.x = ball.startX + (ball.targetX - ball.startX) * progress;
-    ball.y = ball.startY + (ball.targetY - ball.startY) * progress - Math.sin(progress * Math.PI) * G.H * 0.25;
-    ball.rotation = (ball.rotation || 0) + dt * 10;
-
-    if (ball.airTimer <= 0) {
-      // Check if scored
-      const hoopX = ball.targetIsLeftHoop ? G.hoopLeftX : G.hoopRightX;
-      if (ball.willScore) {
-        scoreBucket(ball.scorer, ball.points);
-      } else {
-        // Miss - ball bounces
-        ball.holder = 'free';
-        ball.vy = -2;
-        ball.vx = (Math.random() - 0.5) * 3;
-        showMessage('MISS!');
-      }
-    }
-  } else if (ball.holder === 'free') {
-    ball.vy += 15 * dt; // gravity
-    ball.x += ball.vx * W * 0.003;
-    ball.y += ball.vy;
-    // Bounce on floor
-    if (ball.y > courtFloor - 5) {
-      ball.y = courtFloor - 5;
-      ball.vy *= -0.5;
-      ball.vx *= 0.8;
-      ball.bounceCount++;
-      sfxBounce();
-      if (ball.bounceCount > 3) {
-        // Give to offensive team
-        if (G.offense === 'p1') {
-          ball.holder = 'p1';
-          p1.hasBall = true;
-        } else {
-          ball.holder = 'p2';
-          p2.hasBall = true;
-        }
-        ball.bounceCount = 0;
-      }
-    }
-    // Wall bounce
-    if (ball.x < 10 || ball.x > W - 10) ball.vx *= -1;
-
-    // Pickup
-    const d1 = Math.sqrt((ball.x - p1.x)**2 + (ball.y - (p1.y - playerH*0.5))**2);
-    const d2 = Math.sqrt((ball.x - p2.x)**2 + (ball.y - (p2.y - playerH*0.5))**2);
-    if (d1 < playerW * 2 && d1 < d2) {
-      ball.holder = 'p1'; p1.hasBall = true; p2.hasBall = false;
-      ball.bounceCount = 0;
-      if (G.offense !== 'p1') { G.offense = 'p1'; G.shotClock = 24; }
-    } else if (d2 < playerW * 2) {
-      ball.holder = 'p2'; p2.hasBall = true; p1.hasBall = false;
-      ball.bounceCount = 0;
-      if (G.offense !== 'p2') { G.offense = 'p2'; G.shotClock = 24; }
-    }
-  }
-
-  // -- Block check for shots in air --
-  if (ball.holder === 'air' && !ball.scored) {
-    // Defender can block
-    const defender = ball.scorer === 'p1' ? p2 : p1;
-    const defName = ball.scorer === 'p1' ? 'p2' : 'p1';
-    const dist = Math.sqrt((ball.x - defender.x)**2 + (ball.y - (defender.y - playerH))**2);
-    if (dist < playerW * 2.5 && ball.airTimer > ball.totalAirTime * 0.3) {
-      // Block chance
-      const blockChance = defender.arch.stats.defense * 0.08;
-      const isDefSpecial = defender.specialActive && defender.arch.id === 'defender';
-      if (isDefSpecial || Math.random() < blockChance) {
-        ball.holder = 'free';
-        ball.vy = -3;
-        ball.vx = (ball.scorer === 'p1' ? -1 : 1) * 3;
-        showMessage('BLOCKED!');
-        sfxBlock();
-        if (defName === 'p1') {
-          G.stats.blocks++;
-          addSpecialMeter(10);
-        }
-        spawnParticles(ball.x, ball.y, defender.arch.color, 12);
-      }
-    }
-  }
-
-  // Update particles
-  updateParticles(dt);
-
-  // Update HUD
-  updateHUD();
-
-  // Check win
-  if (G.score1 >= G.targetScore || G.score2 >= G.targetScore) {
-    endRound();
-  }
-}
-
-function updateAI(dt) {
-  const { W, H, courtFloor, playerW, playerH } = G;
-  const p1 = G.p1;
-  const p2 = G.p2;
-  const ball = G.ball;
-
-  if (p2.stunTimer > 0 || p2.shooting || p2.dunking) return;
-
-  G.aiDecisionTimer -= dt;
-  if (G.aiDecisionTimer > 0) {
-    // Move toward target
-    const diff = G.aiTarget.x - p2.x;
-    let aiSpeed = W * 0.003 * (0.6 + p2.arch.stats.speed * 0.14) * (0.5 + G.aiDifficulty * 0.8);
-    if (p2.specialActive && p2.arch.id === 'speedster') aiSpeed *= 1.8;
-
-    if (Math.abs(diff) > 5) {
-      p2.vx = Math.sign(diff) * aiSpeed;
-      p2.x += p2.vx;
-      p2.facing = Math.sign(diff);
-    } else {
-      p2.vx = 0;
-    }
-    return;
-  }
-
-  // Make new decision
-  G.aiDecisionTimer = 0.2 + Math.random() * 0.4 * (1.2 - G.aiDifficulty);
-
-  if (G.offense === 'p2' && ball.holder === 'p2') {
-    // AI on offense
-    const hoopX = G.hoopLeftX;
-    const distToHoop = Math.abs(p2.x - hoopX);
-
-    // Check for dunk opportunity
-    if (distToHoop < W * 0.08 && p2.arch.stats.power >= 3) {
-      if (Math.random() < 0.6 + G.aiDifficulty * 0.3) {
-        startDunk(p2, 'p2', hoopX);
-        return;
-      }
-    }
-
-    // Check for shot
-    if (distToHoop < W * 0.35 && Math.random() < 0.15 + G.aiDifficulty * 0.2) {
-      startShot(p2, 'p2', hoopX, distToHoop);
-      return;
-    }
-
-    // Special move
-    if (p2.arch.id === 'shooter' && p2.specialActive) {
-      if (distToHoop < W * 0.4) {
-        startShot(p2, 'p2', hoopX, distToHoop);
-        return;
-      }
-    }
-
-    // Drive toward hoop
-    G.aiTarget.x = hoopX + W * 0.05 + Math.random() * W * 0.15;
-
-    // Try to avoid defender
-    const dist = Math.abs(p1.x - p2.x);
-    if (dist < playerW * 4) {
-      // Juke
-      if (Math.random() < 0.3) {
-        G.aiTarget.x = p2.x + (Math.random() > 0.5 ? 1 : -1) * W * 0.1;
-      }
-    }
-  } else if (G.offense === 'p1') {
-    // AI on defense
-    if (ball.holder === 'p1') {
-      // Shadow the player between them and the hoop
-      const hoopX = G.hoopRightX;
-      G.aiTarget.x = p1.x + (hoopX - p1.x) * 0.3;
-
-      // Steal attempt
-      const dist = Math.abs(p1.x - p2.x);
-      if (dist < playerW * 3.5 && Math.random() < 0.05 + G.aiDifficulty * 0.1) {
-        attemptSteal(p2, p1, 'p2');
-      }
-    } else if (ball.holder === 'free') {
-      G.aiTarget.x = ball.x;
-    } else {
-      G.aiTarget.x = W * 0.5;
-    }
-  } else if (ball.holder === 'free') {
-    G.aiTarget.x = ball.x;
-  } else {
-    // Idle
-    G.aiTarget.x = G.offense === 'p2' ? W * 0.35 : W * 0.65;
-  }
-
-  // AI special activation
-  if (G.round > 1 && Math.random() < G.aiDifficulty * 0.02 && !p2.specialActive) {
-    if ((G.offense === 'p2' && ball.holder === 'p2') || (G.offense === 'p1' && p2.arch.id === 'defender')) {
-      activateSpecial(p2, 'p2');
-    }
-  }
-}
-
-function startShot(player, who, hoopX, distToHoop) {
-  player.shooting = true;
-  player.shootTimer = 0.4;
-  player.hasBall = false;
-  G.stats.shots++;
-  sfxShoot();
-
-  const ball = G.ball;
-  ball.holder = 'air';
-  ball.startX = ball.x;
-  ball.startY = ball.y;
-  ball.targetX = hoopX;
-  ball.targetY = G.hoopY;
-  ball.scorer = who;
-  ball.rotation = 0;
-
-  const isThree = distToHoop > G.W * 0.25;
-  ball.points = isThree ? 3 : 2;
-
-  // Calculate success chance
-  let chance = 0.5;
-  chance += player.arch.stats.shooting * 0.08; // +0 to +0.40
-  chance -= (distToHoop / G.W) * 0.5; // distance penalty
-  if (G.powerup === 'hothand' && who === 'p1') chance += 0.25;
-  if (player.specialActive && player.arch.id === 'shooter') chance = 1.0; // guaranteed
-  chance = Math.max(0.1, Math.min(0.95, chance));
-
-  ball.willScore = Math.random() < chance;
-  ball.totalAirTime = 0.6 + distToHoop / G.W * 0.5;
-  ball.airTimer = ball.totalAirTime;
-
-  if (isThree) showMessage('THREE!');
-}
-
-function startDunk(player, who, hoopX) {
-  player.dunking = true;
-  player.dunkTimer = 0.6;
-  player.hasBall = false;
-  G.stats.shots++;
-  sfxShoot();
-
-  const ball = G.ball;
-  const isDunkerSpecial = player.specialActive && player.arch.id === 'dunker';
-
-  // Dunk success
-  let chance = 0.7 + player.arch.stats.power * 0.06;
-  if (isDunkerSpecial) chance = 1.0;
-  const willScore = Math.random() < chance;
-
-  ball.holder = 'air';
-  ball.startX = ball.x;
-  ball.startY = ball.y;
-  ball.targetX = hoopX;
-  ball.targetY = G.hoopY;
-  ball.scorer = who;
-  ball.points = 2;
-  ball.willScore = willScore;
-  ball.totalAirTime = 0.55;
-  ball.airTimer = 0.55;
-  ball.rotation = 0;
-
-  if (who === 'p1') G.stats.dunks++;
-  showMessage('DUNK!');
-}
-
-function attemptSteal(stealer, target, who) {
-  const stealChance = 0.15 + stealer.arch.stats.defense * 0.04 + (stealer.arch.id === 'speedster' ? 0.1 : 0);
-  if (Math.random() < stealChance) {
-    G.ball.holder = who;
-    stealer.hasBall = true;
-    target.hasBall = false;
-    G.offense = who;
-    G.shotClock = 24;
-    sfxSteal();
-    showMessage('STEAL!');
-    if (who === 'p1') {
-      G.stats.steals++;
-      addSpecialMeter(15);
-    }
-    target.stunTimer = 0.5;
-    spawnParticles(target.x, target.y - G.playerH * 0.5, '#EAB308', 8);
-  } else {
-    stealer.stunTimer = 0.3;
-  }
-}
-
-function activateSpecial(player, who) {
-  if (who === 'p1' && G.specialMeter < G.specialMax) return;
-  player.specialActive = true;
-  sfxSpecial();
-  G.stats.specials++;
-
-  if (player.arch.id === 'shooter') {
-    player.specialTimer = 5;
-    showMessage('GREEN SHOT!');
-  } else if (player.arch.id === 'speedster') {
-    player.specialTimer = 4;
-    showMessage('ECO SPRINT!');
-  } else if (player.arch.id === 'defender') {
-    player.specialTimer = 5;
-    showMessage('RECYCLED WALL!');
-  } else if (player.arch.id === 'dunker') {
-    player.specialTimer = 4;
-    showMessage('UPCYCLE SLAM!');
-  }
-
-  if (who === 'p1') G.specialMeter = 0;
-  spawnParticles(player.x, player.y - G.playerH, player.arch.color, 25);
-}
-
-function scoreBucket(who, pts) {
-  if (who === 'p1') {
-    G.score1 += pts;
-    G.stats.makes++;
-    if (pts === 3) G.stats.threes++;
-    addSpecialMeter(pts * 8);
-  } else {
-    G.score2 += pts;
-  }
-  sfxScore();
-  G.ball.scored = true;
-  G.ball.holder = 'free';
-  G.ball.vy = 2;
-  G.ball.vx = 0;
-  G.resetTimer = 1.5;
-  showMessage(pts === 3 ? 'THREE POINTER!' : 'SCORE!');
-
-  const hoopX = who === 'p1' ? G.hoopRightX : G.hoopLeftX;
-  spawnParticles(hoopX, G.hoopY, who === 'p1' ? '#34D399' : '#F87171', 20);
-}
-
-function switchPossession() {
-  G.offense = G.offense === 'p1' ? 'p2' : 'p1';
-  G.shotClock = 24;
-  resetPositions();
-}
-
-function resetAfterScore() {
-  // Switch possession to the team that was scored ON
-  G.offense = G.ball.scorer === 'p1' ? 'p2' : 'p1';
-  G.shotClock = 24;
-  resetPositions();
-  G.ball.scored = false;
-
-  // Check if score triggers trivia
-  const totalScore = G.score1 + G.score2;
-  if (totalScore > 0 && totalScore % 3 === 0) {
-    showTrivia();
-  }
-}
-
-function resetPositions() {
-  const { W, courtFloor } = G;
-  if (G.offense === 'p1') {
-    G.p1.x = W * 0.3;
-    G.p2.x = W * 0.65;
-    G.ball.holder = 'p1';
-    G.p1.hasBall = true;
-    G.p2.hasBall = false;
-  } else {
-    G.p2.x = W * 0.7;
-    G.p1.x = W * 0.35;
-    G.ball.holder = 'p2';
-    G.p2.hasBall = true;
-    G.p1.hasBall = false;
-  }
-  G.p1.y = courtFloor;
-  G.p2.y = courtFloor;
-  G.p1.shooting = false;
-  G.p1.dunking = false;
-  G.p2.shooting = false;
-  G.p2.dunking = false;
-  G.ball.bounceCount = 0;
-}
-
-function addSpecialMeter(amt) {
-  G.specialMeter = Math.min(G.specialMax, G.specialMeter + amt);
-}
-
-function showMessage(msg) {
-  G.message = msg;
-  G.messageTimer = 1.5;
-}
-
-function spawnParticles(x, y, color, count) {
-  for (let i = 0; i < count; i++) {
-    G.particles.push({
-      x, y,
-      vx: (Math.random() - 0.5) * 8,
-      vy: (Math.random() - 1) * 6,
-      life: 0.5 + Math.random() * 0.5,
-      maxLife: 1,
-      size: 2 + Math.random() * 4,
-      color,
-    });
-  }
-}
-
-function updateParticles(dt) {
-  for (let i = G.particles.length - 1; i >= 0; i--) {
-    const p = G.particles[i];
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 8 * dt;
-    p.life -= dt;
-    if (p.life <= 0) G.particles.splice(i, 1);
-  }
-}
-
-function endRound() {
-  G.roundOver = true;
-  sfxWhistle();
-  G.roundScores.push({ s1: G.score1, s2: G.score2 });
-
-  // Check if game is over
-  if (G.score1 >= G.targetScore || G.score2 >= G.targetScore || G.round >= G.maxRounds) {
-    endGame();
-  } else {
-    // Show trivia then start next round
-    G.round++;
-    G.aiDifficulty = Math.min(0.9, G.aiDifficulty + 0.12);
-    showTrivia(() => {
-      G.roundOver = false;
-      G.roundTimer = G.roundTime;
-      G.shotClock = 24;
-      G.score1 = 0;
-      G.score2 = 0;
-      resetPositions();
-      showScreen('game');
-    });
-    return;
-  }
-}
-
-function endGame() {
-  const won = G.score1 > G.score2;
-  saveRecord(won);
-
-  document.getElementById('gameover-title').textContent = won ? 'Victory!' : 'Defeat';
-  document.getElementById('gameover-title').style.color = won ? 'var(--green-400)' : '#F87171';
-  document.getElementById('final-score').textContent = `${G.score1} - ${G.score2}`;
-
-  const sg = document.getElementById('stats-grid');
-  sg.innerHTML = `
-    <div class="stat-box"><div class="val">${G.stats.makes}/${G.stats.shots}</div><div class="lbl">FG Made</div></div>
-    <div class="stat-box"><div class="val">${G.stats.threes}</div><div class="lbl">3-Pointers</div></div>
-    <div class="stat-box"><div class="val">${G.stats.steals}</div><div class="lbl">Steals</div></div>
-    <div class="stat-box"><div class="val">${G.stats.blocks}</div><div class="lbl">Blocks</div></div>
-    <div class="stat-box"><div class="val">${G.stats.dunks}</div><div class="lbl">Dunks</div></div>
-    <div class="stat-box"><div class="val">${G.stats.triviaCorrect}/${G.stats.triviaTotal}</div><div class="lbl">Trivia</div></div>
-  `;
-
-  const fl = document.getElementById('facts-learned');
-  fl.innerHTML = '<h4>Sustainability Facts Learned</h4>';
-  if (factsLearned.length === 0) {
-    fl.innerHTML += '<p>No trivia questions answered yet!</p>';
-  } else {
-    factsLearned.forEach(f => {
-      fl.innerHTML += `<p>- ${f}</p>`;
-    });
-  }
-
-  gameRunning = false;
-  showScreen('gameover');
-}
-
-// ==================== TRIVIA ====================
-let triviaCallback = null;
-function showTrivia(cb) {
-  triviaCallback = cb || (() => { G.roundOver = false; showScreen('game'); });
-  G.paused = true;
-
-  // Pick unused question
-  let available = QUESTIONS.filter((_, i) => !usedQuestions.includes(i));
-  if (available.length === 0) { usedQuestions = []; available = QUESTIONS; }
-  const qi = QUESTIONS.indexOf(available[Math.floor(Math.random() * available.length)]);
-  usedQuestions.push(qi);
-  const q = QUESTIONS[qi];
-
-  document.getElementById('trivia-question').textContent = q.q;
-  document.getElementById('trivia-result').textContent = '';
-
-  const optsEl = document.getElementById('trivia-options');
-  // Shuffle options
-  const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
-  optsEl.innerHTML = '';
-  shuffled.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'trivia-option';
-    btn.textContent = opt;
-    btn.onclick = () => answerTrivia(opt, q.a, btn, optsEl);
-    optsEl.appendChild(btn);
-  });
-
-  showScreen('trivia');
-  // Keep game HUD visible
-  document.getElementById('hud').classList.add('active');
-}
-
-function answerTrivia(chosen, correct, btn, container) {
-  G.stats.triviaTotal++;
-  const isCorrect = chosen === correct;
-
-  // Disable all buttons
-  container.querySelectorAll('.trivia-option').forEach(b => {
-    b.style.pointerEvents = 'none';
-    if (b.textContent === correct) b.classList.add('correct');
-  });
-
-  if (isCorrect) {
-    btn.classList.add('correct');
-    G.stats.triviaCorrect++;
-    // Give random powerup
-    const powerups = [
-      { id: 'speed', name: 'Speed Boost', icon: '\u26A1', duration: 30 },
-      { id: 'hothand', name: 'Hot Hand', icon: '\u{1F3AF}', duration: 30 },
-      { id: 'ironwall', name: 'Iron Wall', icon: '\u{1F6E1}\u{FE0F}', duration: 30 },
-      { id: 'specialcharge', name: 'Special Charge', icon: '\u2B50' },
+let selectedArch=null;
+
+function renderArchetypes(){
+  const grid=document.getElementById('archGrid');
+  grid.innerHTML=ARCHETYPES.map((a,i)=>{
+    const stats=[
+      {l:'SPD',v:a.speed/7*100,c:'#34D399'},
+      {l:'3PT',v:a.three,c:'#3B82F6'},
+      {l:'DNK',v:a.dunk,c:'#EF4444'},
+      {l:'STL',v:a.steal,c:'#F59E0B'},
     ];
-    const pu = powerups[Math.floor(Math.random() * powerups.length)];
+    return `<div class="arch-card" data-idx="${i}" onclick="selectArch(${i})">
+      <div class="arch-icon">${a.icon}</div>
+      <div class="arch-name">${a.name}</div>
+      <div class="arch-role">${a.role}</div>
+      <div class="arch-stats">${stats.map(s=>`
+        <div class="stat-row">
+          <span class="stat-label">${s.l}</span>
+          <div class="stat-bar-bg"><div class="stat-bar" style="width:${s.v}%;background:${s.c}"></div></div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+renderArchetypes();
 
-    if (pu.id === 'specialcharge') {
-      G.specialMeter = G.specialMax;
-      document.getElementById('trivia-result').innerHTML = `<span style="color:var(--green-400)">Correct! ${pu.icon} ${pu.name} - Special meter fully charged!</span>`;
-    } else {
-      G.powerup = pu.id;
-      G.powerupTimer = pu.duration;
-      const indicator = document.getElementById('powerup-indicator');
-      indicator.textContent = `${pu.icon} ${pu.name} (${pu.duration}s)`;
-      indicator.classList.add('active');
-      document.getElementById('trivia-result').innerHTML = `<span style="color:var(--green-400)">Correct! ${pu.icon} ${pu.name} for ${pu.duration}s!</span>`;
-    }
-    if (pu.id === 'ironwall') {
-      G.p1.arch.stats.defense = Math.min(5, G.p1.arch.stats.defense + 2);
-    }
-  } else {
-    btn.classList.add('wrong');
-    G.score2 += 1; // Free throw for opponent
-    document.getElementById('trivia-result').innerHTML = `<span style="color:#F87171">Wrong! The answer is "${correct}". Opponent gets a free throw!</span>`;
-  }
-
-  // Add to facts learned
-  const qi = QUESTIONS.findIndex(qq => qq.a === correct);
-  if (qi >= 0) factsLearned.push(`${QUESTIONS[qi].q} \u2192 ${correct}`);
-
-  playSound(isCorrect ? 523 : 220, 0.2, 'sine', 0.1);
-
-  setTimeout(() => {
-    G.paused = false;
-    if (triviaCallback) triviaCallback();
-  }, 2000);
+function selectArch(i){
+  selectedArch=ARCHETYPES[i];
+  document.querySelectorAll('.arch-card').forEach((c,j)=>c.classList.toggle('selected',j===i));
+  const btn=document.getElementById('playBtn');
+  btn.disabled=false;
+  btn.textContent='Play Now';
 }
 
-// ==================== HUD ====================
-function updateHUD() {
-  document.getElementById('p1-score').textContent = G.score1;
-  document.getElementById('p2-score').textContent = G.score2;
+// ══════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════
+const G=0.5,GAME_TIME=60,TRIVIA_EVERY=4;
+const THREE_LINE_RATIO=0.42; // 3pt line at 42% from hoop
 
-  const mins = Math.floor(G.roundTimer / 60);
-  const secs = Math.floor(G.roundTimer % 60);
-  document.getElementById('timer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-  document.getElementById('round-info').textContent = `Round ${G.round} / ${G.maxRounds} | Shot: ${Math.ceil(G.shotClock)}`;
+// ══════════════════════════════════════
+// GAME STATE
+// ══════════════════════════════════════
+let running=false,paused=false,triviaOn=false;
+let score=0,basketCount=0,streak=0,bestStreak=0,triviaBonus=0,stealCount=0;
+let timeLeft=GAME_TIME,dblPts=false,dblTimer=0;
+let shotPower=0,charging=false;
+let shotTimerActive=false,shotTimerVal=0,shotTimerDir=1,shotTimerResult='';
+let shotTimerSpeed=0;
+let dunkAnim=0,dunking=false;
+let stealCooldown=0;
 
-  const pct = (G.specialMeter / G.specialMax) * 100;
-  document.getElementById('special-fill').style.width = pct + '%';
-  const readyEl = document.getElementById('special-ready');
-  if (G.specialMeter >= G.specialMax) {
-    readyEl.style.display = 'block';
-    readyEl.textContent = `PRESS Q - ${G.p1.arch.special.toUpperCase()}!`;
-  } else {
-    readyEl.style.display = 'none';
-  }
+// Input
+const keys={};
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if([' ','w','a','s','d','e','arrowup','arrowdown','arrowleft','arrowright'].includes(e.key.toLowerCase()))e.preventDefault()});
+addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
+function mk(k,v){keys[k]=!!v}
+
+// Player
+const P={x:0,y:0,w:36,h:52,vx:0,vy:0,onGround:false,facing:1,hasBall:true,jumpCount:0};
+// AI Defender
+const AI={x:0,y:0,w:36,h:52,vx:0,vy:0,onGround:false,facing:-1,hasBall:false,stunned:0,color:'#EF4444'};
+// Ball
+const B={x:0,y:0,r:12,vx:0,vy:0,free:false,scored:false,trail:[],spin:0};
+// Hoop
+const H={x:0,y:0,rimW:48,bbH:80};
+
+let particles=[],floatTexts=[];
+
+// ── Court dimensions ──
+function groundY(){return canvas.height-70}
+function threeLineX(){
+  // 3pt line is an arc from the hoop
+  return H.x-canvas.width*THREE_LINE_RATIO;
 }
 
-// ==================== RENDER ====================
-function render() {
-  const { W, H, courtFloor, playerW, playerH } = G;
-  ctx.clearRect(0, 0, W, H);
+// ══════════════════════════════════════
+// TRIVIA
+// ══════════════════════════════════════
+const TRIVIA=[
+  {q:"How many litres of water to make one cotton t-shirt?",o:["700","2,700","500","10,000"],c:1,f:"A single cotton t-shirt needs ~2,700 litres of water — enough to drink for 2.5 years."},
+  {q:"What % of textiles end up in landfills annually?",o:["25%","45%","73%","90%"],c:2,f:"About 73% of all textiles produced end up in landfills or are incinerated."},
+  {q:"Fashion's share of global carbon emissions?",o:["2%","5%","10%","20%"],c:2,f:"Fashion produces ~10% of global CO2 — more than flights and shipping combined."},
+  {q:"How many times is the average garment worn?",o:["7","20","50","100"],c:0,f:"The average garment is worn only 7 times before being discarded."},
+  {q:"Which material takes longest to decompose?",o:["Cotton","Wool","Polyester","Linen"],c:2,f:"Polyester takes up to 200 years, releasing microplastics into soil and water."},
+  {q:"What does 'circular fashion' mean?",o:["Round-shaped clothes","Clothes recycled into new ones","Wearing in rotation","Repeating trends"],c:1,f:"Circular fashion means designing clothes to be reused, repaired, and recycled."},
+  {q:"What is greenwashing?",o:["Cold-water washing","Misleading eco claims","Using green dye","Recycling green fabrics"],c:1,f:"Greenwashing = brands making misleading claims about being eco-friendly."},
+  {q:"Annual textile waste globally?",o:["10M tonnes","50M tonnes","92M tonnes","200M tonnes"],c:2,f:"Over 92 million tonnes of textile waste produced annually."},
+  {q:"What is upcycling?",o:["Throwing away","Donating","Transforming waste into better products","Buying more"],c:2,f:"Upcycling transforms discarded materials into higher-value products."},
+  {q:"Washing synthetic clothes releases what?",o:["Vitamins","Microplastics","Fresh scent","Oxygen"],c:1,f:"Each wash releases ~700,000 microplastic fibres into waterways."},
+  {q:"How much water does the fashion industry use yearly?",o:["1B litres","93B cubic metres","500M litres","20B litres"],c:1,f:"Fashion uses ~93 billion cubic metres of water yearly."},
+  {q:"Which country exports the most used clothing?",o:["China","USA","Germany","UK"],c:1,f:"The USA exports over 700,000 tonnes of used clothing annually."},
+];
+const ECO_FACTS=[
+  "If everyone bought one used item instead of new, it would save 449 million lbs of waste.",
+  "Extending garment life by 9 months reduces its footprint by 20-30%.",
+  "The UAE generates over 1.5 million tonnes of textile waste annually.",
+  "Buying secondhand reduces clothing's carbon footprint by 82%.",
+  "A pair of jeans requires 7,500 litres of water to produce.",
+];
 
-  // -- Court background --
-  // Floor gradient
-  const floorGrad = ctx.createLinearGradient(0, courtFloor - H * 0.05, 0, H);
-  floorGrad.addColorStop(0, '#065F46');
-  floorGrad.addColorStop(0.3, '#047857');
-  floorGrad.addColorStop(1, '#064E3B');
-  ctx.fillStyle = floorGrad;
-  ctx.fillRect(0, courtFloor - 2, W, H - courtFloor + 2);
-
-  // Background wall
-  const wallGrad = ctx.createLinearGradient(0, 0, 0, courtFloor);
-  wallGrad.addColorStop(0, '#111827');
-  wallGrad.addColorStop(1, '#1F2937');
-  ctx.fillStyle = wallGrad;
-  ctx.fillRect(0, 0, W, courtFloor);
-
-  // Court lines
-  ctx.strokeStyle = 'rgba(167, 243, 208, 0.3)';
-  ctx.lineWidth = 2;
-  // Center line
-  ctx.beginPath();
-  ctx.moveTo(W/2, courtFloor);
-  ctx.lineTo(W/2, courtFloor - 2);
-  ctx.stroke();
-  // Center circle on floor
-  ctx.beginPath();
-  ctx.ellipse(W/2, courtFloor, W * 0.08, 4, 0, 0, Math.PI * 2);
-  ctx.stroke();
-  // Three point lines (arcs on floor)
-  ctx.strokeStyle = 'rgba(167, 243, 208, 0.2)';
-  ctx.beginPath();
-  ctx.ellipse(G.hoopRightX, courtFloor, W * 0.22, 6, 0, Math.PI, 0);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.ellipse(G.hoopLeftX, courtFloor, W * 0.22, 6, 0, Math.PI, 0);
-  ctx.stroke();
-  // Floor line
-  ctx.strokeStyle = 'rgba(167, 243, 208, 0.4)';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(0, courtFloor);
-  ctx.lineTo(W, courtFloor);
-  ctx.stroke();
-
-  // -- Hoops --
-  drawHoop(G.hoopLeftX, G.hoopY, -1);
-  drawHoop(G.hoopRightX, G.hoopY, 1);
-
-  // -- Ball shadow --
-  if (G.ball.holder !== 'p1' && G.ball.holder !== 'p2') {
-    ctx.fillStyle = 'rgba(0,0,0,0.2)';
-    ctx.beginPath();
-    ctx.ellipse(G.ball.x, courtFloor, 8, 3, 0, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // -- Players --
-  drawPlayer(G.p1, 'p1');
-  drawPlayer(G.p2, 'p2');
-
-  // -- Ball --
-  drawBall();
-
-  // -- Particles --
-  G.particles.forEach(p => {
-    ctx.globalAlpha = p.life / p.maxLife;
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-    ctx.fill();
+function showTrivia(){
+  triviaOn=true;
+  const q=TRIVIA[Math.floor(Math.random()*TRIVIA.length)];
+  document.getElementById('triviaQ').textContent=q.q;
+  const oc=document.getElementById('triviaOpts');
+  const rc=document.getElementById('triviaRes');
+  rc.className='trivia-result';rc.style.display='none';
+  const L=['A','B','C','D'];
+  oc.innerHTML=q.o.map((o,i)=>`<button class="trivia-opt" data-i="${i}"><span class="opt-letter">${L[i]}</span><span>${o}</span></button>`).join('');
+  oc.querySelectorAll('.trivia-opt').forEach(b=>{
+    b.onclick=()=>{
+      const i=+b.dataset.i,ok=i===q.c;
+      oc.querySelectorAll('.trivia-opt').forEach((x,j)=>{x.style.pointerEvents='none';if(j===q.c)x.classList.add('correct');if(j===i&&!ok)x.classList.add('wrong')});
+      if(ok){const pts=50;score+=pts;triviaBonus+=pts;dblPts=true;dblTimer=600;rc.className='trivia-result show correct-r';rc.innerHTML=`✓ +${pts} + 2x for 10s!<br><br>${q.f}`}
+      else{rc.className='trivia-result show wrong-r';rc.innerHTML=`✗ Wrong.<br><br>${q.f}`}
+      setTimeout(()=>{document.getElementById('triviaPopup').classList.remove('active');triviaOn=false;updateHUD()},2800);
+    };
   });
-  ctx.globalAlpha = 1;
-
-  // -- Message --
-  if (G.messageTimer > 0) {
-    ctx.save();
-    ctx.globalAlpha = Math.min(1, G.messageTimer);
-    ctx.font = `900 ${H * 0.08}px Inter`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#fff';
-    ctx.shadowColor = 'rgba(52,211,153,0.5)';
-    ctx.shadowBlur = 20;
-    ctx.fillText(G.message, W/2, H * 0.4);
-    ctx.shadowBlur = 0;
-    ctx.restore();
-  }
-
-  // -- Possession arrow --
-  const offPlayer = G.offense === 'p1' ? G.p1 : G.p2;
-  ctx.fillStyle = G.offense === 'p1' ? '#34D399' : '#F87171';
-  ctx.beginPath();
-  const arrowX = offPlayer.x;
-  const arrowY = offPlayer.y - playerH - 15;
-  ctx.moveTo(arrowX, arrowY + 8);
-  ctx.lineTo(arrowX - 6, arrowY);
-  ctx.lineTo(arrowX + 6, arrowY);
-  ctx.fill();
-
-  // -- Special active indicator --
-  if (G.p1.specialActive) {
-    ctx.save();
-    ctx.globalAlpha = 0.3 + Math.sin(Date.now() * 0.01) * 0.2;
-    ctx.strokeStyle = G.p1.arch.color;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(G.p1.x, G.p1.y - playerH * 0.5, playerW * 2.5, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-  }
-  if (G.p2.specialActive) {
-    ctx.save();
-    ctx.globalAlpha = 0.3 + Math.sin(Date.now() * 0.01) * 0.2;
-    ctx.strokeStyle = G.p2.arch.color;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(G.p2.x, G.p2.y - playerH * 0.5, playerW * 2.5, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
-  }
+  document.getElementById('triviaPopup').classList.add('active');
 }
 
-function drawHoop(x, y, dir) {
-  const { H, courtFloor, backboardH } = G;
+// ══════════════════════════════════════
+// GAME START / END
+// ══════════════════════════════════════
+let timerInt;
+function startGame(){
+  if(!selectedArch)return;
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('gameOverScreen').classList.add('hidden');
+  document.getElementById('hud').style.display='flex';
+  document.getElementById('controlsOverlay').classList.add('show');
+
+  const W=canvas.width,Ht=canvas.height,gy=groundY();
+  score=0;basketCount=0;streak=0;bestStreak=0;triviaBonus=0;stealCount=0;
+  timeLeft=GAME_TIME;dblPts=false;dblTimer=0;
+  particles=[];floatTexts=[];
+  running=true;paused=false;triviaOn=false;
+  shotPower=0;charging=false;
+  shotTimerActive=false;shotTimerVal=0;dunking=false;dunkAnim=0;
+  stealCooldown=0;
+
+  // Position hoop on right side
+  H.x=W*0.82;H.y=gy*0.38;
+
+  P.x=W*0.15;P.y=gy-P.h;P.vx=0;P.vy=0;P.hasBall=true;P.facing=1;P.jumpCount=0;
+  AI.x=W*0.55;AI.y=gy-AI.h;AI.vx=0;AI.vy=0;AI.hasBall=false;AI.stunned=0;
+  B.free=false;B.scored=false;B.trail=[];B.spin=0;
+
+  updateHUD();
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>{
+    if(!running||paused||triviaOn)return;
+    timeLeft--;updateHUD();
+    if(timeLeft<=0)endGame();
+  },1000);
+}
+
+function endGame(){
+  running=false;clearInterval(timerInt);
+  document.getElementById('hud').style.display='none';
+  document.getElementById('controlsOverlay').classList.remove('show');
+  document.getElementById('finalScore').textContent=score;
+  document.getElementById('finalBaskets').textContent=`Baskets: ${basketCount}`;
+  document.getElementById('finalStreak').textContent=`Best streak: ${bestStreak}`;
+  document.getElementById('finalTrivia').textContent=`Trivia bonus: +${triviaBonus}`;
+  document.getElementById('finalSteals').textContent=`Steals: ${stealCount}`;
+  document.getElementById('finalFactText').textContent=ECO_FACTS[Math.floor(Math.random()*ECO_FACTS.length)];
+  document.getElementById('gameOverScreen').classList.remove('hidden');
+}
+
+function updateHUD(){
+  document.getElementById('scoreDisplay').textContent=score;
+  const s=document.getElementById('streakDisplay');
+  if(streak>=2){s.textContent=`🔥 x${streak}`;s.classList.add('active')}else s.classList.remove('active');
+  const t=document.getElementById('timerDisplay');
+  t.textContent=timeLeft;t.classList.toggle('warning',timeLeft<=10);
+}
+
+// ══════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════
+function spawn(x,y,col,n){for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-.5)*8,vy:(Math.random()-.5)*8-3,r:2+Math.random()*4,color:col,life:1,decay:.015+Math.random()*.02})}
+function addFloat(x,y,txt,col){floatTexts.push({x,y,text:txt,color:col,life:1,vy:-2})}
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y)}
+
+// ══════════════════════════════════════
+// SHOT TIMING METER (2K Style)
+// ══════════════════════════════════════
+// The meter goes up; green zone = perfect release
+// Shot success depends on archetype stats + timing
+function startShotTimer(){
+  shotTimerActive=true;
+  shotTimerVal=0;
+  shotTimerDir=1;
+  // Speed depends on shot type + archetype
+  const fromThree=P.x<threeLineX();
+  shotTimerSpeed=fromThree?0.025:0.03; // slower from 3
+}
+
+function releaseShotTimer(){
+  shotTimerActive=false;
+  // Green zone is 0.45-0.55 (center)
+  const v=shotTimerVal;
+  let timing='';
+  if(v>=0.42&&v<=0.58) timing='green';      // perfect
+  else if(v>=0.3&&v<=0.7) timing='white';    // good
+  else if(v<0.3) timing='early';             // early
+  else timing='late';                         // late
+
+  shotTimerResult=timing;
+  return timing;
+}
+
+function getShotChance(timing){
+  const arch=selectedArch;
+  const fromThree=P.x<threeLineX();
+  const baseStat=fromThree?arch.three:arch.mid;
+
+  let mult=0;
+  if(timing==='green') mult=1.0;       // guaranteed if stat > 50
+  else if(timing==='white') mult=0.7;
+  else if(timing==='early') mult=0.25;
+  else mult=0.2;
+
+  return (baseStat/100)*mult;
+}
+
+// ══════════════════════════════════════
+// UPDATE
+// ══════════════════════════════════════
+function update(){
+  if(!running||paused||triviaOn)return;
+  const W=canvas.width,Ht=canvas.height,gy=groundY();
+
+  // Double points timer
+  if(dblPts){dblTimer--;if(dblTimer<=0)dblPts=false}
+
+  // Steal cooldown
+  if(stealCooldown>0)stealCooldown--;
+
+  // ── Player Movement ──
+  const spd=selectedArch.speed;
+  if(keys['a']||keys['arrowleft']){P.vx=-spd;P.facing=-1}
+  else if(keys['d']||keys['arrowright']){P.vx=spd;P.facing=1}
+  else P.vx*=0.75;
+
+  if((keys['w']||keys['arrowup'])&&P.jumpCount<2){
+    P.vy=-11;P.jumpCount++;keys['w']=false;keys['arrowup']=false;
+  }
+
+  P.vy+=G;P.x+=P.vx;P.y+=P.vy;
+  if(P.y+P.h>=gy){P.y=gy-P.h;P.vy=0;P.onGround=true;P.jumpCount=0}else P.onGround=false;
+  if(P.x<0)P.x=0;if(P.x+P.w>W)P.x=W-P.w;
+
+  // ── Shooting (2K timing meter) ──
+  if(keys[' ']&&P.hasBall&&!dunking){
+    if(!shotTimerActive&&!charging){
+      charging=true;
+      startShotTimer();
+    }
+    shotPower=Math.min(shotPower+0.5,15);
+  }else if(charging&&P.hasBall){
+    // Release
+    const timing=releaseShotTimer();
+    const chance=getShotChance(timing);
+    shootBall(chance,timing);
+    charging=false;shotPower=0;
+  }
+
+  // Shot timer animation
+  if(shotTimerActive){
+    shotTimerVal+=shotTimerSpeed*shotTimerDir;
+    if(shotTimerVal>=1){shotTimerVal=1;shotTimerDir=-1}
+    if(shotTimerVal<=0){shotTimerVal=0;shotTimerDir=1}
+  }
+
+  // ── Dunk ──
+  if((keys['e'])&&P.hasBall&&!dunking){
+    const distToHoop=Math.hypot(P.x+P.w/2-H.x,P.y+P.h/2-H.y);
+    if(distToHoop<120){
+      // Dunk attempt — timing based on dunk stat
+      const chance=selectedArch.dunk/100;
+      if(Math.random()<chance){
+        dunking=true;dunkAnim=0;
+        P.hasBall=false;
+        keys['e']=false;
+      }else{
+        // Failed dunk
+        addFloat(P.x,P.y-20,'MISSED!','#EF4444');
+        P.hasBall=false;
+        B.x=P.x+P.w/2;B.y=P.y;B.vx=(Math.random()-.5)*6;B.vy=-4;
+        B.free=true;B.scored=false;
+        keys['e']=false;
+      }
+    }
+  }
+
+  // Dunk animation
+  if(dunking){
+    dunkAnim++;
+    // Move player toward hoop
+    const tx=H.x-P.w/2,ty=H.y-P.h;
+    P.x+=(tx-P.x)*0.15;P.y+=(ty-P.y)*0.15;
+    P.vy=0;
+    if(dunkAnim>30){
+      // Score!
+      dunking=false;
+      B.x=H.x;B.y=H.y+10;B.vx=0;B.vy=5;B.free=true;B.scored=true;
+      onBasket(true);
+      P.vy=2;
+    }
+  }
+
+  // ── Steal ──
+  if((keys['s']||keys['arrowdown'])&&stealCooldown<=0){
+    keys['s']=false;keys['arrowdown']=false;
+    stealCooldown=60; // 1 second cooldown
+    const d=Math.hypot(P.x+P.w/2-AI.x-AI.w/2,P.y+P.h/2-AI.y-AI.h/2);
+    if(d<70&&AI.hasBall){
+      const chance=selectedArch.steal/100;
+      if(Math.random()<chance){
+        AI.hasBall=false;P.hasBall=true;AI.stunned=40;
+        stealCount++;score+=5;
+        addFloat(AI.x,AI.y-20,'STOLEN! +5','#F59E0B');
+        spawn(AI.x+AI.w/2,AI.y+AI.h/2,'#F59E0B',10);
+        updateHUD();
+      }else{
+        addFloat(P.x,P.y-20,'MISS','#EF4444');
+      }
+    }
+  }
+
+  // ── Ball with player ──
+  if(P.hasBall&&!B.free&&!dunking){
+    B.x=P.x+P.w/2+P.facing*18;B.y=P.y-B.r+5;B.trail=[];
+  }
+
+  // ── Ball physics ──
+  if(B.free){
+    B.vy+=G;B.x+=B.vx;B.y+=B.vy;
+    B.spin+=B.vx*0.05;
+    B.trail.push({x:B.x,y:B.y});if(B.trail.length>15)B.trail.shift();
+
+    // Walls
+    if(B.x-B.r<0){B.x=B.r;B.vx*=-0.6}
+    if(B.x+B.r>W){B.x=W-B.r;B.vx*=-0.6}
+
+    // Backboard
+    const bbX=H.x+H.rimW/2+6;
+    if(B.x+B.r>bbX-3&&B.x-B.r<bbX+3&&B.y>H.y-H.bbH/2&&B.y<H.y+8){
+      B.x=bbX-B.r-4;B.vx*=-0.5;spawn(bbX,B.y,'#fff',5);
+    }
+
+    // Basket check
+    if(!B.scored&&B.vy>0){
+      const rL=H.x-H.rimW/2,rR=H.x+H.rimW/2;
+      if(B.x>rL+4&&B.x<rR-4&&B.y>H.y-4&&B.y<H.y+14){
+        B.scored=true;onBasket(false);
+      }
+      // Rim bounce
+      [rL,rR].forEach(rx=>{
+        const d=Math.hypot(B.x-rx,B.y-H.y);
+        if(d<B.r+4){
+          const a=Math.atan2(B.y-H.y,B.x-rx);
+          B.vx=Math.cos(a)*4;B.vy=Math.sin(a)*4;
+          B.x=rx+Math.cos(a)*(B.r+5);B.y=H.y+Math.sin(a)*(B.r+5);
+          spawn(rx,H.y,'#EF4444',5);
+        }
+      });
+    }
+
+    // Ground
+    if(B.y+B.r>=gy){
+      B.y=gy-B.r;B.vy*=-0.5;B.vx*=0.8;
+      if(Math.abs(B.vy)<1&&Math.abs(B.vx)<0.5){
+        setTimeout(()=>{if(running){
+          B.free=false;
+          if(!B.scored){streak=0;updateHUD()}
+          // AI picks up or player picks up
+          const dP=Math.hypot(B.x-P.x-P.w/2,B.y-P.y-P.h/2);
+          const dA=Math.hypot(B.x-AI.x-AI.w/2,B.y-AI.y-AI.h/2);
+          if(dP<dA||B.scored){P.hasBall=true;AI.hasBall=false}
+          else{AI.hasBall=true;P.hasBall=false}
+        }},400);
+      }
+    }
+    if(B.y-B.r<0){B.y=B.r;B.vy*=-0.5}
+    if(B.y>Ht+50){B.free=false;P.hasBall=true;streak=0;updateHUD()}
+  }
+
+  // ── AI Behavior ──
+  if(AI.stunned>0){AI.stunned--;AI.vx*=0.9}
+  else{
+    // AI follows player or ball
+    if(AI.hasBall){
+      // AI moves toward hoop to shoot
+      const tx=H.x-100;
+      if(AI.x<tx-10)AI.vx=3;else if(AI.x>tx+10)AI.vx=-3;else{
+        // Shoot
+        AI.hasBall=false;
+        B.vx=(H.x-AI.x-AI.w/2)*0.08;
+        B.vy=-12;B.x=AI.x+AI.w/2;B.y=AI.y-B.r;
+        B.free=true;B.scored=false;B.trail=[];
+      }
+    }else if(!P.hasBall&&B.free){
+      // Chase ball
+      const tx=B.x-AI.w/2;
+      AI.vx+=(tx>AI.x?0.3:-0.3);AI.vx=Math.max(-4,Math.min(4,AI.vx));
+    }else if(P.hasBall){
+      // Defend — move between player and hoop
+      const defX=(P.x+H.x)/2;
+      AI.vx+=(defX>AI.x+AI.w/2?0.4:-0.4);
+      AI.vx=Math.max(-4,Math.min(4,AI.vx));
+      // Try to block if very close
+      const d=Math.hypot(P.x+P.w/2-AI.x-AI.w/2,P.y+P.h/2-AI.y-AI.h/2);
+      if(d<50&&Math.random()<0.005){
+        // AI steals from player
+        P.hasBall=false;AI.hasBall=true;
+        addFloat(AI.x,AI.y-20,'STOLEN!','#EF4444');
+        AI.stunned=20;
+      }
+    }else{
+      AI.vx*=0.9;
+    }
+  }
+
+  AI.vy+=G;AI.x+=AI.vx;AI.y+=AI.vy;
+  if(AI.y+AI.h>=gy){AI.y=gy-AI.h;AI.vy=0}
+  if(AI.x<0)AI.x=0;if(AI.x+AI.w>W)AI.x=W-AI.w;
+  AI.vx*=0.95;
+
+  // ── Particles ──
+  particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.1;p.life-=p.decay;return p.life>0});
+  floatTexts=floatTexts.filter(t=>{t.y+=t.vy;t.life-=0.018;return t.life>0});
+}
+
+function shootBall(chance,timing){
+  const power=5+shotPower*0.6;
+  const dx=H.x-(P.x+P.w/2),dy=H.y-P.y;
+  const d=Math.hypot(dx,dy);
+  const angle=Math.atan2(dy-d*0.45,dx);
+
+  // Add randomness based on timing
+  let scatter=0;
+  if(timing==='green')scatter=0;
+  else if(timing==='white')scatter=(Math.random()-.5)*2;
+  else scatter=(Math.random()-.5)*5;
+
+  // If shot should miss based on chance, add more scatter
+  const makes=Math.random()<chance;
+  if(!makes)scatter+=(Math.random()-.5)*8;
+
+  B.vx=Math.cos(angle)*power+scatter*0.3;
+  B.vy=Math.sin(angle)*power-3+scatter*0.2;
+  B.free=true;B.scored=false;B.trail=[];
+  P.hasBall=false;
+
+  // Show timing feedback
+  const colors={green:'#10B981',white:'#fff',early:'#F59E0B',late:'#EF4444'};
+  const labels={green:'PERFECT!',white:'Good',early:'Early',late:'Late'};
+  addFloat(P.x+P.w/2,P.y-30,labels[timing],colors[timing]);
+}
+
+function onBasket(isDunk){
+  basketCount++;streak++;
+  if(streak>bestStreak)bestStreak=streak;
+
+  let pts=isDunk?15:10;
+  // 3-pointer bonus
+  const fromThree=!isDunk&&P.x<threeLineX();
+  if(fromThree)pts=20;
+  pts+=streak*2;
+  if(dblPts)pts*=2;
+  score+=pts;
+
+  const label=isDunk?`DUNK +${pts}`:(fromThree?`3-POINTER +${pts}`:`+${pts}`);
+  const col=isDunk?'#EF4444':(fromThree?'#3B82F6':'#10B981');
+  spawn(H.x,H.y,col,25);spawn(H.x,H.y,'#F59E0B',10);
+  addFloat(H.x,H.y-40,label,col);
+  if(streak>=3)addFloat(H.x,H.y-70,`🔥 ${streak} streak!`,'#F59E0B');
+
+  updateHUD();
+
+  setTimeout(()=>{if(running){
+    B.free=false;P.hasBall=true;AI.hasBall=false;
+    // Randomize hoop position slightly
+    H.x=canvas.width*0.65+Math.random()*canvas.width*0.25;
+    H.y=groundY()*0.25+Math.random()*groundY()*0.2;
+  }},800);
+
+  if(basketCount%TRIVIA_EVERY===0)setTimeout(()=>{if(running)showTrivia()},1200);
+}
+
+// ══════════════════════════════════════
+// DRAW
+// ══════════════════════════════════════
+function draw(){
+  const W=canvas.width,Ht=canvas.height,gy=groundY();
+  ctx.clearRect(0,0,W,Ht);
+
+  // Background
+  const bg=ctx.createLinearGradient(0,0,0,Ht);
+  bg.addColorStop(0,'#0a0e1a');bg.addColorStop(0.7,'#0f1629');bg.addColorStop(1,'#1a1f35');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,Ht);
+
+  if(!running){requestAnimationFrame(loop);return}
+
+  // ── Court ──
+  ctx.fillStyle='#1a2332';ctx.fillRect(0,gy,W,Ht-gy);
+
+  // Court line
+  ctx.strokeStyle='rgba(52,211,153,0.2)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();
+
+  // ── 3-Point Line (arc) ──
+  const tlx=threeLineX();
+  ctx.strokeStyle='rgba(59,130,246,0.4)';ctx.lineWidth=3;ctx.setLineDash([8,6]);
+  ctx.beginPath();
+  // Draw arc from baseline
+  const arcCenterX=H.x;const arcRadius=H.x-tlx;
+  ctx.arc(arcCenterX,gy,arcRadius,Math.PI,0);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 3PT label
+  ctx.fillStyle='rgba(59,130,246,0.35)';ctx.font='bold 13px Inter';ctx.textAlign='center';
+  ctx.fillText('3PT LINE',tlx+30,gy-8);
+
+  // ── Hoop ──
+  const{x:hx,y:hy,rimW:rw,bbH}=H;
 
   // Pole
-  ctx.fillStyle = '#6B7280';
-  ctx.fillRect(x - 2 + dir * 2, y - 5, 4, courtFloor - y + 5);
+  ctx.fillStyle='rgba(255,255,255,0.08)';
+  ctx.fillRect(hx+rw/2+5,hy+bbH/2-10,4,gy-hy-bbH/2+10);
 
   // Backboard
-  ctx.fillStyle = 'rgba(255,255,255,0.8)';
-  ctx.fillRect(x + dir * 2 - 1, y - backboardH * 0.4, 4, backboardH);
+  ctx.fillStyle='rgba(255,255,255,0.15)';
+  ctx.fillRect(hx+rw/2+3,hy-bbH/2,6,bbH);
+  ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=2;
+  ctx.strokeRect(hx+rw/2-18,hy-18,24,22);
 
   // Rim
-  ctx.strokeStyle = '#EF4444';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(x + dir * 3, y + backboardH * 0.1);
-  ctx.lineTo(x - dir * G.rimRadius * 1.5, y + backboardH * 0.1);
-  ctx.stroke();
+  ctx.strokeStyle='#EF4444';ctx.lineWidth=4;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(hx-rw/2,hy);ctx.lineTo(hx+rw/2,hy);ctx.stroke();
+  ctx.fillStyle='#EF4444';
+  [hx-rw/2,hx+rw/2].forEach(rx=>{ctx.beginPath();ctx.arc(rx,hy,4,0,Math.PI*2);ctx.fill()});
 
-  // Net (simple lines)
-  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-  ctx.lineWidth = 1;
-  const rimEnd = x - dir * G.rimRadius * 1.5;
-  const rimStart = x + dir * 3;
-  for (let i = 0; i < 4; i++) {
-    const t = i / 3;
-    const nx = rimStart + (rimEnd - rimStart) * t;
-    ctx.beginPath();
-    ctx.moveTo(nx, y + backboardH * 0.1);
-    ctx.lineTo(nx + (t - 0.5) * 6, y + backboardH * 0.1 + 20);
-    ctx.stroke();
+  // Net
+  ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;
+  for(let i=0;i<=6;i++){
+    const t=i/6;const topX=hx-rw/2+t*rw;const botX=hx-rw/4+t*rw/2;
+    ctx.beginPath();ctx.moveTo(topX,hy+2);ctx.lineTo(botX,hy+30);ctx.stroke();
   }
+  for(let j=0;j<3;j++){
+    const ny=hy+8+j*8;const nf=1-j*0.15;
+    ctx.beginPath();ctx.moveTo(hx-rw/2*nf,ny);ctx.lineTo(hx+rw/2*nf,ny);ctx.stroke();
+  }
+
+  // ── AI Defender ──
+  drawPlayer(AI,AI.stunned>0?'#7f1d1d':'#DC2626','#FCA5A5','AI',AI.stunned>0);
+
+  // ── Player ──
+  drawPlayer(P,selectedArch.color,lighten(selectedArch.color),'YOU',false);
+
+  // ── Ball Trail ──
+  if(B.free&&B.trail.length>1){
+    for(let i=0;i<B.trail.length-1;i++){
+      const t=i/B.trail.length;
+      ctx.fillStyle=`rgba(245,158,11,${t*0.25})`;
+      ctx.beginPath();ctx.arc(B.trail[i].x,B.trail[i].y,B.r*t*0.5,0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  // ── Ball ──
+  // Shadow
+  if(B.y<gy-10){ctx.fillStyle='rgba(0,0,0,0.2)';ctx.beginPath();ctx.ellipse(B.x,gy+2,8,3,0,0,Math.PI*2);ctx.fill()}
+  // Ball
+  ctx.save();ctx.translate(B.x,B.y);ctx.rotate(B.spin);
+  const bg2=ctx.createRadialGradient(-2,-2,1,0,0,B.r);
+  bg2.addColorStop(0,'#F59E0B');bg2.addColorStop(1,'#B45309');
+  ctx.fillStyle=bg2;ctx.beginPath();ctx.arc(0,0,B.r,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(0,0,B.r,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(-B.r,0);ctx.lineTo(B.r,0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,-B.r);ctx.lineTo(0,B.r);ctx.stroke();
+  ctx.restore();
+
+  // ── Shot Timing Meter (2K style) ──
+  if(shotTimerActive){
+    const mW=8,mH=100;
+    const mx=P.x+P.w/2-mW/2,my=P.y-mH-20;
+
+    // Background
+    ctx.fillStyle='rgba(0,0,0,0.6)';
+    roundRect(ctx,mx-2,my-2,mW+4,mH+4,4);
+
+    // Zones: red-yellow-green-yellow-red from bottom to top
+    const zones=[
+      {start:0,end:0.25,color:'#EF4444'},      // early red
+      {start:0.25,end:0.38,color:'#F59E0B'},    // early yellow
+      {start:0.38,end:0.45,color:'#A7F3D0'},    // slightly green
+      {start:0.45,end:0.55,color:'#10B981'},     // GREEN (perfect)
+      {start:0.55,end:0.62,color:'#A7F3D0'},    // slightly green
+      {start:0.62,end:0.75,color:'#F59E0B'},    // late yellow
+      {start:0.75,end:1,color:'#EF4444'},        // late red
+    ];
+    zones.forEach(z=>{
+      ctx.fillStyle=z.color;
+      const zy=my+mH*(1-z.end);
+      const zh=mH*(z.end-z.start);
+      ctx.fillRect(mx,zy,mW,zh);
+    });
+
+    // Cursor
+    const cy=my+mH*(1-shotTimerVal);
+    ctx.fillStyle='#fff';
+    ctx.fillRect(mx-4,cy-2,mW+8,4);
+
+    // Border
+    ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=1;
+    roundRectStroke(ctx,mx,my,mW,mH,3);
+  }
+
+  // ── Shot Power Bar ── (under timing meter)
+  if(charging){
+    const bW=50,bH=5;
+    const bx=P.x+P.w/2-bW/2,by=P.y-15;
+    ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(bx,by,bW,bH);
+    const fill=shotPower/15;
+    ctx.fillStyle=fill<0.5?'#10B981':fill<0.8?'#F59E0B':'#EF4444';
+    ctx.fillRect(bx,by,bW*fill,bH);
+  }
+
+  // ── Dunk indicator ──
+  if(P.hasBall&&!dunking){
+    const dth=Math.hypot(P.x+P.w/2-H.x,P.y+P.h/2-H.y);
+    if(dth<120){
+      ctx.fillStyle='rgba(239,68,68,0.8)';ctx.font='bold 12px Inter';ctx.textAlign='center';
+      ctx.fillText('Press E to DUNK',P.x+P.w/2,P.y-20);
+    }
+  }
+
+  // ── Steal indicator ──
+  if(AI.hasBall&&stealCooldown<=0){
+    const ds=Math.hypot(P.x+P.w/2-AI.x-AI.w/2,P.y+P.h/2-AI.y-AI.h/2);
+    if(ds<80){
+      ctx.fillStyle='rgba(245,158,11,0.8)';ctx.font='bold 12px Inter';ctx.textAlign='center';
+      ctx.fillText('Press S to STEAL',P.x+P.w/2,P.y-20);
+    }
+  }
+
+  // ── 2x indicator ──
+  if(dblPts){
+    ctx.fillStyle='rgba(245,158,11,0.8)';ctx.font='bold 14px Inter';ctx.textAlign='center';
+    ctx.fillText(`⚡ 2x POINTS — ${Math.ceil(dblTimer/60)}s`,W/2,gy+30);
+  }
+
+  // ── Particles ──
+  particles.forEach(p=>{ctx.globalAlpha=p.life;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);ctx.fill()});
+  ctx.globalAlpha=1;
+
+  // ── Float texts ──
+  floatTexts.forEach(t=>{
+    ctx.globalAlpha=t.life;ctx.fillStyle=t.color;
+    ctx.font=`900 ${18+(1-t.life)*12}px Inter`;ctx.textAlign='center';
+    ctx.fillText(t.text,t.x,t.y);
+  });
+  ctx.globalAlpha=1;
 }
 
-function drawPlayer(p, who) {
-  const { playerW, playerH, courtFloor } = G;
-  const x = p.x;
-  const y = p.y;
-  const c1 = p.arch.color;
-  const c2 = p.arch.color2;
+function drawPlayer(p,bodyCol,headCol,label,stunned){
+  const gy=groundY();
+  // Shadow
+  ctx.fillStyle='rgba(0,0,0,0.25)';ctx.beginPath();ctx.ellipse(p.x+p.w/2,gy+2,16,4,0,0,Math.PI*2);ctx.fill();
 
-  // Player shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.2)';
-  ctx.beginPath();
-  ctx.ellipse(x, courtFloor + 1, playerW * 1.2, 4, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Leg animation
-  const legOffset = Math.sin(p.animFrame * Math.PI / 2) * playerW * 0.4;
-
-  // Legs
-  ctx.strokeStyle = c2;
-  ctx.lineWidth = playerW * 0.4;
-  ctx.lineCap = 'round';
-  // Left leg
-  ctx.beginPath();
-  ctx.moveTo(x - playerW * 0.2, y - playerH * 0.15);
-  ctx.lineTo(x - playerW * 0.2 - legOffset, y);
-  ctx.stroke();
-  // Right leg
-  ctx.beginPath();
-  ctx.moveTo(x + playerW * 0.2, y - playerH * 0.15);
-  ctx.lineTo(x + playerW * 0.2 + legOffset, y);
-  ctx.stroke();
+  if(stunned){ctx.globalAlpha=0.5+Math.sin(Date.now()*0.02)*0.3}
 
   // Body
-  ctx.fillStyle = c1;
-  const bodyTop = y - playerH * 0.8;
-  const bodyH = playerH * 0.65;
-  const bodyW = playerW * 1.6;
-  ctx.beginPath();
-  ctx.roundRect(x - bodyW/2, bodyTop, bodyW, bodyH, 4);
-  ctx.fill();
-
-  // Jersey number / label
-  ctx.fillStyle = 'rgba(0,0,0,0.3)';
-  ctx.font = `800 ${playerH * 0.18}px Inter`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(who === 'p1' ? 'P1' : 'AI', x, bodyTop + bodyH * 0.5);
-
-  // Arms
-  ctx.strokeStyle = c2;
-  ctx.lineWidth = playerW * 0.35;
-  const armY = bodyTop + bodyH * 0.2;
-  // Left arm
-  ctx.beginPath();
-  ctx.moveTo(x - bodyW/2, armY);
-  const lax = p.shooting ? x - bodyW/2 - playerW * 0.2 : x - bodyW/2 - playerW * 0.5;
-  const lay = p.shooting ? armY - playerH * 0.3 : armY + playerH * 0.15;
-  ctx.lineTo(lax, lay);
-  ctx.stroke();
-  // Right arm
-  ctx.beginPath();
-  ctx.moveTo(x + bodyW/2, armY);
-  const rax = p.shooting ? x + bodyW/2 + playerW * 0.2 : x + bodyW/2 + playerW * 0.5;
-  const ray = p.shooting ? armY - playerH * 0.3 : armY + playerH * 0.15;
-  ctx.lineTo(rax, ray);
-  ctx.stroke();
+  ctx.fillStyle=bodyCol;
+  roundRect(ctx,p.x+6,p.y+16,p.w-12,p.h-20,6);
 
   // Head
-  const headR = playerW * 0.8;
-  const headY = bodyTop - headR * 0.6;
-  ctx.fillStyle = '#FCD34D';
-  ctx.beginPath();
-  ctx.arc(x, headY, headR, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.fillStyle=headCol;
+  ctx.beginPath();ctx.arc(p.x+p.w/2,p.y+10,11,0,Math.PI*2);ctx.fill();
 
   // Eyes
-  ctx.fillStyle = '#111';
-  const eyeOff = headR * 0.3 * p.facing;
-  ctx.beginPath();
-  ctx.arc(x + eyeOff - headR * 0.15, headY - headR * 0.1, 2, 0, Math.PI * 2);
-  ctx.arc(x + eyeOff + headR * 0.15, headY - headR * 0.1, 2, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.fillStyle='#1a1a2e';
+  const eo=p.facing*3;
+  ctx.beginPath();ctx.arc(p.x+p.w/2+eo-3,p.y+9,2,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(p.x+p.w/2+eo+3,p.y+9,2,0,Math.PI*2);ctx.fill();
 
-  // Name tag
-  ctx.fillStyle = c1;
-  ctx.font = `700 ${Math.max(9, playerH * 0.11)}px Inter`;
-  ctx.textAlign = 'center';
-  ctx.fillText(p.arch.name, x, headY - headR - 4);
+  // Arms
+  ctx.strokeStyle=bodyCol;ctx.lineWidth=3;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(p.x+p.w/2,p.y+22);ctx.lineTo(p.x+p.w/2-p.facing*14,p.y+30);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(p.x+p.w/2,p.y+22);ctx.lineTo(p.x+p.w/2+p.facing*14,p.y+18);ctx.stroke();
+
+  // Legs
+  ctx.strokeStyle=darken(bodyCol);ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(p.x+p.w/2-5,p.y+p.h-8);ctx.lineTo(p.x+p.w/2-9,p.y+p.h);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(p.x+p.w/2+5,p.y+p.h-8);ctx.lineTo(p.x+p.w/2+9,p.y+p.h);ctx.stroke();
+
+  ctx.globalAlpha=1;
+
+  // Label
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='bold 10px Inter';ctx.textAlign='center';
+  ctx.fillText(label,p.x+p.w/2,p.y-5);
 }
 
-function drawBall() {
-  const ball = G.ball;
-  const r = G.W * 0.012;
-
-  ctx.save();
-  if (ball.holder === 'air') {
-    ctx.translate(ball.x, ball.y);
-    ctx.rotate(ball.rotation || 0);
-    ctx.translate(-ball.x, -ball.y);
-  }
-
-  // Ball
-  ctx.fillStyle = '#F97316';
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, r, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Lines on ball
-  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(ball.x - r, ball.y);
-  ctx.lineTo(ball.x + r, ball.y);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(ball.x, ball.y - r);
-  ctx.lineTo(ball.x, ball.y + r);
-  ctx.stroke();
-
-  // Recycling symbol (simplified arrows)
-  ctx.strokeStyle = 'rgba(52,211,153,0.6)';
-  ctx.lineWidth = 1.5;
-  const sr = r * 0.45;
-  for (let i = 0; i < 3; i++) {
-    const angle = (i * Math.PI * 2 / 3) - Math.PI / 2;
-    const ax = ball.x + Math.cos(angle) * sr;
-    const ay = ball.y + Math.sin(angle) * sr;
-    const bAngle = angle + Math.PI * 2 / 3;
-    const bx = ball.x + Math.cos(bAngle) * sr;
-    const by = ball.y + Math.sin(bAngle) * sr;
-    ctx.beginPath();
-    ctx.moveTo(ax, ay);
-    ctx.lineTo(bx, by);
-    ctx.stroke();
-    // Arrow head
-    const arrowAngle = Math.atan2(by - ay, bx - ax);
-    ctx.beginPath();
-    ctx.moveTo(bx, by);
-    ctx.lineTo(bx - Math.cos(arrowAngle - 0.5) * 3, by - Math.sin(arrowAngle - 0.5) * 3);
-    ctx.stroke();
-  }
-
-  ctx.restore();
+function lighten(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgb(${Math.min(255,r+80)},${Math.min(255,g+80)},${Math.min(255,b+80)})`;
+}
+function darken(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgb(${Math.max(0,r-40)},${Math.max(0,g-40)},${Math.max(0,b-40)})`;
 }
 
-// ==================== INIT ====================
-showScreen('title');
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();
+}
+function roundRectStroke(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.stroke();
+}
 
-// Prevent scrolling
-document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
-document.addEventListener('contextmenu', e => e.preventDefault());
+// ── Loop ──
+function loop(){update();draw();requestAnimationFrame(loop)}
+loop();
 </script>
 </body>
 </html>
