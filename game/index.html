@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Fabric Rescue | Rewoven</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Games | Rewoven</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -19,6 +19,7 @@
   --green-900: #064E3B;
   --dark: #111827;
   --gray-600: #4B5563;
+  --white: #FFFFFF;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,12 +28,7 @@ body {
   font-family: 'Inter', sans-serif;
   background: var(--dark);
   color: #fff;
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
-  touch-action: none;
-  -webkit-user-select: none;
-  user-select: none;
+  min-height: 100vh;
 }
 
 /* Nav */
@@ -52,100 +48,188 @@ nav a.logo {
   text-decoration: none;
   letter-spacing: -0.5px;
 }
-nav .nav-score {
-  font-size: 14px; font-weight: 600;
+nav .nav-links {
+  display: flex; gap: 20px; align-items: center;
+}
+nav .nav-links a {
+  font-size: 14px; font-weight: 500;
   color: var(--green-200);
-  display: none;
+  text-decoration: none;
+  transition: color 0.2s;
 }
-nav .nav-score.active { display: flex; gap: 16px; align-items: center; }
-nav .nav-score span { display: flex; align-items: center; gap: 4px; }
+nav .nav-links a:hover { color: var(--green-400); }
 
-/* Game Canvas Area */
-#gameArea {
-  position: fixed;
-  top: 56px; left: 0; right: 0; bottom: 0;
-  overflow: hidden;
-}
-
-/* Screens */
-.screen {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 24px;
-  transition: opacity 0.4s, transform 0.4s;
-  z-index: 50;
-}
-.screen.hidden {
-  opacity: 0; pointer-events: none;
-  transform: scale(0.95);
-}
-
-/* Start Screen */
-#startScreen {
+/* Hero */
+.hero {
+  padding: 120px 24px 60px;
+  text-align: center;
   background: linear-gradient(180deg, var(--dark) 0%, var(--green-900) 100%);
 }
-#startScreen h1 {
+.hero h1 {
   font-family: 'Playfair Display', serif;
   font-size: clamp(36px, 8vw, 64px);
   font-weight: 700;
   background: linear-gradient(135deg, var(--green-400), var(--green-200));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
-#startScreen .subtitle {
+.hero p {
   font-size: clamp(14px, 3vw, 18px);
   color: var(--green-200);
-  margin-bottom: 32px;
-  text-align: center;
-  max-width: 500px;
+  max-width: 560px;
+  margin: 0 auto;
   line-height: 1.6;
 }
-.instructions {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(52,211,153,0.2);
-  border-radius: 16px;
-  padding: 20px 24px;
-  margin-bottom: 28px;
-  max-width: 460px;
-  width: 100%;
-  font-size: 14px;
-  color: var(--green-100);
-  line-height: 1.7;
-}
-.instructions strong { color: var(--green-400); }
-.difficulty-selector {
-  display: flex; gap: 10px;
-  margin-bottom: 20px;
-}
-.diff-btn {
-  padding: 10px 24px;
-  border-radius: 999px;
-  border: 2px solid var(--green-600);
-  background: transparent;
-  color: var(--green-200);
-  font-family: 'Inter', sans-serif;
-  font-weight: 600; font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.diff-btn:hover { background: var(--green-800); }
-.diff-btn.selected {
-  background: var(--green-600);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(16,185,129,0.3);
+
+/* Game Cards */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 28px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
 }
 
-/* Pill Buttons */
+.game-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(52,211,153,0.15);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.game-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(16,185,129,0.15);
+}
+
+.card-preview {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-preview-rescue {
+  background: linear-gradient(135deg, #064E3B 0%, #111827 100%);
+}
+.card-preview-rescue .preview-items {
+  font-size: 48px;
+  display: flex; gap: 16px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.card-preview-runner {
+  background: linear-gradient(135deg, #1a1a2e 0%, #064E3B 100%);
+  position: relative;
+}
+.card-preview-runner .preview-runner {
+  position: relative;
+  width: 100%; height: 100%;
+}
+.card-preview-runner .ground-line {
+  position: absolute;
+  bottom: 40px; left: 0; right: 0;
+  height: 2px;
+  background: var(--green-400);
+  opacity: 0.4;
+}
+.card-preview-runner .runner-char {
+  position: absolute;
+  bottom: 44px; left: 25%;
+  width: 30px; height: 50px;
+  background: var(--green-400);
+  border-radius: 8px 8px 2px 2px;
+  animation: runBounce 0.5s ease-in-out infinite;
+}
+.card-preview-runner .runner-head {
+  position: absolute;
+  bottom: 96px; left: calc(25% + 3px);
+  width: 24px; height: 24px;
+  background: var(--green-200);
+  border-radius: 50%;
+  animation: runBounce 0.5s ease-in-out infinite;
+}
+.card-preview-runner .runner-items {
+  position: absolute;
+  bottom: 55px; right: 20%;
+  font-size: 28px;
+  display: flex; gap: 24px;
+  animation: slideLeft 4s linear infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes runBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes slideLeft {
+  0% { transform: translateX(80px); }
+  100% { transform: translateX(-120px); }
+}
+
+.card-body {
+  padding: 24px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--green-400);
+}
+.badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-easy {
+  background: rgba(52,211,153,0.15);
+  color: var(--green-400);
+  border: 1px solid rgba(52,211,153,0.3);
+}
+.badge-medium {
+  background: rgba(251,191,36,0.12);
+  color: #FBBF24;
+  border: 1px solid rgba(251,191,36,0.3);
+}
+.card-desc {
+  font-size: 14px;
+  color: var(--green-100);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.card-genre {
+  font-size: 12px;
+  color: var(--gray-600);
+  margin-bottom: 20px;
+}
+
 .pill-btn {
-  padding: 14px 40px;
+  display: inline-block;
+  padding: 12px 32px;
   border-radius: 999px;
   border: none;
   font-family: 'Inter', sans-serif;
-  font-weight: 600; font-size: 16px;
+  font-weight: 600; font-size: 15px;
   cursor: pointer;
   transition: all 0.25s;
+  text-decoration: none;
+  text-align: center;
   box-shadow: 0 4px 20px rgba(16,185,129,0.3);
 }
 .pill-btn.primary {
@@ -156,334 +240,26 @@ nav .nav-score span { display: flex; align-items: center; gap: 4px; }
   transform: translateY(-2px);
   box-shadow: 0 6px 28px rgba(16,185,129,0.45);
 }
-.pill-btn.secondary {
-  background: rgba(255,255,255,0.08);
-  color: var(--green-200);
-  box-shadow: none;
-  border: 1px solid rgba(52,211,153,0.3);
-}
-.pill-btn.secondary:hover {
-  background: rgba(255,255,255,0.14);
-}
 
-/* Falling Items */
-.falling-item {
-  position: absolute;
-  display: flex; flex-direction: column;
-  align-items: center;
-  cursor: grab;
-  transition: transform 0.1s, box-shadow 0.1s;
-  z-index: 10;
-  touch-action: none;
-}
-.falling-item .item-emoji {
-  font-size: 40px;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
-  transition: transform 0.15s;
-}
-.falling-item .item-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--green-100);
-  background: rgba(0,0,0,0.6);
-  padding: 2px 8px;
-  border-radius: 8px;
-  margin-top: 2px;
-  white-space: nowrap;
-  pointer-events: none;
-}
-.falling-item.selected {
-  z-index: 20;
-}
-.falling-item.selected .item-emoji {
-  transform: scale(1.25);
-  filter: drop-shadow(0 0 16px rgba(52,211,153,0.6));
-}
-.falling-item.dragging {
-  z-index: 30;
-  opacity: 0.85;
-}
-
-/* Bins */
-#binsContainer {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 8px 12px;
-  background: linear-gradient(0deg, rgba(17,24,39,0.95) 60%, transparent);
-  z-index: 15;
-}
-.bin {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  width: 70px; height: 80px;
-  border-radius: 14px;
-  border: 2px solid rgba(52,211,153,0.25);
-  background: rgba(255,255,255,0.05);
-  cursor: pointer;
-  transition: all 0.2s;
-  position: relative;
-}
-.bin:hover, .bin.highlight {
-  border-color: var(--green-400);
-  background: rgba(52,211,153,0.12);
-  transform: translateY(-4px);
-  box-shadow: 0 6px 20px rgba(52,211,153,0.2);
-}
-.bin .bin-emoji { font-size: 24px; margin-bottom: 2px; }
-.bin .bin-label {
-  font-size: 9px; font-weight: 700;
-  color: var(--green-200);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.bin.landfill { border-color: rgba(239,68,68,0.3); }
-.bin.landfill:hover { border-color: #EF4444; background: rgba(239,68,68,0.1); }
-
-/* HUD */
-#hud {
-  position: absolute;
-  top: 8px; left: 12px; right: 12px;
-  display: flex; justify-content: space-between;
-  align-items: flex-start;
-  z-index: 20;
-  pointer-events: none;
-}
-.hud-left, .hud-right {
-  display: flex; flex-direction: column; gap: 4px;
-}
-.hud-right { align-items: flex-end; }
-.hud-item {
-  font-size: 13px; font-weight: 600;
-  color: var(--green-200);
-  background: rgba(0,0,0,0.5);
-  padding: 4px 10px;
-  border-radius: 10px;
-  backdrop-filter: blur(4px);
-}
-.hud-item .val { color: var(--green-400); font-weight: 700; }
-.streak-display {
-  font-size: 15px;
-  font-weight: 700;
-  color: #FBBF24;
-  text-shadow: 0 0 12px rgba(251,191,36,0.5);
-}
-.combo-popup {
-  position: absolute;
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: #FBBF24;
-  text-shadow: 0 0 20px rgba(251,191,36,0.6);
-  pointer-events: none;
-  z-index: 40;
-  animation: comboFade 1s forwards;
-}
-@keyframes comboFade {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
-}
-
-/* Fact Popup */
-.fact-popup {
-  position: fixed;
-  bottom: 110px; left: 50%; transform: translateX(-50%);
-  background: var(--green-900);
-  border: 1px solid var(--green-600);
-  border-radius: 14px;
-  padding: 12px 20px;
-  max-width: 380px;
-  width: calc(100% - 32px);
-  font-size: 13px;
-  color: var(--green-100);
-  line-height: 1.5;
-  z-index: 45;
-  animation: factIn 0.3s ease-out;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+/* Footer */
+.footer {
   text-align: center;
-}
-.fact-popup .fact-icon { font-size: 18px; margin-bottom: 4px; display: block; }
-@keyframes factIn {
-  0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-  100% { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-/* Power-ups */
-.powerup-item {
-  position: absolute;
-  font-size: 32px;
-  cursor: pointer;
-  z-index: 12;
-  animation: powerupGlow 1s infinite alternate;
-  filter: drop-shadow(0 0 10px rgba(251,191,36,0.6));
-}
-@keyframes powerupGlow {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.15); }
-}
-.powerup-active {
-  position: fixed;
-  top: 60px; left: 50%; transform: translateX(-50%);
-  background: rgba(251,191,36,0.15);
-  border: 1px solid rgba(251,191,36,0.4);
-  border-radius: 10px;
-  padding: 6px 16px;
-  font-size: 13px; font-weight: 600;
-  color: #FBBF24;
-  z-index: 30;
-  animation: fadeIn 0.3s;
-}
-
-/* Particles */
-.particle {
-  position: absolute;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 35;
-}
-
-/* Screen Shake */
-.shake {
-  animation: shake 0.4s;
-}
-@keyframes shake {
-  0%, 100% { transform: translate(0); }
-  10% { transform: translate(-6px, 3px); }
-  20% { transform: translate(6px, -3px); }
-  30% { transform: translate(-4px, -2px); }
-  40% { transform: translate(4px, 2px); }
-  50% { transform: translate(-2px, 4px); }
-  60% { transform: translate(2px, -4px); }
-  70% { transform: translate(-3px, 1px); }
-  80% { transform: translate(3px, -1px); }
-}
-
-/* Lives */
-.lives-display {
-  display: flex; gap: 3px;
-}
-.life-heart { font-size: 16px; transition: all 0.3s; }
-.life-heart.lost { opacity: 0.2; transform: scale(0.7); }
-
-/* Game Over */
-#gameOverScreen {
-  background: linear-gradient(180deg, var(--dark) 0%, var(--green-900) 100%);
-}
-#gameOverScreen h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(28px, 6vw, 48px);
-  color: var(--green-400);
-  margin-bottom: 20px;
-}
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  max-width: 400px; width: 100%;
-  margin-bottom: 24px;
-}
-.stat-card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(52,211,153,0.15);
-  border-radius: 14px;
-  padding: 16px;
-  text-align: center;
-}
-.stat-card .stat-val {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px; font-weight: 700;
-  color: var(--green-400);
-}
-.stat-card .stat-label {
-  font-size: 11px; font-weight: 600;
-  color: var(--green-200);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 4px;
-}
-.go-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-
-/* Leaderboard */
-.leaderboard {
-  max-width: 400px; width: 100%;
-  margin-top: 20px;
-}
-.leaderboard h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 18px; color: var(--green-400);
-  margin-bottom: 10px; text-align: center;
-}
-.lb-entry {
-  display: flex; justify-content: space-between;
-  padding: 8px 14px;
-  background: rgba(255,255,255,0.04);
-  border-radius: 10px;
-  margin-bottom: 4px;
+  padding: 24px;
   font-size: 13px;
+  color: var(--gray-600);
+  border-top: 1px solid rgba(52,211,153,0.08);
 }
-.lb-entry .lb-rank { color: var(--green-400); font-weight: 700; width: 28px; }
-.lb-entry .lb-name { color: var(--green-200); flex: 1; }
-.lb-entry .lb-score { color: var(--green-400); font-weight: 600; }
-.lb-entry.current { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.3); }
-
-/* Level Banner */
-.level-banner {
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: 'Playfair Display', serif;
-  font-size: 48px; font-weight: 700;
+.footer a {
   color: var(--green-400);
-  text-shadow: 0 0 40px rgba(52,211,153,0.5);
-  z-index: 50;
-  animation: levelBannerAnim 1.5s forwards;
-  pointer-events: none;
-}
-@keyframes levelBannerAnim {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+  text-decoration: none;
 }
 
-/* Pause overlay */
-#pauseOverlay {
-  position: absolute; inset: 0;
-  background: rgba(17,24,39,0.85);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  z-index: 48;
-  backdrop-filter: blur(6px);
-}
-#pauseOverlay.hidden { display: none; }
-#pauseOverlay h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 36px; color: var(--green-400);
-  margin-bottom: 20px;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
-}
-
-/* Responsive */
 @media (max-width: 480px) {
-  .bin { width: 58px; height: 68px; }
-  .bin .bin-emoji { font-size: 20px; }
-  .bin .bin-label { font-size: 8px; }
-  .falling-item .item-emoji { font-size: 32px; }
-  .falling-item .item-label { font-size: 10px; }
-  #binsContainer { gap: 4px; padding: 6px 4px 10px; }
-  .instructions { padding: 14px 16px; font-size: 13px; }
-}
-@media (min-width: 768px) {
-  .bin { width: 90px; height: 96px; }
-  .bin .bin-emoji { font-size: 30px; }
-  .bin .bin-label { font-size: 10px; }
-  #binsContainer { gap: 12px; }
+  .games-grid {
+    grid-template-columns: 1fr;
+    padding: 24px 16px 60px;
+  }
+  .card-preview { height: 160px; }
 }
 </style>
 </head>
@@ -491,766 +267,70 @@ nav .nav-score span { display: flex; align-items: center; gap: 4px; }
 
 <nav>
   <a href="/" class="logo">Rewoven</a>
-  <div class="nav-score" id="navScore">
-    <span>Score: <b id="navScoreVal">0</b></span>
-    <span id="navLevel">Level 1</span>
-    <button onclick="game.togglePause()" style="background:none;border:1px solid rgba(52,211,153,0.3);color:var(--green-200);border-radius:8px;padding:4px 12px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif;">Pause</button>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/game/">Games</a>
   </div>
 </nav>
 
-<div id="gameArea">
-  <!-- Start Screen -->
-  <div class="screen" id="startScreen">
-    <h1>Fabric Rescue</h1>
-    <p class="subtitle">Sort falling clothing items into the right bins and learn how your fashion choices impact the planet.</p>
-    <div class="instructions">
-      <strong>How to play:</strong><br>
-      Tap/click a falling item, then tap the correct bin. Or drag items directly to bins.<br><br>
-      <strong>Bins:</strong> Recycle, Donate, Upcycle, Compost, or Landfill (last resort!)<br>
-      <strong>Streak bonus:</strong> Sort correctly in a row for multiplier points!<br>
-      <strong>Power-ups:</strong> Catch falling stars for slow-mo, extra lives, and 2x points!
-    </div>
-    <div class="difficulty-selector">
-      <button class="diff-btn selected" data-diff="easy" onclick="game.setDifficulty('easy',this)">Easy</button>
-      <button class="diff-btn" data-diff="normal" onclick="game.setDifficulty('normal',this)">Normal</button>
-      <button class="diff-btn" data-diff="hard" onclick="game.setDifficulty('hard',this)">Hard</button>
-    </div>
-    <button class="pill-btn primary" onclick="game.start()">Start Game</button>
-  </div>
+<section class="hero">
+  <h1>Rewoven Games</h1>
+  <p>Learn about sustainable fashion through play. Each game teaches you something new about the environmental impact of your clothing choices.</p>
+</section>
 
-  <!-- HUD -->
-  <div id="hud" style="display:none;">
-    <div class="hud-left">
-      <div class="hud-item">Score: <span class="val" id="scoreDisplay">0</span></div>
-      <div class="hud-item">Level: <span class="val" id="levelDisplay">1</span></div>
-      <div class="hud-item streak-display" id="streakDisplay" style="display:none;"></div>
-    </div>
-    <div class="hud-right">
-      <div class="hud-item">
-        <div class="lives-display" id="livesDisplay"></div>
+<div class="games-grid">
+
+  <!-- Fabric Rescue -->
+  <div class="game-card">
+    <div class="card-preview card-preview-rescue">
+      <div class="preview-items">
+        <span>👗</span>
+        <span>🧶</span>
+        <span>👜</span>
       </div>
     </div>
-  </div>
-
-  <!-- Bins -->
-  <div id="binsContainer" style="display:none;">
-    <div class="bin" data-bin="recycle" onclick="game.selectBin('recycle')">
-      <span class="bin-emoji">&#9851;&#65039;</span>
-      <span class="bin-label">Recycle</span>
-    </div>
-    <div class="bin" data-bin="donate" onclick="game.selectBin('donate')">
-      <span class="bin-emoji">&#129309;</span>
-      <span class="bin-label">Donate</span>
-    </div>
-    <div class="bin" data-bin="upcycle" onclick="game.selectBin('upcycle')">
-      <span class="bin-emoji">&#9986;&#65039;</span>
-      <span class="bin-label">Upcycle</span>
-    </div>
-    <div class="bin" data-bin="compost" onclick="game.selectBin('compost')">
-      <span class="bin-emoji">&#127793;</span>
-      <span class="bin-label">Compost</span>
-    </div>
-    <div class="bin landfill" data-bin="landfill" onclick="game.selectBin('landfill')">
-      <span class="bin-emoji">&#128465;&#65039;</span>
-      <span class="bin-label">Landfill</span>
+    <div class="card-body">
+      <div class="card-header">
+        <span class="card-title">Fabric Rescue</span>
+        <span class="badge badge-easy">Easy</span>
+      </div>
+      <p class="card-desc">Sort falling fashion items into the right bins — recycle, donate, or compost. Learn what happens to your clothes after you're done wearing them.</p>
+      <p class="card-genre">Sorting &middot; Drag & Drop</p>
+      <a href="/game/fabric-rescue/" class="pill-btn primary">Play Now</a>
     </div>
   </div>
 
-  <!-- Pause Overlay -->
-  <div id="pauseOverlay" class="hidden">
-    <h2>Paused</h2>
-    <button class="pill-btn primary" onclick="game.togglePause()" style="margin-bottom:12px;">Resume</button>
-    <button class="pill-btn secondary" onclick="game.quit()">Quit</button>
+  <!-- Eco Runner -->
+  <div class="game-card">
+    <div class="card-preview card-preview-runner">
+      <div class="preview-runner">
+        <div class="ground-line"></div>
+        <div class="runner-char"></div>
+        <div class="runner-head"></div>
+        <div class="runner-items">
+          <span>🌿</span>
+          <span>🛢️</span>
+          <span>♻️</span>
+          <span>🌱</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="card-header">
+        <span class="card-title">Eco Runner</span>
+        <span class="badge badge-medium">Medium</span>
+      </div>
+      <p class="card-desc">Run through changing biomes, collect sustainable items, and dodge fast fashion hazards. How far can you go before the fashion industry catches up?</p>
+      <p class="card-genre">Endless Runner &middot; Action</p>
+      <a href="/game/fashion-footprint/" class="pill-btn primary">Play Now</a>
+    </div>
   </div>
 
-  <!-- Game Over Screen -->
-  <div class="screen hidden" id="gameOverScreen">
-    <h2>Game Over!</h2>
-    <div class="stats-grid" id="statsGrid"></div>
-    <div class="go-buttons">
-      <button class="pill-btn primary" onclick="game.start()">Play Again</button>
-      <button class="pill-btn secondary" onclick="game.shareScore()">Share Score</button>
-      <button class="pill-btn secondary" onclick="game.showStart()">Menu</button>
-    </div>
-    <div class="leaderboard" id="leaderboard"></div>
-  </div>
 </div>
 
-<script>
-const ITEMS = [
-  { emoji: '\u{1F455}', name: 'Cotton T-shirt', material: 'cotton', bestBin: 'donate', altBin: 'compost',
-    fact: 'A single cotton t-shirt requires about 2,700 liters of water to produce \u2014 enough drinking water for one person for 2.5 years.',
-    waterSaved: 2700, co2Saved: 8 },
-  { emoji: '\u{1F456}', name: 'Denim Jeans', material: 'denim', bestBin: 'upcycle', altBin: 'donate',
-    fact: 'One pair of jeans uses approximately 7,500 liters of water to produce and can be upcycled into bags, quilts, or shorts.',
-    waterSaved: 7500, co2Saved: 20 },
-  { emoji: '\u{1F457}', name: 'Polyester Dress', material: 'polyester', bestBin: 'recycle', altBin: null,
-    fact: 'Polyester is made from petroleum and takes over 200 years to decompose. Recycling it saves 70% of the energy vs. making new.',
-    waterSaved: 500, co2Saved: 15 },
-  { emoji: '\u{1F9E5}', name: 'Wool Coat', material: 'wool', bestBin: 'donate', altBin: 'compost',
-    fact: 'Wool is naturally biodegradable and flame-resistant. A quality wool coat can last decades if donated and cared for.',
-    waterSaved: 3000, co2Saved: 25 },
-  { emoji: '\u{1F45F}', name: 'Sneakers', material: 'mixed', bestBin: 'recycle', altBin: 'donate',
-    fact: 'Sneakers contain up to 65 different materials. Some brands now offer take-back programs to recycle them into playground surfaces.',
-    waterSaved: 2000, co2Saved: 14 },
-  { emoji: '\u{1F9E6}', name: 'Nylon Socks', material: 'nylon', bestBin: 'recycle', altBin: null,
-    fact: 'Nylon is petroleum-based and releases nitrous oxide during production, a greenhouse gas 310x more potent than CO\u2082.',
-    waterSaved: 400, co2Saved: 6 },
-  { emoji: '\u{1F45C}', name: 'Leather Bag', material: 'leather', bestBin: 'upcycle', altBin: 'donate',
-    fact: 'Leather can be upcycled into wallets, belts, and accessories. Tanning leather uses heavy chemicals that pollute waterways.',
-    waterSaved: 5000, co2Saved: 18 },
-  { emoji: '\u{1F9E3}', name: 'Silk Scarf', material: 'silk', bestBin: 'donate', altBin: 'compost',
-    fact: 'Silk is biodegradable and one of the strongest natural fibers. A silk scarf in good condition can be donated and reused for years.',
-    waterSaved: 1500, co2Saved: 10 },
-  { emoji: '\u{1F455}', name: 'Linen Shirt', material: 'linen', bestBin: 'donate', altBin: 'compost',
-    fact: 'Linen comes from flax, which needs 60% less water than cotton and can grow in poor soil without pesticides.',
-    waterSaved: 1000, co2Saved: 5 },
-  { emoji: '\u{1F9E5}', name: 'Fleece Jacket', material: 'polyester', bestBin: 'recycle', altBin: null,
-    fact: 'Most fleece is made from recycled plastic bottles, but sheds microplastics when washed. Use a filter bag when laundering!',
-    waterSaved: 600, co2Saved: 12 },
-  { emoji: '\u{1F457}', name: 'Linen Dress', material: 'linen', bestBin: 'donate', altBin: 'compost',
-    fact: 'Linen gets softer with every wash and can last for decades. It\'s one of the most sustainable fabrics available.',
-    waterSaved: 900, co2Saved: 4 },
-  { emoji: '\u{1F456}', name: 'Cotton Shorts', material: 'cotton', bestBin: 'donate', altBin: 'compost',
-    fact: 'The fashion industry produces 10% of global carbon emissions \u2014 more than aviation and shipping combined.',
-    waterSaved: 1800, co2Saved: 7 },
-];
+<div class="footer">
+  <p>Made with care by <a href="/">Rewoven</a> &middot; Sustainable fashion starts with awareness</p>
+</div>
 
-const POWERUP_TYPES = [
-  { emoji: '\u{23F3}', name: 'Slow-Mo', effect: 'slowmo', duration: 8000 },
-  { emoji: '\u{2764}\u{FE0F}', name: 'Extra Life', effect: 'life', duration: 0 },
-  { emoji: '\u{2B50}', name: '2x Points', effect: 'double', duration: 10000 },
-];
-
-const DIFFICULTY = {
-  easy:   { fallSpeed: 0.5, spawnRate: 3500, maxItems: 3, speedIncrease: 0.04, rateDecrease: 120 },
-  normal: { fallSpeed: 0.8, spawnRate: 2500, maxItems: 5, speedIncrease: 0.07, rateDecrease: 150 },
-  hard:   { fallSpeed: 1.2, spawnRate: 1800, maxItems: 7, speedIncrease: 0.1,  rateDecrease: 180 },
-};
-
-class SoundEngine {
-  constructor() {
-    this.ctx = null;
-  }
-  init() {
-    if (this.ctx) return;
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  play(type) {
-    if (!this.ctx) return;
-    const o = this.ctx.createOscillator();
-    const g = this.ctx.createGain();
-    o.connect(g); g.connect(this.ctx.destination);
-    const t = this.ctx.currentTime;
-    switch (type) {
-      case 'correct':
-        o.type = 'sine'; o.frequency.setValueAtTime(523, t);
-        o.frequency.setValueAtTime(659, t + 0.08);
-        o.frequency.setValueAtTime(784, t + 0.16);
-        g.gain.setValueAtTime(0.15, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-        o.start(t); o.stop(t + 0.4); break;
-      case 'wrong':
-        o.type = 'sawtooth'; o.frequency.setValueAtTime(200, t);
-        o.frequency.setValueAtTime(140, t + 0.15);
-        g.gain.setValueAtTime(0.12, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-        o.start(t); o.stop(t + 0.35); break;
-      case 'landfill':
-        o.type = 'triangle'; o.frequency.setValueAtTime(300, t);
-        o.frequency.setValueAtTime(200, t + 0.2);
-        g.gain.setValueAtTime(0.1, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-        o.start(t); o.stop(t + 0.3); break;
-      case 'select':
-        o.type = 'sine'; o.frequency.setValueAtTime(880, t);
-        g.gain.setValueAtTime(0.08, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-        o.start(t); o.stop(t + 0.1); break;
-      case 'powerup':
-        o.type = 'sine'; o.frequency.setValueAtTime(600, t);
-        o.frequency.setValueAtTime(900, t + 0.1);
-        o.frequency.setValueAtTime(1200, t + 0.2);
-        g.gain.setValueAtTime(0.12, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-        o.start(t); o.stop(t + 0.4); break;
-      case 'levelup':
-        o.type = 'sine';
-        [523,659,784,1047].forEach((f, i) => {
-          o.frequency.setValueAtTime(f, t + i * 0.12);
-        });
-        g.gain.setValueAtTime(0.12, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
-        o.start(t); o.stop(t + 0.6); break;
-      case 'gameover':
-        o.type = 'sawtooth';
-        [400,350,300,200].forEach((f, i) => {
-          o.frequency.setValueAtTime(f, t + i * 0.2);
-        });
-        g.gain.setValueAtTime(0.1, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 1);
-        o.start(t); o.stop(t + 1); break;
-      case 'miss':
-        o.type = 'sine'; o.frequency.setValueAtTime(440, t);
-        o.frequency.setValueAtTime(220, t + 0.15);
-        g.gain.setValueAtTime(0.1, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-        o.start(t); o.stop(t + 0.25); break;
-    }
-  }
-}
-
-class Game {
-  constructor() {
-    this.sound = new SoundEngine();
-    this.difficulty = 'easy';
-    this.running = false;
-    this.paused = false;
-    this.score = 0;
-    this.lives = 3;
-    this.level = 1;
-    this.streak = 0;
-    this.maxStreak = 0;
-    this.itemsSaved = 0;
-    this.totalWater = 0;
-    this.totalCO2 = 0;
-    this.itemsOnScreen = [];
-    this.selectedItem = null;
-    this.dragItem = null;
-    this.dragOffsetX = 0;
-    this.dragOffsetY = 0;
-    this.spawnTimer = null;
-    this.animFrame = null;
-    this.lastTime = 0;
-    this.itemsSorted = 0;
-    this.itemsPerLevel = 10;
-    this.activePowerups = {};
-    this.powerupsOnScreen = [];
-    this.factTimeout = null;
-    this.gameArea = document.getElementById('gameArea');
-    this.binsContainer = document.getElementById('binsContainer');
-    this.setupTouch();
-  }
-
-  setDifficulty(diff, btn) {
-    this.difficulty = diff;
-    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-  }
-
-  showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-  }
-
-  showStart() {
-    this.cleanup();
-    document.getElementById('hud').style.display = 'none';
-    this.binsContainer.style.display = 'none';
-    document.getElementById('navScore').classList.remove('active');
-    this.showScreen('startScreen');
-  }
-
-  start() {
-    this.sound.init();
-    this.cleanup();
-    this.score = 0; this.lives = 3; this.level = 1;
-    this.streak = 0; this.maxStreak = 0;
-    this.itemsSaved = 0; this.totalWater = 0; this.totalCO2 = 0;
-    this.itemsSorted = 0;
-    this.selectedItem = null;
-    this.activePowerups = {};
-    this.running = true; this.paused = false;
-
-    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-    document.getElementById('pauseOverlay').classList.add('hidden');
-    document.getElementById('hud').style.display = 'flex';
-    this.binsContainer.style.display = 'flex';
-    document.getElementById('navScore').classList.add('active');
-
-    this.updateHUD();
-    this.showLevelBanner();
-    setTimeout(() => this.beginSpawning(), 1200);
-    this.lastTime = performance.now();
-    this.animFrame = requestAnimationFrame((t) => this.gameLoop(t));
-  }
-
-  cleanup() {
-    this.running = false;
-    if (this.spawnTimer) clearInterval(this.spawnTimer);
-    if (this.animFrame) cancelAnimationFrame(this.animFrame);
-    if (this.factTimeout) clearTimeout(this.factTimeout);
-    this.itemsOnScreen.forEach(item => item.el.remove());
-    this.itemsOnScreen = [];
-    this.powerupsOnScreen.forEach(p => p.el.remove());
-    this.powerupsOnScreen = [];
-    document.querySelectorAll('.fact-popup, .combo-popup, .level-banner, .powerup-active, .particle').forEach(e => e.remove());
-  }
-
-  beginSpawning() {
-    if (!this.running) return;
-    const diff = DIFFICULTY[this.difficulty];
-    const rate = Math.max(800, diff.spawnRate - (this.level - 1) * diff.rateDecrease);
-    if (this.spawnTimer) clearInterval(this.spawnTimer);
-    this.spawnItem();
-    this.spawnTimer = setInterval(() => {
-      if (!this.paused && this.running) {
-        const maxItems = diff.maxItems + Math.floor(this.level / 3);
-        if (this.itemsOnScreen.length < maxItems) {
-          this.spawnItem();
-        }
-        if (Math.random() < 0.08) this.spawnPowerup();
-      }
-    }, rate);
-  }
-
-  spawnItem() {
-    const itemData = ITEMS[Math.floor(Math.random() * ITEMS.length)];
-    const areaRect = this.gameArea.getBoundingClientRect();
-    const x = 30 + Math.random() * (areaRect.width - 100);
-    const el = document.createElement('div');
-    el.className = 'falling-item';
-    el.style.left = x + 'px';
-    el.style.top = '-60px';
-    el.innerHTML = `<span class="item-emoji">${itemData.emoji}</span><span class="item-label">${itemData.name}</span>`;
-
-    const item = { el, data: itemData, x, y: -60, speed: this.getCurrentSpeed() };
-    el.addEventListener('pointerdown', (e) => this.onItemPointerDown(e, item));
-    this.gameArea.appendChild(el);
-    this.itemsOnScreen.push(item);
-  }
-
-  spawnPowerup() {
-    const type = POWERUP_TYPES[Math.floor(Math.random() * POWERUP_TYPES.length)];
-    const areaRect = this.gameArea.getBoundingClientRect();
-    const x = 30 + Math.random() * (areaRect.width - 60);
-    const el = document.createElement('div');
-    el.className = 'powerup-item';
-    el.style.left = x + 'px';
-    el.style.top = '-40px';
-    el.textContent = type.emoji;
-    const p = { el, type, x, y: -40, speed: this.getCurrentSpeed() * 0.6 };
-    el.addEventListener('pointerdown', (e) => {
-      e.stopPropagation();
-      this.collectPowerup(p);
-    });
-    this.gameArea.appendChild(el);
-    this.powerupsOnScreen.push(p);
-  }
-
-  collectPowerup(p) {
-    this.sound.play('powerup');
-    this.spawnParticles(p.x + 16, p.y + 16, '#FBBF24', 10);
-    p.el.remove();
-    this.powerupsOnScreen = this.powerupsOnScreen.filter(pp => pp !== p);
-
-    const eff = p.type.effect;
-    if (eff === 'life') {
-      this.lives = Math.min(this.lives + 1, 5);
-      this.updateHUD();
-    } else {
-      this.activePowerups[eff] = Date.now() + p.type.duration;
-      this.showPowerupIndicator(p.type);
-    }
-  }
-
-  showPowerupIndicator(type) {
-    document.querySelectorAll('.powerup-active').forEach(e => e.remove());
-    const el = document.createElement('div');
-    el.className = 'powerup-active';
-    el.textContent = `${type.emoji} ${type.name} Active!`;
-    this.gameArea.appendChild(el);
-    setTimeout(() => el.remove(), type.duration);
-  }
-
-  getCurrentSpeed() {
-    const diff = DIFFICULTY[this.difficulty];
-    let speed = diff.fallSpeed + (this.level - 1) * diff.speedIncrease;
-    if (this.activePowerups.slowmo && Date.now() < this.activePowerups.slowmo) {
-      speed *= 0.4;
-    }
-    return speed;
-  }
-
-  gameLoop(time) {
-    if (!this.running) return;
-    const dt = Math.min(time - this.lastTime, 50);
-    this.lastTime = time;
-
-    if (!this.paused) {
-      const areaH = this.gameArea.getBoundingClientRect().height;
-      const binsTop = areaH - (this.binsContainer ? this.binsContainer.getBoundingClientRect().height : 90);
-
-      // Update items
-      for (let i = this.itemsOnScreen.length - 1; i >= 0; i--) {
-        const item = this.itemsOnScreen[i];
-        if (item === this.dragItem) continue;
-        item.y += item.speed * (dt / 16);
-        item.el.style.top = item.y + 'px';
-
-        if (item.y > binsTop + 20) {
-          this.missItem(item, i);
-        }
-      }
-
-      // Update powerups
-      for (let i = this.powerupsOnScreen.length - 1; i >= 0; i--) {
-        const p = this.powerupsOnScreen[i];
-        p.y += p.speed * (dt / 16);
-        p.el.style.top = p.y + 'px';
-        if (p.y > areaH) {
-          p.el.remove();
-          this.powerupsOnScreen.splice(i, 1);
-        }
-      }
-
-      // Update speeds for items already on screen
-      this.itemsOnScreen.forEach(item => {
-        if (item !== this.dragItem) item.speed = this.getCurrentSpeed();
-      });
-    }
-
-    this.animFrame = requestAnimationFrame((t) => this.gameLoop(t));
-  }
-
-  missItem(item, index) {
-    this.sound.play('miss');
-    this.lives--;
-    this.streak = 0;
-    this.updateHUD();
-    item.el.remove();
-    this.itemsOnScreen.splice(index, 1);
-    if (this.selectedItem === item) this.selectedItem = null;
-    this.gameArea.classList.add('shake');
-    setTimeout(() => this.gameArea.classList.remove('shake'), 400);
-    if (this.lives <= 0) this.gameOver();
-  }
-
-  onItemPointerDown(e, item) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.sound.play('select');
-
-    // Deselect previous
-    if (this.selectedItem && this.selectedItem !== item) {
-      this.selectedItem.el.classList.remove('selected');
-    }
-
-    this.selectedItem = item;
-    item.el.classList.add('selected');
-
-    // Setup drag
-    const rect = item.el.getBoundingClientRect();
-    const areaRect = this.gameArea.getBoundingClientRect();
-    this.dragOffsetX = e.clientX - rect.left;
-    this.dragOffsetY = e.clientY - rect.top;
-    this.dragItem = item;
-    item.el.classList.add('dragging');
-    item.el.setPointerCapture(e.pointerId);
-
-    const onMove = (ev) => {
-      ev.preventDefault();
-      const nx = ev.clientX - areaRect.left - this.dragOffsetX;
-      const ny = ev.clientY - areaRect.top - this.dragOffsetY;
-      item.x = nx; item.y = ny;
-      item.el.style.left = nx + 'px';
-      item.el.style.top = ny + 'px';
-
-      // Highlight bins on hover
-      document.querySelectorAll('.bin').forEach(bin => {
-        const br = bin.getBoundingClientRect();
-        const cx = ev.clientX, cy = ev.clientY;
-        if (cx >= br.left && cx <= br.right && cy >= br.top && cy <= br.bottom) {
-          bin.classList.add('highlight');
-        } else {
-          bin.classList.remove('highlight');
-        }
-      });
-    };
-
-    const onUp = (ev) => {
-      item.el.classList.remove('dragging');
-      this.dragItem = null;
-      item.el.removeEventListener('pointermove', onMove);
-      item.el.removeEventListener('pointerup', onUp);
-      item.el.removeEventListener('pointercancel', onUp);
-      document.querySelectorAll('.bin').forEach(bin => bin.classList.remove('highlight'));
-
-      // Check if dropped on a bin
-      const bins = document.querySelectorAll('.bin');
-      for (const bin of bins) {
-        const br = bin.getBoundingClientRect();
-        if (ev.clientX >= br.left && ev.clientX <= br.right &&
-            ev.clientY >= br.top && ev.clientY <= br.bottom) {
-          this.selectBin(bin.dataset.bin);
-          return;
-        }
-      }
-    };
-
-    item.el.addEventListener('pointermove', onMove);
-    item.el.addEventListener('pointerup', onUp);
-    item.el.addEventListener('pointercancel', onUp);
-  }
-
-  selectBin(binName) {
-    if (!this.selectedItem || !this.running || this.paused) return;
-    const item = this.selectedItem;
-    const data = item.data;
-    const correct = (binName === data.bestBin || binName === data.altBin);
-    const isLandfill = binName === 'landfill';
-
-    if (isLandfill) {
-      this.sound.play('landfill');
-      this.streak = 0;
-      this.showFact('\u26A0\uFE0F Landfill should be the last resort! This ' + data.name + ' could have been sorted to ' + data.bestBin.charAt(0).toUpperCase() + data.bestBin.slice(1) + '.', true);
-    } else if (correct) {
-      const mult = this.activePowerups.double && Date.now() < this.activePowerups.double ? 2 : 1;
-      this.streak++;
-      if (this.streak > this.maxStreak) this.maxStreak = this.streak;
-      const streakMult = 1 + Math.floor(this.streak / 3) * 0.5;
-      const points = Math.round(100 * streakMult * mult);
-      this.score += points;
-      this.itemsSaved++;
-      this.totalWater += data.waterSaved;
-      this.totalCO2 += data.co2Saved;
-      this.sound.play('correct');
-      this.spawnParticles(item.x + 20, item.y + 20, '#34D399', 15);
-      this.showFact('\u2705 ' + data.fact);
-      if (this.streak >= 3 && this.streak % 3 === 0) {
-        this.showCombo(this.streak, item.x, item.y);
-      }
-      this.showPointPopup('+' + points, item.x, item.y - 20);
-    } else {
-      this.sound.play('wrong');
-      this.lives--;
-      this.streak = 0;
-      this.gameArea.classList.add('shake');
-      setTimeout(() => this.gameArea.classList.remove('shake'), 400);
-      this.showFact('\u274C Wrong bin! ' + data.name + ' is best sorted to ' + data.bestBin.charAt(0).toUpperCase() + data.bestBin.slice(1) + '. ' + data.fact, true);
-      if (this.lives <= 0) {
-        this.removeItem(item);
-        this.updateHUD();
-        this.gameOver();
-        return;
-      }
-    }
-
-    this.removeItem(item);
-    this.itemsSorted++;
-    if (this.itemsSorted % this.itemsPerLevel === 0) {
-      this.levelUp();
-    }
-    this.updateHUD();
-  }
-
-  removeItem(item) {
-    item.el.remove();
-    this.itemsOnScreen = this.itemsOnScreen.filter(i => i !== item);
-    if (this.selectedItem === item) this.selectedItem = null;
-  }
-
-  levelUp() {
-    this.level++;
-    this.sound.play('levelup');
-    this.showLevelBanner();
-    this.beginSpawning();
-  }
-
-  showLevelBanner() {
-    const el = document.createElement('div');
-    el.className = 'level-banner';
-    el.textContent = 'Level ' + this.level;
-    this.gameArea.appendChild(el);
-    setTimeout(() => el.remove(), 1500);
-  }
-
-  showCombo(streak, x, y) {
-    const el = document.createElement('div');
-    el.className = 'combo-popup';
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    el.textContent = streak + 'x Streak!';
-    this.gameArea.appendChild(el);
-    setTimeout(() => el.remove(), 1000);
-  }
-
-  showPointPopup(text, x, y) {
-    const el = document.createElement('div');
-    el.className = 'combo-popup';
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    el.style.fontSize = '20px';
-    el.style.color = '#34D399';
-    el.textContent = text;
-    this.gameArea.appendChild(el);
-    setTimeout(() => el.remove(), 800);
-  }
-
-  showFact(text, isWarning) {
-    document.querySelectorAll('.fact-popup').forEach(e => e.remove());
-    if (this.factTimeout) clearTimeout(this.factTimeout);
-    const el = document.createElement('div');
-    el.className = 'fact-popup';
-    if (isWarning) el.style.borderColor = '#F59E0B';
-    el.innerHTML = `<span class="fact-icon">${isWarning ? '\u{1F4A1}' : '\u{1F331}'}</span>${text}`;
-    this.gameArea.appendChild(el);
-    this.factTimeout = setTimeout(() => el.remove(), 3500);
-  }
-
-  spawnParticles(x, y, color, count) {
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.style.left = x + 'px';
-      p.style.top = y + 'px';
-      p.style.background = color;
-      const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
-      const dist = 40 + Math.random() * 60;
-      const dx = Math.cos(angle) * dist;
-      const dy = Math.sin(angle) * dist;
-      p.style.transition = 'all 0.6s ease-out';
-      this.gameArea.appendChild(p);
-      requestAnimationFrame(() => {
-        p.style.transform = `translate(${dx}px, ${dy}px)`;
-        p.style.opacity = '0';
-      });
-      setTimeout(() => p.remove(), 600);
-    }
-  }
-
-  updateHUD() {
-    document.getElementById('scoreDisplay').textContent = this.score;
-    document.getElementById('levelDisplay').textContent = this.level;
-    document.getElementById('navScoreVal').textContent = this.score;
-    document.getElementById('navLevel').textContent = 'Level ' + this.level;
-
-    const livesEl = document.getElementById('livesDisplay');
-    livesEl.innerHTML = '';
-    for (let i = 0; i < 3; i++) {
-      const h = document.createElement('span');
-      h.className = 'life-heart' + (i >= this.lives ? ' lost' : '');
-      h.textContent = '\u2764\uFE0F';
-      livesEl.appendChild(h);
-    }
-    // Show extra lives beyond 3
-    for (let i = 3; i < this.lives; i++) {
-      const h = document.createElement('span');
-      h.className = 'life-heart';
-      h.textContent = '\u2764\uFE0F';
-      livesEl.appendChild(h);
-    }
-
-    const streakEl = document.getElementById('streakDisplay');
-    if (this.streak >= 2) {
-      streakEl.style.display = 'block';
-      streakEl.textContent = '\u{1F525} ' + this.streak + 'x Streak';
-    } else {
-      streakEl.style.display = 'none';
-    }
-  }
-
-  togglePause() {
-    if (!this.running) return;
-    this.paused = !this.paused;
-    document.getElementById('pauseOverlay').classList.toggle('hidden', !this.paused);
-  }
-
-  quit() {
-    this.paused = false;
-    document.getElementById('pauseOverlay').classList.add('hidden');
-    this.gameOver();
-  }
-
-  gameOver() {
-    this.running = false;
-    this.sound.play('gameover');
-    if (this.spawnTimer) clearInterval(this.spawnTimer);
-    if (this.animFrame) cancelAnimationFrame(this.animFrame);
-
-    document.getElementById('hud').style.display = 'none';
-    this.binsContainer.style.display = 'none';
-    document.getElementById('navScore').classList.remove('active');
-
-    // Clean up remaining items
-    this.itemsOnScreen.forEach(item => item.el.remove());
-    this.itemsOnScreen = [];
-    this.powerupsOnScreen.forEach(p => p.el.remove());
-    this.powerupsOnScreen = [];
-    document.querySelectorAll('.fact-popup, .combo-popup, .powerup-active').forEach(e => e.remove());
-
-    this.saveScore();
-    this.showGameOverScreen();
-  }
-
-  showGameOverScreen() {
-    const sg = document.getElementById('statsGrid');
-    const waterL = this.totalWater >= 1000 ? (this.totalWater / 1000).toFixed(1) + 'k' : this.totalWater;
-    sg.innerHTML = `
-      <div class="stat-card"><div class="stat-val">${this.score}</div><div class="stat-label">Final Score</div></div>
-      <div class="stat-card"><div class="stat-val">${this.itemsSaved}</div><div class="stat-label">Items Saved</div></div>
-      <div class="stat-card"><div class="stat-val">${waterL}L</div><div class="stat-label">Water Saved</div></div>
-      <div class="stat-card"><div class="stat-val">${this.totalCO2}kg</div><div class="stat-label">CO\u2082 Prevented</div></div>
-      <div class="stat-card"><div class="stat-val">${this.maxStreak}x</div><div class="stat-label">Best Streak</div></div>
-      <div class="stat-card"><div class="stat-val">Lv.${this.level}</div><div class="stat-label">Level Reached</div></div>
-    `;
-    this.renderLeaderboard();
-    this.showScreen('gameOverScreen');
-  }
-
-  saveScore() {
-    try {
-      let scores = JSON.parse(localStorage.getItem('fabricRescueScores') || '[]');
-      scores.push({
-        score: this.score,
-        level: this.level,
-        items: this.itemsSaved,
-        difficulty: this.difficulty,
-        date: new Date().toISOString().split('T')[0],
-      });
-      scores.sort((a, b) => b.score - a.score);
-      scores = scores.slice(0, 10);
-      localStorage.setItem('fabricRescueScores', JSON.stringify(scores));
-    } catch (e) {}
-  }
-
-  renderLeaderboard() {
-    try {
-      const scores = JSON.parse(localStorage.getItem('fabricRescueScores') || '[]');
-      if (scores.length === 0) { document.getElementById('leaderboard').innerHTML = ''; return; }
-      let html = '<h3>Leaderboard</h3>';
-      scores.forEach((s, i) => {
-        const isCurrent = s.score === this.score && s.date === new Date().toISOString().split('T')[0];
-        html += `<div class="lb-entry${isCurrent ? ' current' : ''}">
-          <span class="lb-rank">#${i + 1}</span>
-          <span class="lb-name">Lv.${s.level} (${s.difficulty})</span>
-          <span class="lb-score">${s.score}</span>
-        </div>`;
-      });
-      document.getElementById('leaderboard').innerHTML = html;
-    } catch (e) {}
-  }
-
-  shareScore() {
-    const text = `I rescued ${this.itemsSaved} clothing items in Fabric Rescue by @Rewoven! Score: ${this.score} | Water saved: ${this.totalWater}L | CO\u2082 prevented: ${this.totalCO2}kg. Play at rewovenapp.com/game/`;
-    if (navigator.share) {
-      navigator.share({ title: 'Fabric Rescue Score', text }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(text).then(() => {
-        alert('Score copied to clipboard!');
-      }).catch(() => {
-        alert(text);
-      });
-    }
-  }
-
-  setupTouch() {
-    // Prevent default touch behaviors on game area
-    this.gameArea.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-  }
-}
-
-const game = new Game();
-</script>
 </body>
 </html>
