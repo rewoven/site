@@ -345,6 +345,7 @@ function startGame(){
   B.free=false;B.scored=false;B.trail=[];B.spin=0;
 
   updateHUD();
+  ensureLoop();
   clearInterval(timerInt);
   timerInt=setInterval(()=>{
     if(!running||paused||triviaOn)return;
@@ -701,7 +702,7 @@ function draw(){
   bg.addColorStop(0,'#0a0e1a');bg.addColorStop(0.7,'#0f1629');bg.addColorStop(1,'#1a1f35');
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,Ht);
 
-  if(!running){requestAnimationFrame(loop);return}
+  if(!running)return
 
   // ── Court ──
   ctx.fillStyle='#1a2332';ctx.fillRect(0,gy,W,Ht-gy);
@@ -925,8 +926,13 @@ function roundRectStroke(ctx,x,y,w,h,r){
 }
 
 // ── Loop ──
-function loop(){update();draw();requestAnimationFrame(loop)}
-loop();
+let loopRunning=false;
+function loop(){
+  if(running){update();draw()}
+  requestAnimationFrame(loop);
+}
+
+function ensureLoop(){if(!loopRunning){loopRunning=true;loop()}}
 </script>
 </body>
 </html>
