@@ -21,17 +21,31 @@ canvas{display:block;margin:0 auto}
 .back-btn:hover{background:rgba(167,243,208,.1)}
 
 /* Screens */
-.screen{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+.screen{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;overflow-y:auto}
 .screen.hide{display:none}
 #menuScreen{background:linear-gradient(135deg,#064E3B,#0a0e1a 70%)}
 .menu-icon{font-size:72px;margin-bottom:16px}
 .menu-title{font-size:clamp(36px,8vw,60px);font-weight:900;background:linear-gradient(135deg,#10B981,#34D399,#A7F3D0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
-.menu-sub{font-size:16px;color:#94A3B8;max-width:420px;line-height:1.6;margin-bottom:32px}
+.menu-sub{font-size:16px;color:#94A3B8;max-width:420px;line-height:1.6;margin-bottom:24px}
+
+/* Player Select */
+.select-label{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:#64748B;margin-bottom:12px;font-weight:700}
+.player-cards{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;justify-content:center}
+.p-card{width:140px;padding:16px 10px;border-radius:16px;border:2px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);cursor:pointer;transition:all .2s;text-align:center}
+.p-card:hover{border-color:#34D399;background:rgba(52,211,153,.06);transform:translateY(-2px)}
+.p-card.sel{border-color:#10B981;background:rgba(16,185,129,.12)}
+.p-card .jersey{font-size:36px;font-weight:900;margin-bottom:4px}
+.p-card .pname{font-size:13px;font-weight:800;margin-bottom:2px}
+.p-card .archetype{font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.p-card .special{font-size:10px;color:#A7F3D0;background:rgba(16,185,129,.1);padding:4px 8px;border-radius:6px;display:inline-block}
+
+/* Mode select */
 .menu-modes{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;justify-content:center}
 .mode-btn{padding:14px 28px;border-radius:14px;border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
 .mode-btn:hover{border-color:#34D399;background:rgba(52,211,153,.08)}
 .mode-btn.sel{border-color:#10B981;background:rgba(16,185,129,.15)}
 .mode-btn small{display:block;font-size:11px;font-weight:500;color:#64748B;margin-top:4px}
+
 .play-btn{background:linear-gradient(135deg,#10B981,#059669);border:none;border-radius:50px;padding:18px 52px;font-size:18px;font-weight:800;color:#fff;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(16,185,129,.4);transition:all .3s}
 .play-btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(16,185,129,.6)}
 .controls-info{margin-top:24px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px 24px;font-size:12px;color:#64748B;max-width:360px;line-height:1.8}
@@ -77,8 +91,20 @@ canvas{display:block;margin:0 auto}
 .hud-time.warn{color:#EF4444;animation:blink .5s ease infinite}
 @keyframes blink{50%{opacity:.4}}
 
+/* Streak */
+.streak-hud{position:fixed;top:80px;right:20px;z-index:30;display:none;pointer-events:none;font-size:14px;font-weight:800;color:#F59E0B}
+.streak-hud.on{display:block}
+
+/* Special move HUD */
+.special-hud{position:fixed;top:80px;left:20px;z-index:30;display:none;pointer-events:none}
+.special-hud.on{display:block}
+.special-bar{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 14px;font-size:11px;font-weight:700;color:#94A3B8}
+.special-bar.ready{border-color:#10B981;color:#10B981;animation:pulse 1.5s ease infinite}
+@keyframes pulse{50%{opacity:.6}}
+.special-bar .sp-key{background:rgba(16,185,129,.2);border:1px solid rgba(16,185,129,.3);border-radius:4px;padding:1px 6px;font-size:10px;margin-right:4px;color:#A7F3D0}
+
 /* Shot Meter */
-.shot-meter{position:fixed;left:20px;bottom:50%;z-index:30;width:12px;height:120px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;display:none;border:1px solid rgba(255,255,255,.1)}
+.shot-meter{position:fixed;left:20px;bottom:50%;z-index:30;width:14px;height:140px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden;display:none;border:1px solid rgba(255,255,255,.1)}
 .shot-meter.on{display:block}
 .shot-meter .zone{position:absolute;left:0;right:0}
 .shot-meter .cursor{position:absolute;left:-3px;right:-3px;height:4px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.6);transition:none}
@@ -87,12 +113,13 @@ canvas{display:block;margin:0 auto}
 .mobile-pad{position:fixed;bottom:10px;left:0;right:0;z-index:30;display:none;justify-content:space-between;padding:0 16px;pointer-events:none}
 .mobile-pad.on{display:flex}
 .m-side{display:flex;gap:8px;pointer-events:auto}
-.m-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.12);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.m-btn{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.12);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
 .m-btn:active{background:rgba(52,211,153,.25);border-color:#34D399}
 .m-btn.big{width:68px;height:68px;background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.3);font-size:11px;font-weight:800}
+.m-btn.sp{background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.3);font-size:9px;font-weight:800;color:#F59E0B}
 
 @media(max-width:768px){.mobile-pad.on{display:flex}.controls-info{display:none}}
-@media(max-width:480px){.menu-title{font-size:32px}.over-score{font-size:48px}}
+@media(max-width:480px){.menu-title{font-size:32px}.over-score{font-size:48px}.p-card{width:110px;padding:12px 8px}.p-card .jersey{font-size:28px}}
 </style>
 </head>
 <body>
@@ -108,7 +135,31 @@ canvas{display:block;margin:0 auto}
 <div class="screen" id="menuScreen">
   <div class="menu-icon">🏀</div>
   <div class="menu-title">Eco Hoops</div>
-  <div class="menu-sub">Shoot hoops, score points, and learn about sustainability. Choose your game mode and play!</div>
+  <div class="menu-sub">Pick your player, shoot hoops, and learn about sustainability!</div>
+
+  <div class="select-label">Choose Your Player</div>
+  <div class="player-cards" id="playerCards">
+    <div class="p-card sel" data-player="curry" onclick="pickPlayer(this,'curry')">
+      <div class="jersey" style="color:#FFD700">30</div>
+      <div class="pname">Steph Curry</div>
+      <div class="archetype">Shooter</div>
+      <div class="special">Auto 3PT every 30s</div>
+    </div>
+    <div class="p-card" data-player="carter" onclick="pickPlayer(this,'carter')">
+      <div class="jersey" style="color:#EF4444">15</div>
+      <div class="pname">Vince Carter</div>
+      <div class="archetype">Dunker</div>
+      <div class="special">Auto Dunk every 30s</div>
+    </div>
+    <div class="p-card" data-player="rodman" onclick="pickPlayer(this,'rodman')">
+      <div class="jersey" style="color:#3B82F6">91</div>
+      <div class="pname">Dennis Rodman</div>
+      <div class="archetype">Defender</div>
+      <div class="special">Block Hoop every 30s</div>
+    </div>
+  </div>
+
+  <div class="select-label">Game Mode</div>
   <div class="menu-modes">
     <button class="mode-btn sel" data-mode="timed" onclick="pickMode(this,'timed')">
       Timed<small>60 seconds</small>
@@ -120,19 +171,19 @@ canvas{display:block;margin:0 auto}
   <button class="play-btn" onclick="startGame()">Play Now</button>
   <div class="controls-info">
     <kbd>A</kbd> <kbd>D</kbd> Move &nbsp;|&nbsp; <kbd>W</kbd> Jump &nbsp;|&nbsp; Hold <kbd>SPACE</kbd> to shoot — release on green!<br>
-    <kbd>S</kbd> Steal &nbsp;|&nbsp; Near hoop = auto dunk
+    <kbd>S</kbd> Steal &nbsp;|&nbsp; <kbd>E</kbd> Special Move &nbsp;|&nbsp; Near hoop + jump = dunk
   </div>
   <a href="/game/" style="margin-top:20px;color:#475569;font-size:13px;text-decoration:none">Back to Games</a>
 </div>
 
 <!-- Game Over -->
 <div class="screen hide" id="overScreen">
-  <div style="font-size:42px;font-weight:900">Game Over</div>
+  <div style="font-size:42px;font-weight:900" id="overTitle">Game Over</div>
   <div class="over-score" id="finalScore">0</div>
   <div class="over-detail" id="finalDetail"></div>
   <div class="over-fact"><strong>Eco Fact</strong><span id="finalFact"></span></div>
   <div class="over-btns">
-    <button class="play-btn" onclick="startGame()">Play Again</button>
+    <button class="play-btn" onclick="showMenu()">Play Again</button>
     <button class="sec-btn" onclick="location.href='/game/'">Games Hub</button>
   </div>
 </div>
@@ -140,39 +191,50 @@ canvas{display:block;margin:0 auto}
 <!-- Trivia -->
 <div class="screen hide" id="triviaScreen">
   <div class="trivia-card">
-    <div class="trivia-badge">Sustainability Trivia</div>
+    <div class="trivia-badge" id="triviaBadge">Sustainability Trivia</div>
     <div class="trivia-q" id="tQ"></div>
     <div class="trivia-opts" id="tO"></div>
     <div class="trivia-res" id="tR"></div>
-    <button class="skip-btn" id="tSkip" onclick="closeTrivia()">Skip →</button>
+    <button class="skip-btn" id="tSkip" onclick="closeTrivia()">Skip &rarr;</button>
   </div>
 </div>
 
 <!-- HUD -->
 <div class="hud" id="hud">
-  <div class="hud-team" style="color:#10B981"><span>YOU</span><div class="hud-score-val" id="yourScore">0</div></div>
+  <div class="hud-team" style="color:#10B981"><span id="hudPlayerName">YOU</span><div class="hud-score-val" id="yourScore">0</div></div>
   <div class="hud-vs">VS</div>
   <div class="hud-team" style="color:#EF4444"><div class="hud-score-val" id="aiScore">0</div><span>CPU</span></div>
 </div>
 <div class="hud-time" id="hudTime">60</div>
 
+<!-- Streak -->
+<div class="streak-hud" id="streakHud"></div>
+
+<!-- Special Move HUD -->
+<div class="special-hud" id="specialHud">
+  <div class="special-bar" id="specialBar"><span class="sp-key">E</span> <span id="specialText">Special: 30s</span></div>
+</div>
+
 <!-- Shot Meter -->
 <div class="shot-meter" id="shotMeter">
+  <div class="zone" id="meterRed1" style="background:#EF4444"></div>
+  <div class="zone" id="meterYellow1" style="background:#F59E0B"></div>
   <div class="zone" id="meterGreen" style="background:#10B981"></div>
-  <div class="zone" style="background:#F59E0B;bottom:0;height:35%"></div>
-  <div class="zone" style="background:#F59E0B;top:0;height:25%"></div>
+  <div class="zone" id="meterYellow2" style="background:#F59E0B"></div>
+  <div class="zone" id="meterRed2" style="background:#EF4444"></div>
   <div class="cursor" id="meterCursor"></div>
 </div>
 
 <!-- Mobile Controls -->
 <div class="mobile-pad" id="mobilePad">
   <div class="m-side">
-    <button class="m-btn" ontouchstart="mk('a',1)" ontouchend="mk('a',0)">◀</button>
-    <button class="m-btn" ontouchstart="mk('d',1)" ontouchend="mk('d',0)">▶</button>
-    <button class="m-btn" ontouchstart="mk('w',1)" ontouchend="mk('w',0)">▲</button>
+    <button class="m-btn" ontouchstart="mk('a',1)" ontouchend="mk('a',0)">&#9664;</button>
+    <button class="m-btn" ontouchstart="mk('d',1)" ontouchend="mk('d',0)">&#9654;</button>
+    <button class="m-btn" ontouchstart="mk('w',1)" ontouchend="mk('w',0)">&#9650;</button>
   </div>
   <div class="m-side">
     <button class="m-btn" style="font-size:10px;font-weight:700" ontouchstart="mk('s',1)" ontouchend="mk('s',0)">STL</button>
+    <button class="m-btn sp" ontouchstart="mk('e',1)" ontouchend="mk('e',0)">SPL</button>
     <button class="m-btn big" ontouchstart="mk(' ',1)" ontouchend="mk(' ',0)">SHOOT</button>
   </div>
 </div>
@@ -180,633 +242,1371 @@ canvas{display:block;margin:0 auto}
 <canvas id="c"></canvas>
 
 <script>
-// ═══════════════════════════════════════
-// ECO HOOPS — Original Rewoven Game
-// ═══════════════════════════════════════
-const C=document.getElementById('c'),X=C.getContext('2d');
-let W,H,GY; // width, height, ground Y
+// =====================================================
+// ECO HOOPS — Rewoven Games (Complete Rewrite)
+// =====================================================
 
-function resize(){
-  W=C.width=innerWidth;H=C.height=innerHeight;
-  GY=H-80;
+const C = document.getElementById('c'), X = C.getContext('2d');
+let W, H, GY, COURT_LEFT, COURT_RIGHT;
+
+function resize() {
+  W = C.width = innerWidth;
+  H = C.height = innerHeight;
+  GY = H - 80;
+  COURT_LEFT = 30;
+  COURT_RIGHT = W - 30;
 }
-addEventListener('resize',resize);resize();
+addEventListener('resize', resize);
+resize();
+
+// ── Player Archetypes ──
+const PLAYERS = {
+  curry: {
+    name: 'Steph Curry', number: 30, archetype: 'Shooter',
+    skinCol: '#D4A574', hairCol: '#1a1a1a', hairStyle: 'short',
+    jerseyCol: '#1D428A', shortsCol: '#1D428A', shoeCol: '#FFD700',
+    speed: 4.2, jumpPow: 10.5, greenZone: 0.28, meterSpeed: 0.022,
+    shootScatter: 0.45, dunkRange: 55, dunkSpeed: 0.12, dunkBonusPts: 0,
+    stealChance: 0.35,
+    specialName: 'Auto 3PT', specialDesc: 'Guaranteed 3-pointer'
+  },
+  carter: {
+    name: 'Vince Carter', number: 15, archetype: 'Dunker',
+    skinCol: '#8B6914', hairCol: '#1a1a1a', hairStyle: 'buzz',
+    jerseyCol: '#6F263D', shortsCol: '#6F263D', shoeCol: '#C8102E',
+    speed: 5.0, jumpPow: 13.5, greenZone: 0.16, meterSpeed: 0.028,
+    shootScatter: 1.0, dunkRange: 140, dunkSpeed: 0.22, dunkBonusPts: 1,
+    stealChance: 0.40,
+    specialName: 'Vinsanity Dunk', specialDesc: 'Fly to the hoop for an automatic dunk'
+  },
+  rodman: {
+    name: 'Dennis Rodman', number: 91, archetype: 'Defender',
+    skinCol: '#D4A574', hairCol: '#EF4444', hairStyle: 'wild',
+    jerseyCol: '#C8102E', shortsCol: '#1a1a2e', shoeCol: '#3B82F6',
+    speed: 6.2, jumpPow: 11.5, greenZone: 0.10, meterSpeed: 0.035,
+    shootScatter: 1.8, dunkRange: 65, dunkSpeed: 0.13, dunkBonusPts: 0,
+    stealChance: 0.70,
+    specialName: 'Lockdown', specialDesc: 'Opponent hoop unscorable for 5s'
+  }
+};
 
 // ── Constants ──
-const GRAV=0.48, FRIC=0.92, MAX_POW=16, TRIVIA_EVERY=5;
+const GRAV = 0.52, FRIC = 0.92, MAX_POW = 14, TRIVIA_EVERY = 5;
+const SPECIAL_CD_SECS = 30;
+const SPECIAL_CD_FRAMES = SPECIAL_CD_SECS * 60;
 
 // ── State ──
-let mode='timed',running=false,paused=false,triviaOn=false;
-let pScore=0,aScore=0,timeLeft=60,basketN=0,streak=0,bestStreak=0,triviaBonus=0;
-let shotCharging=false,shotPower=0;
-let meterActive=false,meterVal=0,meterDir=1,meterSpd=0.028;
-let stealCD=0,dunkAnim=0,dunking=false;
-let possession='player'; // 'player' or 'ai'
-let aiShootTimer=0;
-let timerInt=null;
+let selectedPlayer = 'curry';
+let mode = 'timed', running = false, paused = false, triviaOn = false;
+let pScore = 0, aScore = 0, timeLeft = 60, basketN = 0, streak = 0, bestStreak = 0, triviaBonus = 0;
+let shotCharging = false, shotPower = 0;
+let meterActive = false, meterVal = 0, meterDir = 1;
+let stealCD = 0, dunkAnim = 0, dunking = false;
+let possession = 'player'; // 'player', 'ai', 'player_shot', 'ai_shot', 'scored_p', 'scored_a', 'blocked', 'loose'
+let ballState = 'held'; // 'held', 'air', 'loose'
+let aiShootTimer = 0, aiJumpTimer = 0;
+let timerInt = null;
+let frameCount = 0;
+
+// Special move
+let specialTimer = 0;
+let specialReady = false;
+let specialActive = false;
+let specialDuration = 0;
+let hoopBlocked = false;
+let autoAnimating = false;
+let specialTriviaShown = false;
+
+// Possession reset delay
+let resetTimer = 0;
+let resetPending = false;
 
 // ── Input ──
-const K={};
-addEventListener('keydown',e=>{K[e.key.toLowerCase()]=true;if([' ','w','a','s','d'].includes(e.key.toLowerCase()))e.preventDefault()});
-addEventListener('keyup',e=>{K[e.key.toLowerCase()]=false});
-function mk(k,v){K[k]=!!v}
+const K = {};
+const KDown = {}; // edge detection
+addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (!K[k]) KDown[k] = true;
+  K[k] = true;
+  if ([' ', 'w', 'a', 's', 'd', 'e'].includes(k)) e.preventDefault();
+});
+addEventListener('keyup', e => { K[e.key.toLowerCase()] = false; });
+function mk(k, v) {
+  if (v && !K[k]) KDown[k] = true;
+  K[k] = !!v;
+}
 
 // ── Entities ──
-const P={x:0,y:0,w:38,h:54,vx:0,vy:0,face:1,onG:false,jc:0}; // player
-const A={x:0,y:0,w:38,h:54,vx:0,vy:0,face:-1,onG:false,stun:0}; // AI
-const B={x:0,y:0,r:13,vx:0,vy:0,trail:[],spin:0}; // ball
-let ballState='held'; // 'held','air','loose','scored'
+const P = { x:0, y:0, w:48, h:68, vx:0, vy:0, face:1, onG:false, jc:0, animT:0 };
+const A = { x:0, y:0, w:48, h:68, vx:0, vy:0, face:-1, onG:false, stun:0, animT:0 };
+const B = { x:0, y:0, r:12, vx:0, vy:0, trail:[], spin:0 };
 
-// ── Hoops (both sides) ──
-const hoopL={x:0,y:0,rimW:48,dir:1};  // left hoop (AI scores here)
-const hoopR={x:0,y:0,rimW:48,dir:-1}; // right hoop (player scores here)
+// ── Hoops ──
+const hoopL = { x:0, y:0, rimW:50, dir:1 };
+const hoopR = { x:0, y:0, rimW:50, dir:-1 };
 
-let particles=[],floats=[];
+let particles = [], floats = [];
+
+// 3pt line distance (fraction of W from hoop)
+const THREE_PT_DIST = 0.28;
 
 // ── Trivia ──
-const TRIVIA=[
-  {q:"Water to make 1 cotton t-shirt?",o:["700L","2,700L","500L","10,000L"],c:1,f:"~2,700 litres — enough drinking water for 2.5 years."},
-  {q:"% of textiles that end up in landfills?",o:["25%","45%","73%","90%"],c:2,f:"73% of textiles end up in landfills or incinerated."},
-  {q:"Fashion's share of global CO₂?",o:["2%","5%","10%","20%"],c:2,f:"~10% — more than international flights + shipping combined."},
-  {q:"Average times a garment is worn?",o:["7","20","50","100"],c:0,f:"Just 7 times before being thrown away."},
-  {q:"Slowest material to decompose?",o:["Cotton","Wool","Polyester","Linen"],c:2,f:"Polyester: up to 200 years, releasing microplastics."},
-  {q:"What is circular fashion?",o:["Round clothes","Recycled into new","Worn in rotation","Repeat trends"],c:1,f:"Designing clothes to be reused, repaired, and recycled."},
-  {q:"What is greenwashing?",o:["Eco laundry","Misleading eco claims","Green dye","Recycling green"],c:1,f:"Brands making misleading claims about being eco-friendly."},
-  {q:"Global textile waste per year?",o:["10M t","50M t","92M t","200M t"],c:2,f:"Over 92 million tonnes annually."},
-  {q:"What is upcycling?",o:["Throwing away","Donating","Waste → better products","Buying more"],c:2,f:"Transforming waste into higher-value products."},
-  {q:"Washing synthetics releases?",o:["Vitamins","Microplastics","Scent","Oxygen"],c:1,f:"~700,000 microplastic fibres per wash load."},
-  {q:"Cheapest water-footprint fibre?",o:["Cotton","Polyester","Linen","Nylon"],c:2,f:"Linen uses far less water and grows in poor soil."},
-  {q:"Garments produced globally per year?",o:["10B","50B","100B","150B"],c:2,f:"100 billion — ~14 for every person on Earth."},
+const TRIVIA = [
+  { q: "How much water to make 1 cotton t-shirt?", o: ["700 litres","2,700 litres","500 litres","10,000 litres"], c:1, f: "About 2,700 litres -- enough drinking water for 2.5 years." },
+  { q: "What % of textiles end up in landfills?", o: ["25%","45%","73%","90%"], c:2, f: "73% of textiles end up in landfills or incinerated." },
+  { q: "Fashion's share of global CO2 emissions?", o: ["2%","5%","10%","20%"], c:2, f: "About 10% -- more than international flights and shipping combined." },
+  { q: "Average times a garment is worn before disposal?", o: ["7","20","50","100"], c:0, f: "Just 7 times before being thrown away." },
+  { q: "Which material takes longest to decompose?", o: ["Cotton","Wool","Polyester","Linen"], c:2, f: "Polyester can take up to 200 years, releasing microplastics." },
+  { q: "What is circular fashion?", o: ["Round clothes","Recycled into new items","Worn in rotation","Repeating trends"], c:1, f: "Designing clothes to be reused, repaired, and recycled." },
+  { q: "What is greenwashing?", o: ["Eco laundry","Misleading eco claims","Green dye process","Recycling green materials"], c:1, f: "Brands making misleading claims about being eco-friendly." },
+  { q: "Global textile waste produced per year?", o: ["10M tonnes","50M tonnes","92M tonnes","200M tonnes"], c:2, f: "Over 92 million tonnes annually." },
+  { q: "What is upcycling?", o: ["Throwing away","Donating","Waste into better products","Buying more"], c:2, f: "Transforming waste into higher-value products." },
+  { q: "Washing synthetic clothes releases what?", o: ["Vitamins","Microplastics","Pleasant scent","Oxygen"], c:1, f: "About 700,000 microplastic fibres per wash load." },
+  { q: "Which fibre has the smallest water footprint?", o: ["Cotton","Polyester","Linen","Nylon"], c:2, f: "Linen uses far less water and grows in poor soil." },
+  { q: "How many garments are produced globally per year?", o: ["10 billion","50 billion","100 billion","150 billion"], c:2, f: "100 billion -- about 14 for every person on Earth." },
 ];
-const FACTS=[
+
+const FACTS = [
   "Buying secondhand reduces clothing's carbon footprint by 82%.",
   "Extending garment life by 9 months cuts its footprint by 20-30%.",
   "The UAE generates over 1.5M tonnes of textile waste annually.",
   "A pair of jeans needs 7,500 litres of water to produce.",
-  "If everyone bought 1 used item vs new, it'd save 449M lbs of waste.",
+  "If everyone bought 1 used item vs new, it would save 449M lbs of waste.",
+  "The fashion industry uses 93 billion cubic metres of water annually.",
+  "Less than 1% of clothing is recycled into new garments.",
+  "Rewoven helps reduce textile waste through sustainable fashion initiatives.",
 ];
-let triviaUsed=[];
 
-function pickMode(el,m){
-  mode=m;
-  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('sel'));
+let triviaUsed = [];
+
+// ── Menu Functions ──
+function pickPlayer(el, p) {
+  selectedPlayer = p;
+  document.querySelectorAll('.p-card').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
 }
 
-// ═══ START ═══
-function startGame(){
-  document.getElementById('menuScreen').classList.add('hide');
-  document.getElementById('overScreen').classList.add('hide');
-  document.getElementById('hud').classList.add('on');
-  document.getElementById('hudTime').classList.add('on');
-  if(innerWidth<=768)document.getElementById('mobilePad').classList.add('on');
-
-  resize();
-  pScore=0;aScore=0;timeLeft=60;basketN=0;streak=0;bestStreak=0;triviaBonus=0;
-  stealCD=0;dunking=false;dunkAnim=0;
-  particles=[];floats=[];
-  possession='player';ballState='held';aiShootTimer=0;
-
-  // Hoops
-  hoopR.x=W*0.88;hoopR.y=GY*0.35;
-  hoopL.x=W*0.12;hoopL.y=GY*0.35;
-
-  // Player starts left-center
-  P.x=W*0.3;P.y=GY-P.h;P.vx=0;P.vy=0;P.face=1;P.jc=0;
-  A.x=W*0.6;A.y=GY-A.h;A.vx=0;A.vy=0;A.face=-1;A.stun=0;
-
-  shotCharging=false;shotPower=0;meterActive=false;
-
-  running=true;paused=false;triviaOn=false;
-  updateHUD();
-
-  clearInterval(timerInt);
-  if(mode==='timed'){
-    timerInt=setInterval(()=>{
-      if(!running||paused||triviaOn)return;
-      timeLeft--;updateHUD();
-      if(timeLeft<=0)endGame();
-    },1000);
-  }
+function pickMode(el, m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
 }
 
-function endGame(){
-  running=false;clearInterval(timerInt);
+function showMenu() {
+  running = false;
+  clearInterval(timerInt);
+  document.getElementById('overScreen').classList.add('hide');
   document.getElementById('hud').classList.remove('on');
   document.getElementById('hudTime').classList.remove('on');
   document.getElementById('mobilePad').classList.remove('on');
   document.getElementById('shotMeter').classList.remove('on');
+  document.getElementById('specialHud').classList.remove('on');
+  document.getElementById('streakHud').classList.remove('on');
+  document.getElementById('menuScreen').classList.remove('hide');
+}
 
-  const won=pScore>aScore;
-  document.getElementById('finalScore').textContent=`${pScore} - ${aScore}`;
-  document.getElementById('finalDetail').textContent=won?'You win! 🎉':'CPU wins. Try again!';
-  document.getElementById('finalFact').textContent=FACTS[Math.floor(Math.random()*FACTS.length)];
+// ═══ START GAME ═══
+function startGame() {
+  const pl = PLAYERS[selectedPlayer];
+  document.getElementById('menuScreen').classList.add('hide');
+  document.getElementById('overScreen').classList.add('hide');
+  document.getElementById('hud').classList.add('on');
+  document.getElementById('specialHud').classList.add('on');
+  document.getElementById('streakHud').classList.add('on');
+  document.getElementById('hudPlayerName').textContent = pl.name.split(' ')[1].toUpperCase();
+  if (innerWidth <= 768) document.getElementById('mobilePad').classList.add('on');
+
+  if (mode === 'timed') {
+    document.getElementById('hudTime').classList.add('on');
+  } else {
+    document.getElementById('hudTime').classList.remove('on');
+  }
+
+  resize();
+  pScore = 0; aScore = 0; timeLeft = 60; basketN = 0; streak = 0; bestStreak = 0; triviaBonus = 0;
+  stealCD = 0; dunking = false; dunkAnim = 0; frameCount = 0;
+  particles = []; floats = [];
+  possession = 'player'; ballState = 'held'; aiShootTimer = 0; aiJumpTimer = 0;
+  resetTimer = 0; resetPending = false;
+
+  specialTimer = 0; specialReady = false; specialActive = false; specialDuration = 0;
+  hoopBlocked = false; autoAnimating = false; specialTriviaShown = false;
+  shotCharging = false; shotPower = 0; meterActive = false;
+
+  // Hoops
+  hoopR.x = W * 0.88; hoopR.y = GY * 0.38;
+  hoopL.x = W * 0.12; hoopL.y = GY * 0.38;
+
+  // Positions
+  P.x = W * 0.3; P.y = GY - P.h; P.vx = 0; P.vy = 0; P.face = 1; P.jc = 0; P.animT = 0;
+  A.x = W * 0.6; A.y = GY - A.h; A.vx = 0; A.vy = 0; A.face = -1; A.stun = 0; A.animT = 0;
+
+  running = true; paused = false; triviaOn = false;
+  updateHUD();
+  updateSpecialHUD();
+  updateStreakHUD();
+
+  clearInterval(timerInt);
+  if (mode === 'timed') {
+    timerInt = setInterval(() => {
+      if (!running || paused || triviaOn) return;
+      timeLeft--;
+      updateHUD();
+      if (timeLeft <= 0) endGame();
+    }, 1000);
+  }
+}
+
+function endGame() {
+  running = false; clearInterval(timerInt);
+  document.getElementById('hud').classList.remove('on');
+  document.getElementById('hudTime').classList.remove('on');
+  document.getElementById('mobilePad').classList.remove('on');
+  document.getElementById('shotMeter').classList.remove('on');
+  document.getElementById('specialHud').classList.remove('on');
+  document.getElementById('streakHud').classList.remove('on');
+
+  const won = pScore > aScore;
+  const tied = pScore === aScore;
+  document.getElementById('overTitle').textContent = won ? 'Victory!' : (tied ? 'Draw!' : 'Game Over');
+  document.getElementById('finalScore').textContent = pScore + ' - ' + aScore;
+  let detail = won ? 'You win!' : (tied ? "It's a tie!" : 'CPU wins. Try again!');
+  if (bestStreak >= 3) detail += ' Best streak: ' + bestStreak + 'x';
+  if (triviaBonus > 0) detail += ' | Trivia bonus: +' + triviaBonus;
+  document.getElementById('finalDetail').textContent = detail;
+  document.getElementById('finalFact').textContent = FACTS[Math.floor(Math.random() * FACTS.length)];
   document.getElementById('overScreen').classList.remove('hide');
 }
 
-function updateHUD(){
-  document.getElementById('yourScore').textContent=pScore;
-  document.getElementById('aiScore').textContent=aScore;
-  const t=document.getElementById('hudTime');
-  t.textContent=timeLeft;t.classList.toggle('warn',timeLeft<=10);
+function updateHUD() {
+  document.getElementById('yourScore').textContent = pScore;
+  document.getElementById('aiScore').textContent = aScore;
+  const t = document.getElementById('hudTime');
+  if (mode === 'timed') {
+    t.textContent = timeLeft;
+    t.classList.toggle('warn', timeLeft <= 10);
+  }
+}
+
+function updateSpecialHUD() {
+  const pl = PLAYERS[selectedPlayer];
+  const bar = document.getElementById('specialBar');
+  const txt = document.getElementById('specialText');
+  if (specialReady) {
+    bar.classList.add('ready');
+    txt.textContent = pl.specialName + ' READY! Press E';
+  } else {
+    bar.classList.remove('ready');
+    const secs = Math.ceil((SPECIAL_CD_FRAMES - specialTimer) / 60);
+    txt.textContent = pl.specialName + ': ' + secs + 's';
+  }
+}
+
+function updateStreakHUD() {
+  const el = document.getElementById('streakHud');
+  if (streak >= 2) {
+    el.textContent = streak + 'x Streak';
+    el.style.color = streak >= 5 ? '#EF4444' : '#F59E0B';
+  } else {
+    el.textContent = '';
+  }
 }
 
 // ═══ TRIVIA ═══
-function showTrivia(){
-  triviaOn=true;
-  if(triviaUsed.length>=TRIVIA.length)triviaUsed=[];
-  let avail=TRIVIA.filter((_,i)=>!triviaUsed.includes(i));
-  let ri=Math.floor(Math.random()*avail.length);
-  let q=avail[ri];triviaUsed.push(TRIVIA.indexOf(q));
+let triviaMode = 'bonus';
 
-  document.getElementById('tQ').textContent=q.q;
-  const oc=document.getElementById('tO'),rc=document.getElementById('tR');
-  rc.className='trivia-res';rc.style.display='none';
-  document.getElementById('tSkip').style.display='';
-  const L=['A','B','C','D'];
-  oc.innerHTML=q.o.map((o,i)=>`<button class="t-opt" data-i="${i}"><span class="letter">${L[i]}</span><span>${o}</span></button>`).join('');
-  oc.querySelectorAll('.t-opt').forEach(b=>{
-    b.onclick=()=>{
-      const i=+b.dataset.i,ok=i===q.c;
-      oc.querySelectorAll('.t-opt').forEach((x,j)=>{x.style.pointerEvents='none';if(j===q.c)x.classList.add('right');if(j===i&&!ok)x.classList.add('wrong')});
-      document.getElementById('tSkip').style.display='none';
-      if(ok){pScore+=5;triviaBonus+=5;rc.className='trivia-res show ok';rc.innerHTML=`<strong>+5 bonus points!</strong><br>${q.f}`;updateHUD()}
-      else{rc.className='trivia-res show no';rc.innerHTML=`<strong>Not quite.</strong><br>${q.f}`}
-      setTimeout(closeTrivia,3000);
+function showTrivia(tMode) {
+  triviaMode = tMode || 'bonus';
+  triviaOn = true;
+  if (triviaUsed.length >= TRIVIA.length) triviaUsed = [];
+  let avail = TRIVIA.filter((_, i) => !triviaUsed.includes(i));
+  let ri = Math.floor(Math.random() * avail.length);
+  let q = avail[ri]; triviaUsed.push(TRIVIA.indexOf(q));
+
+  const badge = document.getElementById('triviaBadge');
+  if (triviaMode === 'special') {
+    const pl = PLAYERS[selectedPlayer];
+    badge.textContent = 'Answer to Unlock ' + pl.specialName + '!';
+    badge.style.background = 'linear-gradient(135deg, #F59E0B, #D97706)';
+  } else {
+    badge.textContent = 'Sustainability Trivia';
+    badge.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+  }
+
+  document.getElementById('tQ').textContent = q.q;
+  const oc = document.getElementById('tO'), rc = document.getElementById('tR');
+  rc.className = 'trivia-res'; rc.style.display = 'none';
+  document.getElementById('tSkip').style.display = '';
+  const L = ['A','B','C','D'];
+  oc.innerHTML = q.o.map((o, i) =>
+    '<button class="t-opt" data-i="' + i + '"><span class="letter">' + L[i] + '</span><span>' + o + '</span></button>'
+  ).join('');
+  oc.querySelectorAll('.t-opt').forEach(b => {
+    b.onclick = () => {
+      const i = +b.dataset.i, ok = i === q.c;
+      oc.querySelectorAll('.t-opt').forEach((x, j) => {
+        x.style.pointerEvents = 'none';
+        if (j === q.c) x.classList.add('right');
+        if (j === i && !ok) x.classList.add('wrong');
+      });
+      document.getElementById('tSkip').style.display = 'none';
+      if (ok) {
+        if (triviaMode === 'special') {
+          specialReady = true;
+          updateSpecialHUD();
+          rc.className = 'trivia-res show ok';
+          rc.innerHTML = '<strong>Special Move Unlocked! Press E to use it!</strong><br>' + q.f;
+        } else {
+          pScore += 5; triviaBonus += 5; updateHUD();
+          rc.className = 'trivia-res show ok';
+          rc.innerHTML = '<strong>+5 bonus points!</strong><br>' + q.f;
+        }
+      } else {
+        if (triviaMode === 'special') {
+          rc.className = 'trivia-res show no';
+          rc.innerHTML = '<strong>Wrong! Special move not unlocked. Wait 30s.</strong><br>' + q.f;
+          specialTimer = 0;
+          updateSpecialHUD();
+        } else {
+          rc.className = 'trivia-res show no';
+          rc.innerHTML = '<strong>Not quite.</strong><br>' + q.f;
+        }
+      }
+      setTimeout(closeTrivia, 2200);
     };
   });
   document.getElementById('triviaScreen').classList.remove('hide');
 }
-function closeTrivia(){
+
+function closeTrivia() {
   document.getElementById('triviaScreen').classList.add('hide');
-  triviaOn=false;
+  triviaOn = false;
+  specialTriviaShown = false;
 }
 
 // ═══ HELPERS ═══
-function spawn(x,y,col,n){for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-.5)*8,vy:(Math.random()-.5)*8-3,r:2+Math.random()*4,color:col,life:1,d:.015+Math.random()*.02})}
-function addFloat(x,y,t,c){floats.push({x,y,text:t,color:c,life:1,vy:-2})}
+function spawn(x, y, col, n) {
+  for (let i = 0; i < n; i++) particles.push({
+    x, y, vx: (Math.random()-.5)*8, vy: (Math.random()-.5)*8-3,
+    r: 2+Math.random()*4, color: col, life: 1, d: 0.015+Math.random()*0.02
+  });
+}
+function addFloat(x, y, t, c) { floats.push({ x, y, text: t, color: c, life: 1, vy: -1.5 }); }
+
+function dist(x1,y1,x2,y2) { return Math.hypot(x2-x1, y2-y1); }
+function lerp(a,b,t) { return a+(b-a)*t; }
+function clamp(v,mn,mx) { return Math.max(mn,Math.min(mx,v)); }
+
+// ═══ SPECIAL MOVES ═══
+function activateSpecial() {
+  if (!specialReady || specialActive || autoAnimating) return;
+  const pl = PLAYERS[selectedPlayer];
+  specialReady = false;
+  specialTimer = 0;
+  updateSpecialHUD();
+
+  if (selectedPlayer === 'curry') {
+    // Auto 3-pointer: move behind 3pt line and shoot guaranteed basket
+    autoAnimating = true;
+    specialActive = true;
+    addFloat(P.x + P.w/2, P.y - 30, 'AUTO 3PT!', '#FFD700');
+    spawn(P.x + P.w/2, P.y + P.h/2, '#FFD700', 20);
+    // Position behind 3-point line
+    P.x = hoopR.x - W * THREE_PT_DIST - 40;
+    P.y = GY - P.h;
+    P.face = 1; P.vx = 0; P.vy = 0;
+    possession = 'player'; ballState = 'held';
+    setTimeout(() => {
+      if (!running) { autoAnimating = false; specialActive = false; return; }
+      // Perfect shot aimed at hoop
+      const bx = P.x + P.w/2, by = P.y;
+      const dx = hoopR.x - bx, dy = hoopR.y - by;
+      const d = Math.hypot(dx, dy);
+      const angle = Math.atan2(dy - d * 0.5, dx);
+      const power = 10;
+      B.x = bx; B.y = by - B.r;
+      B.vx = Math.cos(angle) * power;
+      B.vy = Math.sin(angle) * power - 3;
+      ballState = 'air'; B.trail = []; B.spin = 0;
+      possession = 'player_shot';
+      addFloat(bx, by - 50, 'PERFECT!', '#10B981');
+      spawn(bx, by, '#FFD700', 10);
+      autoAnimating = false;
+      specialActive = false;
+    }, 500);
+
+  } else if (selectedPlayer === 'carter') {
+    // Vinsanity Dunk: auto fly to hoop
+    autoAnimating = true;
+    specialActive = true;
+    addFloat(P.x + P.w/2, P.y - 30, 'VINSANITY!', '#EF4444');
+    spawn(P.x + P.w/2, P.y + P.h/2, '#EF4444', 25);
+    possession = 'player'; ballState = 'held';
+    dunking = true; dunkAnim = 0;
+    // The dunk logic in update() will handle flying to hoop
+    autoAnimating = false;
+    specialActive = false;
+
+  } else if (selectedPlayer === 'rodman') {
+    // Block opponent hoop for 5 seconds
+    hoopBlocked = true;
+    specialDuration = 300; // 5 seconds at 60fps
+    addFloat(hoopL.x, hoopL.y - 30, 'LOCKDOWN!', '#3B82F6');
+    spawn(hoopL.x, hoopL.y, '#3B82F6', 25);
+    spawn(hoopL.x, hoopL.y, '#fff', 10);
+  }
+}
+
+// ═══ SHOT METER ═══
+function setupMeter() {
+  const pl = PLAYERS[selectedPlayer];
+  const gz = pl.greenZone; // fraction of bar that is green
+  const center = 0.50; // green zone centered at 50%
+  const greenStart = center - gz/2;
+  const greenEnd = center + gz/2;
+  const yellowWidth = 0.12;
+
+  // Set zone positions (bottom-based percentages)
+  const r1 = document.getElementById('meterRed1');
+  r1.style.bottom = '0'; r1.style.height = (greenStart - yellowWidth) * 100 + '%';
+
+  const y1 = document.getElementById('meterYellow1');
+  y1.style.bottom = (greenStart - yellowWidth) * 100 + '%'; y1.style.height = yellowWidth * 100 + '%';
+
+  const g = document.getElementById('meterGreen');
+  g.style.bottom = greenStart * 100 + '%'; g.style.height = gz * 100 + '%';
+
+  const y2 = document.getElementById('meterYellow2');
+  y2.style.bottom = greenEnd * 100 + '%'; y2.style.height = yellowWidth * 100 + '%';
+
+  const r2 = document.getElementById('meterRed2');
+  r2.style.bottom = (greenEnd + yellowWidth) * 100 + '%';
+  r2.style.height = (1 - greenEnd - yellowWidth) * 100 + '%';
+
+  meterVal = 0; meterDir = 1;
+  meterActive = true;
+  document.getElementById('shotMeter').classList.add('on');
+}
+
+function getMeterTiming() {
+  const pl = PLAYERS[selectedPlayer];
+  const gz = pl.greenZone;
+  const center = 0.50;
+  const greenStart = center - gz/2;
+  const greenEnd = center + gz/2;
+  const yellowWidth = 0.12;
+
+  if (meterVal >= greenStart && meterVal <= greenEnd) return 'green';
+  if (meterVal >= greenStart - yellowWidth && meterVal < greenStart) return 'yellow';
+  if (meterVal > greenEnd && meterVal <= greenEnd + yellowWidth) return 'yellow';
+  return 'red';
+}
+
+function isThreePointer(shooterX, hoop) {
+  return Math.abs(shooterX + P.w/2 - hoop.x) > W * THREE_PT_DIST;
+}
+
+// ═══ SHOOTING ═══
+function shoot(shooter, targetHoop, timing) {
+  const pl = PLAYERS[selectedPlayer];
+  const power = 6 + shotPower * 0.4;
+  const bx = shooter.x + shooter.w/2;
+  const by = shooter.y;
+  const dx = targetHoop.x - bx;
+  const dy = targetHoop.y - by;
+  const d = Math.hypot(dx, dy);
+
+  // Arc angle - higher arc for further shots
+  const arcFactor = clamp(d / (W * 0.5), 0.3, 0.6);
+  const angle = Math.atan2(dy - d * arcFactor, dx);
+
+  // Scatter based on timing and archetype
+  let scatter = 0;
+  if (timing === 'green') {
+    scatter = 0; // perfect
+  } else if (timing === 'yellow') {
+    scatter = (Math.random() - 0.5) * 2.5;
+  } else {
+    scatter = (Math.random() - 0.5) * 7;
+  }
+
+  // Apply archetype scatter modifier for human player
+  if (shooter === P) {
+    scatter *= pl.shootScatter;
+  }
+
+  const speed = clamp(power, 7, 12);
+  B.vx = Math.cos(angle) * speed + scatter * 0.3;
+  B.vy = Math.sin(angle) * speed - 3 + scatter * 0.15;
+  B.x = bx;
+  B.y = by - B.r;
+  ballState = 'air'; B.trail = []; B.spin = 0;
+
+  if (shooter === P) {
+    const cols = { green:'#10B981', yellow:'#F59E0B', red:'#EF4444' };
+    const lbls = { green:'PERFECT!', yellow:'Good', red:'Bad' };
+    addFloat(bx, by - 30, lbls[timing], cols[timing]);
+    possession = 'player_shot';
+  }
+}
+
+function scoreBasket(who, pts, isDunk) {
+  if (who === 'player') {
+    pScore += pts; basketN++; streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    const label = isDunk ? 'DUNK! +' + pts : (pts === 3 ? '3-POINTER! +' + pts : '+' + pts);
+    const col = isDunk ? '#EF4444' : (pts === 3 ? '#3B82F6' : '#10B981');
+    spawn(hoopR.x, hoopR.y, col, 25);
+    spawn(hoopR.x, hoopR.y, '#F59E0B', 10);
+    addFloat(hoopR.x, hoopR.y - 40, label, col);
+    if (streak >= 3) addFloat(hoopR.x, hoopR.y - 70, streak + 'x streak!', '#F59E0B');
+    updateHUD();
+    updateStreakHUD();
+    if (mode === '21' && pScore >= 21) { setTimeout(endGame, 600); return; }
+    if (basketN % TRIVIA_EVERY === 0) setTimeout(() => { if (running) showTrivia('bonus'); }, 1200);
+  }
+  // Schedule possession reset
+  resetPending = true;
+  resetTimer = 55; // ~0.9 seconds
+}
+
+function resetPossession() {
+  if (possession === 'scored_p' || possession === 'player_shot') {
+    possession = 'ai';
+  } else if (possession === 'scored_a' || possession === 'ai_shot' || possession === 'blocked') {
+    possession = 'player';
+  } else {
+    const dp = dist(B.x, B.y, P.x+P.w/2, P.y+P.h/2);
+    const da = dist(B.x, B.y, A.x+A.w/2, A.y+A.h/2);
+    possession = dp < da ? 'player' : 'ai';
+  }
+  ballState = 'held'; streak = (possession === 'player' ? streak : 0); aiShootTimer = 0;
+  updateStreakHUD();
+
+  if (possession === 'player') {
+    P.x = W * 0.25; P.y = GY - P.h; A.x = W * 0.6; A.y = GY - A.h;
+  } else {
+    A.x = W * 0.75; A.y = GY - A.h; P.x = W * 0.4; P.y = GY - P.h;
+  }
+  P.vx = 0; P.vy = 0; A.vx = 0; A.vy = 0;
+}
 
 // ═══ UPDATE ═══
-function update(){
-  if(!running||paused||triviaOn)return;
-  if(stealCD>0)stealCD--;
+function update() {
+  if (!running || paused || triviaOn) return;
+  const pl = PLAYERS[selectedPlayer];
+  frameCount++;
 
-  const spd=5.2;
-
-  // ── Player ──
-  if(K.a||K.arrowleft){P.vx=-spd;P.face=-1}
-  else if(K.d||K.arrowright){P.vx=spd;P.face=1}
-  else P.vx*=0.75;
-
-  if((K.w||K.arrowup)&&P.jc<2){P.vy=-11.5;P.jc++;K.w=false;K.arrowup=false}
-
-  P.vy+=GRAV;P.x+=P.vx;P.y+=P.vy;
-  if(P.y+P.h>=GY){P.y=GY-P.h;P.vy=0;P.onG=true;P.jc=0}else P.onG=false;
-  if(P.x<0)P.x=0;if(P.x+P.w>W)P.x=W-P.w;
-
-  // ── Shooting ──
-  if(K[' ']&&possession==='player'&&ballState==='held'&&!dunking){
-    if(!shotCharging){shotCharging=true;meterActive=true;meterVal=0;meterDir=1;
-      document.getElementById('shotMeter').classList.add('on');
-      // Green zone position
-      const gz=document.getElementById('meterGreen');
-      gz.style.bottom='35%';gz.style.height='15%';
+  // ── Special move cooldown ──
+  if (!specialReady) {
+    specialTimer++;
+    if (specialTimer % 60 === 0) updateSpecialHUD();
+    if (specialTimer >= SPECIAL_CD_FRAMES && !specialTriviaShown && !triviaOn) {
+      specialTriviaShown = true;
+      showTrivia('special');
+      return;
     }
-    shotPower=Math.min(shotPower+0.5,MAX_POW);
-  }else if(shotCharging&&possession==='player'){
-    // Release
-    const timing=getMeterTiming();
-    shoot(P,hoopR,timing);
-    shotCharging=false;shotPower=0;meterActive=false;
+  }
+
+  // Special duration (Rodman lockdown)
+  if (specialDuration > 0) {
+    specialDuration--;
+    if (specialDuration <= 0) hoopBlocked = false;
+  }
+
+  if (stealCD > 0) stealCD--;
+  if (autoAnimating) return;
+
+  // ── Reset possession timer ──
+  if (resetPending) {
+    resetTimer--;
+    if (resetTimer <= 0) {
+      resetPending = false;
+      resetPossession();
+    }
+  }
+
+  // ── Special move trigger ──
+  if (KDown.e && specialReady) {
+    KDown.e = false;
+    activateSpecial();
+  }
+  KDown.e = false;
+
+  // ── Player movement ──
+  const spd = pl.speed;
+  if (K.a || K.arrowleft) { P.vx = -spd; P.face = -1; }
+  else if (K.d || K.arrowright) { P.vx = spd; P.face = 1; }
+  else P.vx *= 0.7;
+
+  // Jump (edge triggered)
+  if ((KDown.w || KDown.arrowup) && P.jc < 2) {
+    P.vy = -pl.jumpPow;
+    P.jc++;
+    KDown.w = false; KDown.arrowup = false;
+  }
+  KDown.w = false; KDown.arrowup = false;
+
+  P.vy += GRAV;
+  P.x += P.vx; P.y += P.vy;
+  if (P.y + P.h >= GY) { P.y = GY - P.h; P.vy = 0; P.onG = true; P.jc = 0; } else P.onG = false;
+  P.x = clamp(P.x, COURT_LEFT, COURT_RIGHT - P.w);
+
+  // Anim timer for running bob
+  if (Math.abs(P.vx) > 0.5 && P.onG) P.animT += 0.15;
+  else if (P.onG) P.animT = 0;
+
+  // ── Shooting (hold space) ──
+  if (K[' '] && possession === 'player' && ballState === 'held' && !dunking) {
+    if (!shotCharging) {
+      shotCharging = true;
+      shotPower = 0;
+      setupMeter();
+    }
+    shotPower = Math.min(shotPower + 0.4, MAX_POW);
+  } else if (shotCharging && possession === 'player') {
+    // Released space — shoot
+    const timing = getMeterTiming();
+    shoot(P, hoopR, timing);
+    shotCharging = false; shotPower = 0; meterActive = false;
     document.getElementById('shotMeter').classList.remove('on');
   }
 
-  // Meter animation
-  if(meterActive){
-    meterVal+=meterSpd*meterDir;
-    if(meterVal>=1){meterVal=1;meterDir=-1}
-    if(meterVal<=0){meterVal=0;meterDir=1}
-    document.getElementById('meterCursor').style.bottom=(meterVal*100)+'%';
+  // Meter cursor animation
+  if (meterActive) {
+    meterVal += PLAYERS[selectedPlayer].meterSpeed * meterDir;
+    if (meterVal >= 1) { meterVal = 1; meterDir = -1; }
+    if (meterVal <= 0) { meterVal = 0; meterDir = 1; }
+    document.getElementById('meterCursor').style.bottom = (meterVal * 100) + '%';
   }
 
   // ── Dunk check ──
-  if(possession==='player'&&ballState==='held'&&!dunking){
-    const dh=Math.hypot(P.x+P.w/2-hoopR.x,P.y-hoopR.y);
-    if(dh<90&&!P.onG){
-      dunking=true;dunkAnim=0;
+  if (possession === 'player' && ballState === 'held' && !dunking && !shotCharging) {
+    const dh = dist(P.x + P.w/2, P.y, hoopR.x, hoopR.y);
+    if (dh < pl.dunkRange && !P.onG && P.vy < 2) {
+      dunking = true; dunkAnim = 0;
     }
   }
-  if(dunking){
+
+  if (dunking) {
     dunkAnim++;
-    P.x+=(hoopR.x-P.w/2-P.x)*0.15;
-    P.y+=(hoopR.y-P.h-P.y)*0.15;
-    P.vy=0;
-    if(dunkAnim>25){
-      dunking=false;
-      scoreBasket('player',3,true);
+    const ds = pl.dunkSpeed;
+    P.x += (hoopR.x - P.w/2 - P.x) * ds;
+    P.y += (hoopR.y - P.h * 0.3 - P.y) * ds;
+    P.vy = 0; P.vx = 0;
+    const dunkFrames = selectedPlayer === 'carter' ? 15 : 25;
+    if (dunkAnim > dunkFrames) {
+      dunking = false;
+      const pts = 2 + pl.dunkBonusPts; // Carter gets +1 bonus
+      scoreBasket('player', pts, true);
     }
   }
 
   // ── Steal ──
-  if((K.s||K.arrowdown)&&stealCD<=0){
-    K.s=false;K.arrowdown=false;stealCD=50;
-    if(possession==='ai'){
-      const d=Math.hypot(P.x+P.w/2-A.x-A.w/2,P.y+P.h/2-A.y-A.h/2);
-      if(d<70&&Math.random()<0.55){
-        possession='player';ballState='held';A.stun=30;
-        addFloat(A.x,A.y-20,'STEAL!','#F59E0B');
-        spawn(A.x+A.w/2,A.y+A.h/2,'#F59E0B',10);
-      }else{
-        addFloat(P.x,P.y-20,'MISS','#EF4444');
+  if ((KDown.s || KDown.arrowdown) && stealCD <= 0) {
+    KDown.s = false; KDown.arrowdown = false;
+    stealCD = 40;
+    if (possession === 'ai' && ballState === 'held') {
+      const d = dist(P.x+P.w/2, P.y+P.h/2, A.x+A.w/2, A.y+A.h/2);
+      if (d < 75 && Math.random() < pl.stealChance) {
+        possession = 'player'; ballState = 'held'; A.stun = 40;
+        addFloat(A.x+A.w/2, A.y-20, 'STEAL!', '#F59E0B');
+        spawn(A.x+A.w/2, A.y+A.h/2, '#F59E0B', 12);
+      } else {
+        addFloat(P.x+P.w/2, P.y-20, 'MISS', '#EF4444');
       }
     }
   }
+  KDown.s = false; KDown.arrowdown = false;
 
-  // ── Ball held ──
-  if(ballState==='held'){
-    const holder=possession==='player'?P:A;
-    B.x=holder.x+holder.w/2+holder.face*18;
-    B.y=holder.y-B.r+8;
-    B.trail=[];B.spin=0;
+  // ── Ball held position ──
+  if (ballState === 'held' && !dunking) {
+    const holder = possession === 'player' ? P : A;
+    const bobY = holder.onG ? Math.sin(holder.animT * 2) * 3 : 0;
+    B.x = holder.x + holder.w/2 + holder.face * 18;
+    B.y = holder.y + 10 + bobY;
+    B.vx = 0; B.vy = 0;
+    B.trail = []; B.spin = 0;
+  } else if (ballState === 'held' && dunking) {
+    B.x = P.x + P.w/2;
+    B.y = P.y - 5;
   }
 
   // ── Ball in air ──
-  if(ballState==='air'){
-    B.vy+=GRAV;B.x+=B.vx;B.y+=B.vy;B.spin+=B.vx*0.04;
-    B.trail.push({x:B.x,y:B.y});if(B.trail.length>15)B.trail.shift();
+  if (ballState === 'air') {
+    B.vy += GRAV;
+    B.x += B.vx; B.y += B.vy;
+    B.spin += B.vx * 0.04;
+    B.trail.push({ x:B.x, y:B.y });
+    if (B.trail.length > 18) B.trail.shift();
 
     // Walls
-    if(B.x<B.r){B.x=B.r;B.vx*=-0.5}
-    if(B.x>W-B.r){B.x=W-B.r;B.vx*=-0.5}
+    if (B.x < B.r) { B.x = B.r; B.vx *= -0.5; }
+    if (B.x > W - B.r) { B.x = W - B.r; B.vx *= -0.5; }
 
     // Check both hoops
-    [hoopR,hoopL].forEach(h=>{
-      // Backboard
-      const bbX=h===hoopR?h.x+h.rimW/2+6:h.x-h.rimW/2-6;
-      const bbSide=h===hoopR?1:-1;
-      if(bbSide===1&&B.x+B.r>bbX-3&&B.x<bbX+3&&B.y>h.y-40&&B.y<h.y+8){B.x=bbX-B.r-4;B.vx*=-0.5;spawn(bbX,B.y,'#fff',4)}
-      if(bbSide===-1&&B.x-B.r<bbX+3&&B.x>bbX-3&&B.y>h.y-40&&B.y<h.y+8){B.x=bbX+B.r+4;B.vx*=-0.5;spawn(bbX,B.y,'#fff',4)}
+    checkHoopCollision(hoopR, 1);
+    checkHoopCollision(hoopL, -1);
 
-      // Basket
-      if(B.vy>0){
-        const rL=h.x-h.rimW/2,rR=h.x+h.rimW/2;
-        if(B.x>rL+4&&B.x<rR-4&&B.y>h.y-4&&B.y<h.y+14){
-          if(h===hoopR&&possession!=='scored_p'){
-            const pts=isThreePointer(P.x,hoopR)?3:2;
-            scoreBasket('player',pts,false);
-            possession='scored_p';
-          }else if(h===hoopL&&possession!=='scored_a'){
-            aScore+=2;updateHUD();
-            spawn(h.x,h.y,'#EF4444',15);
-            addFloat(h.x,h.y-30,'+2','#EF4444');
-            possession='scored_a';
-          }
-        }
-        // Rim bounce
-        [rL,rR].forEach(rx=>{
-          const dd=Math.hypot(B.x-rx,B.y-h.y);
-          if(dd<B.r+4){
-            const an=Math.atan2(B.y-h.y,B.x-rx);
-            B.vx=Math.cos(an)*4;B.vy=Math.sin(an)*4;
-            B.x=rx+Math.cos(an)*(B.r+5);B.y=h.y+Math.sin(an)*(B.r+5);
-            spawn(rx,h.y,'#EF4444',4);
-          }
-        });
-      }
-    });
-
-    // Ground
-    if(B.y+B.r>=GY){
-      B.y=GY-B.r;B.vy*=-0.45;B.vx*=0.8;
-      if(Math.abs(B.vy)<1.5){
-        ballState='loose';
-        B.vx*=0.3;B.vy=0;
+    // Ground bounce
+    if (B.y + B.r >= GY) {
+      B.y = GY - B.r;
+      B.vy *= -0.42;
+      B.vx *= 0.75;
+      if (Math.abs(B.vy) < 1.5) {
+        ballState = 'loose';
+        B.vx *= 0.4; B.vy = 0;
       }
     }
-    if(B.y<-50||B.y>H+50){resetPossession()}
+
+    // Off screen reset
+    if (B.y > H + 80 || B.x < -80 || B.x > W + 80) {
+      resetPending = true; resetTimer = 10;
+    }
   }
 
   // ── Loose ball ──
-  if(ballState==='loose'){
-    B.vy+=GRAV;B.x+=B.vx;B.y+=B.vy;B.vx*=0.95;
-    if(B.y+B.r>=GY){B.y=GY-B.r;B.vy*=-0.3;B.vx*=0.7}
+  if (ballState === 'loose') {
+    B.vy += GRAV;
+    B.x += B.vx; B.y += B.vy;
+    B.vx *= 0.97;
+    if (B.y + B.r >= GY) { B.y = GY - B.r; B.vy *= -0.25; B.vx *= 0.85; }
+    B.x = clamp(B.x, B.r, W - B.r);
 
-    // Player pickup
-    const dp=Math.hypot(B.x-P.x-P.w/2,B.y-P.y-P.h/2);
-    if(dp<40){possession='player';ballState='held';streak=0}
-    // AI pickup
-    const da=Math.hypot(B.x-A.x-A.w/2,B.y-A.y-A.h/2);
-    if(da<40&&A.stun<=0){possession='ai';ballState='held'}
+    // Pickup
+    const dp = dist(B.x, B.y, P.x+P.w/2, P.y+P.h/2);
+    if (dp < 45) { possession = 'player'; ballState = 'held'; }
+    const da = dist(B.x, B.y, A.x+A.w/2, A.y+A.h/2);
+    if (da < 45 && A.stun <= 0) { possession = 'ai'; ballState = 'held'; }
 
-    // Timeout
-    if(Math.abs(B.vx)<0.2&&Math.abs(B.vy)<0.5&&B.y>=GY-B.r-2){
-      setTimeout(()=>{if(ballState==='loose')resetPossession()},800);
+    // If ball stopped, reset after a bit
+    if (Math.abs(B.vx) < 0.15 && Math.abs(B.vy) < 0.3 && B.y >= GY - B.r - 2) {
+      if (!resetPending) { resetPending = true; resetTimer = 60; }
     }
   }
 
   // ── AI Behavior ──
-  if(A.stun>0){A.stun--;A.vx*=0.85}
-  else{
-    if(possession==='ai'&&ballState==='held'){
-      // Move toward player's hoop (left)
-      const targetX=hoopL.x+100+Math.sin(Date.now()*0.002)*60;
-      if(A.x+A.w/2<targetX-15)A.vx=3.5;
-      else if(A.x+A.w/2>targetX+15)A.vx=-3.5;
-      else A.vx*=0.8;
-      A.face=A.x+A.w/2>hoopL.x?-1:1;
-
-      aiShootTimer++;
-      const distToHoop=Math.abs(A.x+A.w/2-hoopL.x);
-      if(aiShootTimer>90&&distToHoop<250){
-        // AI shoots
-        shoot(A,hoopL,'white');
-        possession='ai_shot';
-        aiShootTimer=0;
-      }
-    }else if(ballState==='loose'){
-      const tx=B.x-A.w/2;
-      A.vx+=(tx>A.x?0.4:-0.4);A.vx=Math.max(-4,Math.min(4,A.vx));
-    }else if(possession==='player'&&ballState==='held'){
-      // Defend — stay between player and hoop
-      const defX=(P.x+hoopR.x)/2;
-      A.vx+=(defX>A.x+A.w/2?0.35:-0.35);
-      A.vx=Math.max(-4,Math.min(4,A.vx));
-      A.face=P.x>A.x?1:-1;
-    }else{
-      A.vx*=0.9;
-    }
-  }
-  A.vy+=GRAV;A.x+=A.vx;A.y+=A.vy;
-  if(A.y+A.h>=GY){A.y=GY-A.h;A.vy=0;A.onG=true}
-  if(A.x<0)A.x=0;if(A.x+A.w>W)A.x=W-A.w;
-  A.vx*=FRIC;
+  updateAI();
 
   // ── Particles ──
-  particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=0.12;p.life-=p.d;return p.life>0});
-  floats=floats.filter(f=>{f.y+=f.vy;f.life-=0.018;return f.life>0});
+  particles = particles.filter(p => {
+    p.x += p.vx; p.y += p.vy; p.vy += 0.12; p.life -= p.d;
+    return p.life > 0;
+  });
+  floats = floats.filter(f => {
+    f.y += f.vy; f.life -= 0.016;
+    return f.life > 0;
+  });
 }
 
-function getMeterTiming(){
-  if(meterVal>=0.35&&meterVal<=0.50)return 'green';
-  if(meterVal>=0.25&&meterVal<=0.60)return 'white';
-  return meterVal<0.25?'early':'late';
-}
+function checkHoopCollision(h, side) {
+  const bbX = side === 1 ? h.x + h.rimW/2 + 6 : h.x - h.rimW/2 - 6;
 
-function isThreePointer(px,hoop){
-  return Math.abs(px+P.w/2-hoop.x)>W*0.32;
-}
+  // Backboard collision
+  if (side === 1) {
+    if (B.x + B.r > bbX - 3 && B.x < bbX + 5 && B.y > h.y - 42 && B.y < h.y + 10) {
+      B.x = bbX - B.r - 4; B.vx *= -0.55; spawn(bbX, B.y, '#aaa', 4);
+    }
+  } else {
+    if (B.x - B.r < bbX + 3 && B.x > bbX - 5 && B.y > h.y - 42 && B.y < h.y + 10) {
+      B.x = bbX + B.r + 4; B.vx *= -0.55; spawn(bbX, B.y, '#aaa', 4);
+    }
+  }
 
-function shoot(shooter,targetHoop,timing){
-  const power=5+shotPower*0.55;
-  const dx=targetHoop.x-(shooter.x+shooter.w/2);
-  const dy=targetHoop.y-shooter.y;
-  const dist=Math.hypot(dx,dy);
-  const angle=Math.atan2(dy-dist*0.45,dx);
+  // Basket scoring (ball falling through rim)
+  if (B.vy > 0) {
+    const rL = h.x - h.rimW/2, rR = h.x + h.rimW/2;
+    if (B.x > rL + 5 && B.x < rR - 5 && B.y > h.y - 3 && B.y < h.y + 16) {
+      if (h === hoopR && possession === 'player_shot') {
+        const pts = isThreePointer(P.x, hoopR) ? 3 : 2;
+        scoreBasket('player', pts, false);
+        possession = 'scored_p';
+      } else if (h === hoopL && possession === 'ai_shot') {
+        if (hoopBlocked) {
+          addFloat(h.x, h.y - 30, 'BLOCKED!', '#3B82F6');
+          spawn(h.x, h.y, '#3B82F6', 18);
+          B.vy *= -0.9; B.vx = (Math.random()-0.5)*10;
+          possession = 'blocked';
+        } else {
+          aScore += 2; updateHUD();
+          spawn(h.x, h.y, '#EF4444', 18);
+          addFloat(h.x, h.y - 30, '+2', '#EF4444');
+          streak = 0; updateStreakHUD();
+          possession = 'scored_a';
+          if (mode === '21' && aScore >= 21) { setTimeout(endGame, 600); return; }
+          resetPending = true; resetTimer = 55;
+        }
+      }
+    }
 
-  let scatter=0;
-  if(timing==='green')scatter=0;
-  else if(timing==='white')scatter=(Math.random()-.5)*2.5;
-  else scatter=(Math.random()-.5)*6;
-
-  B.vx=Math.cos(angle)*power+scatter*0.3;
-  B.vy=Math.sin(angle)*power-2.5+scatter*0.2;
-  B.x=shooter.x+shooter.w/2;B.y=shooter.y-B.r;
-  ballState='air';B.trail=[];B.spin=0;
-
-  if(shooter===P){
-    const cols={green:'#10B981',white:'#fff',early:'#F59E0B',late:'#EF4444'};
-    const lbls={green:'PERFECT!',white:'Good',early:'Early',late:'Late'};
-    addFloat(P.x+P.w/2,P.y-30,lbls[timing],cols[timing]);
-    possession='player_shot';
+    // Rim collision (bounce off rim edges)
+    [rL, rR].forEach(rx => {
+      const dd = dist(B.x, B.y, rx, h.y);
+      if (dd < B.r + 4) {
+        const an = Math.atan2(B.y - h.y, B.x - rx);
+        const bounce = 3.5;
+        B.vx = Math.cos(an) * bounce;
+        B.vy = Math.sin(an) * bounce;
+        B.x = rx + Math.cos(an) * (B.r + 5);
+        B.y = h.y + Math.sin(an) * (B.r + 5);
+        spawn(rx, h.y, '#EF4444', 3);
+      }
+    });
   }
 }
 
-function scoreBasket(who,pts,isDunk){
-  if(who==='player'){
-    pScore+=pts;basketN++;streak++;
-    if(streak>bestStreak)bestStreak=streak;
-    const label=isDunk?`DUNK! +${pts}`:(pts===3?`3-POINTER! +${pts}`:`+${pts}`);
-    const col=isDunk?'#EF4444':(pts===3?'#3B82F6':'#10B981');
-    spawn(hoopR.x,hoopR.y,col,20);spawn(hoopR.x,hoopR.y,'#F59E0B',8);
-    addFloat(hoopR.x,hoopR.y-35,label,col);
-    if(streak>=3)addFloat(hoopR.x,hoopR.y-65,`🔥 ${streak}x streak!`,'#F59E0B');
-    updateHUD();
+// ═══ AI ═══
+function updateAI() {
+  if (A.stun > 0) {
+    A.stun--;
+    A.vx *= 0.85;
+  } else {
+    if (possession === 'ai' && ballState === 'held') {
+      // Dribble toward its hoop (hoopL) with some weaving
+      const targetX = hoopL.x + 90 + Math.sin(frameCount * 0.015) * 50;
+      const dx = targetX - (A.x + A.w/2);
+      if (Math.abs(dx) > 10) {
+        A.vx += (dx > 0 ? 0.5 : -0.5);
+        A.vx = clamp(A.vx, -4.0, 4.0);
+      } else {
+        A.vx *= 0.85;
+      }
+      A.face = A.x + A.w/2 > hoopL.x ? -1 : 1;
 
-    // First to 21 check
-    if(mode==='21'&&pScore>=21){setTimeout(endGame,500);return}
+      // Try to evade player if close
+      const distToPlayer = dist(A.x+A.w/2, A.y+A.h/2, P.x+P.w/2, P.y+P.h/2);
+      if (distToPlayer < 80) {
+        // Move away from player
+        const awayDir = A.x > P.x ? 1 : -1;
+        A.vx += awayDir * 0.8;
+      }
 
-    // Trivia
-    if(basketN%TRIVIA_EVERY===0)setTimeout(()=>{if(running)showTrivia()},1000);
+      // Shoot when close enough
+      aiShootTimer++;
+      const distToHoop = Math.abs(A.x + A.w/2 - hoopL.x);
+      if (aiShootTimer > 70 && distToHoop < 220 && distToHoop > 40) {
+        aiShoot();
+        aiShootTimer = 0;
+      } else if (aiShootTimer > 140) {
+        // Fallback: just shoot from anywhere
+        aiShoot();
+        aiShootTimer = 0;
+      }
+
+    } else if (ballState === 'loose' || ballState === 'air') {
+      // Chase loose ball
+      if (ballState === 'loose') {
+        const tx = B.x - A.w/2;
+        A.vx += (tx > A.x ? 0.5 : -0.5);
+        A.vx = clamp(A.vx, -4.5, 4.5);
+      } else {
+        // Predict where ball will land
+        A.vx *= 0.95;
+      }
+
+    } else if (possession === 'player' && ballState === 'held') {
+      // Play defense: get between player and hoop
+      const defX = lerp(P.x, hoopR.x, 0.35);
+      const dx = defX - (A.x + A.w/2);
+      A.vx += clamp(dx * 0.03, -0.6, 0.6);
+      A.vx = clamp(A.vx, -4.5, 4.5);
+      A.face = P.x > A.x ? 1 : -1;
+
+      // AI attempt steal when close
+      const d = dist(A.x+A.w/2, A.y+A.h/2, P.x+P.w/2, P.y+P.h/2);
+      if (d < 60 && Math.random() < 0.008) {
+        // AI steal attempt (lower chance than player)
+        if (Math.random() < 0.25) {
+          possession = 'ai'; ballState = 'held'; P.vx *= -0.5;
+          addFloat(P.x+P.w/2, P.y-20, 'STOLEN!', '#EF4444');
+          spawn(P.x+P.w/2, P.y+P.h/2, '#EF4444', 8);
+        }
+      }
+    } else {
+      A.vx *= 0.9;
+    }
   }
-  // Reset after score
-  setTimeout(()=>{if(running)resetPossession()},900);
+
+  A.vy += GRAV;
+  A.x += A.vx; A.y += A.vy;
+  if (A.y + A.h >= GY) { A.y = GY - A.h; A.vy = 0; A.onG = true; } else A.onG = false;
+  A.x = clamp(A.x, COURT_LEFT, COURT_RIGHT - A.w);
+  A.vx *= FRIC;
+
+  // Anim timer
+  if (Math.abs(A.vx) > 0.5 && A.onG) A.animT += 0.12;
+  else if (A.onG) A.animT = 0;
 }
 
-function resetPossession(){
-  // Alternate possession
-  if(possession==='scored_p'||possession==='player_shot'){
-    possession='ai';
-  }else if(possession==='scored_a'||possession==='ai_shot'){
-    possession='player';
-  }else{
-    // Whoever is closer
-    const dp=Math.hypot(B.x-P.x-P.w/2,B.y-P.y-P.h/2);
-    const da=Math.hypot(B.x-A.x-A.w/2,B.y-A.y-A.h/2);
-    possession=dp<da?'player':'ai';
-  }
-  ballState='held';streak=0;aiShootTimer=0;
-  // Reset positions
-  if(possession==='player'){
-    P.x=W*0.25;P.y=GY-P.h;A.x=W*0.6;A.y=GY-A.h;
-  }else{
-    A.x=W*0.75;A.y=GY-A.h;P.x=W*0.4;P.y=GY-P.h;
-  }
-  P.vx=0;P.vy=0;A.vx=0;A.vy=0;
+function aiShoot() {
+  const bx = A.x + A.w/2, by = A.y;
+  const dx = hoopL.x - bx, dy = hoopL.y - by;
+  const d = Math.hypot(dx, dy);
+  const arcFactor = clamp(d / (W * 0.5), 0.3, 0.55);
+  const angle = Math.atan2(dy - d * arcFactor, dx);
+  const power = 7 + Math.random() * 3;
+  const scatter = (Math.random() - 0.5) * 3;
+
+  B.x = bx; B.y = by - B.r;
+  B.vx = Math.cos(angle) * power + scatter * 0.2;
+  B.vy = Math.sin(angle) * power - 2.5 + scatter * 0.1;
+  ballState = 'air'; B.trail = []; B.spin = 0;
+  possession = 'ai_shot';
 }
 
 // ═══ DRAW ═══
-function draw(){
-  X.clearRect(0,0,W,H);
+function draw() {
+  X.clearRect(0, 0, W, H);
 
-  // Sky
-  const bg=X.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,'#0a0e1a');bg.addColorStop(0.6,'#0f1629');bg.addColorStop(1,'#1a2332');
-  X.fillStyle=bg;X.fillRect(0,0,W,H);
+  // Background gradient
+  const bg = X.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#0a0e1a');
+  bg.addColorStop(0.5, '#0f1629');
+  bg.addColorStop(1, '#1a2332');
+  X.fillStyle = bg;
+  X.fillRect(0, 0, W, H);
 
-  if(!running)return;
+  if (!running) return;
 
-  // Court
-  X.fillStyle='#1a2332';X.fillRect(0,GY,W,H-GY);
-  X.strokeStyle='rgba(52,211,153,0.2)';X.lineWidth=2;
-  X.beginPath();X.moveTo(0,GY);X.lineTo(W,GY);X.stroke();
+  const pl = PLAYERS[selectedPlayer];
 
-  // Half court line
-  X.strokeStyle='rgba(52,211,153,0.08)';
-  X.beginPath();X.moveTo(W/2,GY);X.lineTo(W/2,GY-120);X.stroke();
-  X.beginPath();X.arc(W/2,GY,50,Math.PI,0);X.stroke();
+  // ── Court floor ──
+  X.fillStyle = '#1a2332';
+  X.fillRect(0, GY, W, H - GY);
 
-  // 3-point lines (arcs from each hoop)
-  X.strokeStyle='rgba(59,130,246,0.25)';X.lineWidth=2;X.setLineDash([6,4]);
-  const threeR=W*0.32;
-  X.beginPath();X.arc(hoopR.x,GY,threeR,Math.PI,0);X.stroke();
-  X.beginPath();X.arc(hoopL.x,GY,threeR,0,Math.PI);X.stroke();
+  // Floor gradient (wood-like)
+  const floorGrad = X.createLinearGradient(0, GY, 0, H);
+  floorGrad.addColorStop(0, '#1e2d3d');
+  floorGrad.addColorStop(1, '#141d2b');
+  X.fillStyle = floorGrad;
+  X.fillRect(0, GY, W, H - GY);
+
+  // Court line
+  X.strokeStyle = 'rgba(52,211,153,0.25)';
+  X.lineWidth = 2;
+  X.beginPath(); X.moveTo(0, GY); X.lineTo(W, GY); X.stroke();
+
+  // Half court
+  X.strokeStyle = 'rgba(52,211,153,0.08)';
+  X.lineWidth = 1.5;
+  X.beginPath(); X.moveTo(W/2, GY); X.lineTo(W/2, GY - 140); X.stroke();
+  X.beginPath(); X.arc(W/2, GY, 55, Math.PI, 0); X.stroke();
+
+  // Center circle
+  X.beginPath(); X.arc(W/2, GY, 30, Math.PI, 0); X.stroke();
+
+  // 3-point lines
+  X.strokeStyle = 'rgba(59,130,246,0.3)';
+  X.lineWidth = 2;
+  X.setLineDash([6, 4]);
+  const threeR = W * THREE_PT_DIST;
+  X.beginPath(); X.arc(hoopR.x, GY, threeR, Math.PI, 0); X.stroke();
+  X.beginPath(); X.arc(hoopL.x, GY, threeR, Math.PI, 0); X.stroke();
   X.setLineDash([]);
 
-  // Labels
-  X.fillStyle='rgba(59,130,246,0.2)';X.font='bold 11px Inter';X.textAlign='center';
-  X.fillText('3PT',hoopR.x-threeR+20,GY-6);
-  X.fillText('3PT',hoopL.x+threeR-20,GY-6);
+  // 3PT labels
+  X.fillStyle = 'rgba(59,130,246,0.25)';
+  X.font = 'bold 11px Inter';
+  X.textAlign = 'center';
+  X.fillText('3PT', hoopR.x - threeR + 22, GY - 6);
+  X.fillText('3PT', hoopL.x + threeR - 22, GY - 6);
 
-  // ── Draw both hoops ──
-  drawHoop(hoopR,1);
-  drawHoop(hoopL,-1);
+  // ── Draw hoops (back part of net first for depth) ──
+  drawHoop(hoopR, 1);
+  drawHoop(hoopL, -1);
 
-  // ── AI ──
-  drawEntity(A,'#DC2626','#FCA5A5','CPU',A.stun>0);
+  // Rodman lockdown visual
+  if (hoopBlocked) {
+    X.save();
+    const t = frameCount * 0.05;
+    X.strokeStyle = 'rgba(59,130,246,0.6)';
+    X.lineWidth = 3;
+    X.setLineDash([5, 5]);
+    X.beginPath();
+    X.arc(hoopL.x, hoopL.y + 5, 40 + Math.sin(t) * 3, 0, Math.PI * 2);
+    X.stroke();
+    X.setLineDash([]);
+    X.fillStyle = 'rgba(59,130,246,0.1)';
+    X.beginPath();
+    X.arc(hoopL.x, hoopL.y + 5, 40, 0, Math.PI * 2);
+    X.fill();
+    // X icon
+    X.font = 'bold 18px Inter';
+    X.fillStyle = 'rgba(59,130,246,0.8)';
+    X.textAlign = 'center';
+    X.fillText('X', hoopL.x, hoopL.y + 52);
+    X.restore();
+  }
 
-  // ── Player ──
-  drawEntity(P,'#10B981','#A7F3D0','YOU',false);
+  // ── Draw entities (sorted by Y for depth) ──
+  const entities = [
+    { type:'ai', e:A, jerseyCol:'#DC2626', skinCol:'#C8956C', shoeCol:'#333', hairCol:'#1a1a1a', hairStyle:'short', name:'CPU', number:'00', stunned:A.stun>0 },
+    { type:'player', e:P, jerseyCol:pl.jerseyCol, skinCol:pl.skinCol, shoeCol:pl.shoeCol, hairCol:pl.hairCol, hairStyle:pl.hairStyle, name:pl.name.split(' ')[1], number:String(pl.number), stunned:false }
+  ];
+  // Sort by Y so closer entities draw on top
+  entities.sort((a,b) => a.e.y - b.e.y);
+  entities.forEach(ent => drawPlayer(ent));
 
   // ── Ball trail ──
-  if(ballState==='air'&&B.trail.length>1){
-    for(let i=0;i<B.trail.length-1;i++){
-      const t=i/B.trail.length;
-      X.fillStyle=`rgba(245,158,11,${t*0.25})`;
-      X.beginPath();X.arc(B.trail[i].x,B.trail[i].y,B.r*t*0.5,0,Math.PI*2);X.fill();
+  if (ballState === 'air' && B.trail.length > 1) {
+    for (let i = 0; i < B.trail.length - 1; i++) {
+      const t = i / B.trail.length;
+      X.fillStyle = 'rgba(245,158,11,' + (t * 0.2) + ')';
+      X.beginPath(); X.arc(B.trail[i].x, B.trail[i].y, B.r * t * 0.5, 0, Math.PI * 2); X.fill();
     }
   }
 
   // ── Ball ──
-  if(B.y<GY-8){X.fillStyle='rgba(0,0,0,0.2)';X.beginPath();X.ellipse(B.x,GY+2,9,3,0,0,Math.PI*2);X.fill()}
-  X.save();X.translate(B.x,B.y);X.rotate(B.spin);
-  const bg2=X.createRadialGradient(-2,-2,1,0,0,B.r);
-  bg2.addColorStop(0,'#F59E0B');bg2.addColorStop(1,'#B45309');
-  X.fillStyle=bg2;X.beginPath();X.arc(0,0,B.r,0,Math.PI*2);X.fill();
-  X.strokeStyle='rgba(0,0,0,0.2)';X.lineWidth=1.5;
-  X.beginPath();X.arc(0,0,B.r,0,Math.PI*2);X.stroke();
-  X.beginPath();X.moveTo(-B.r,0);X.lineTo(B.r,0);X.stroke();
-  X.beginPath();X.moveTo(0,-B.r);X.lineTo(0,B.r);X.stroke();
-  X.restore();
+  drawBall();
 
-  // ── Power bar ──
-  if(shotCharging){
-    const bw=50,bh=5,bx=P.x+P.w/2-bw/2,by=P.y-15;
-    X.fillStyle='rgba(0,0,0,0.5)';X.fillRect(bx,by,bw,bh);
-    const f=shotPower/MAX_POW;
-    X.fillStyle=f<0.5?'#10B981':f<0.8?'#F59E0B':'#EF4444';
-    X.fillRect(bx,by,bw*f,bh);
+  // ── Power bar (above player head) ──
+  if (shotCharging) {
+    const bw = 52, bh = 6;
+    const bx = P.x + P.w/2 - bw/2, by = P.y - 22;
+    X.fillStyle = 'rgba(0,0,0,0.6)';
+    roundRect(bx-1, by-1, bw+2, bh+2, 3);
+    const f = shotPower / MAX_POW;
+    X.fillStyle = f < 0.4 ? '#10B981' : f < 0.75 ? '#F59E0B' : '#EF4444';
+    roundRect(bx, by, bw * f, bh, 2);
   }
 
-  // ── Prompts ──
-  if(possession==='player'&&ballState==='held'&&!dunking){
-    const dh=Math.hypot(P.x+P.w/2-hoopR.x,P.y-hoopR.y);
-    if(dh<100&&!P.onG){
-      X.fillStyle='rgba(239,68,68,0.8)';X.font='bold 12px Inter';X.textAlign='center';
-      X.fillText('DUNK!',P.x+P.w/2,P.y-20);
-    }
-  }
-  if(possession==='ai'&&ballState==='held'&&stealCD<=0){
-    const ds=Math.hypot(P.x+P.w/2-A.x-A.w/2,P.y+P.h/2-A.y-A.h/2);
-    if(ds<80){
-      X.fillStyle='rgba(245,158,11,0.7)';X.font='bold 11px Inter';X.textAlign='center';
-      X.fillText('Press S to STEAL',P.x+P.w/2,P.y-18);
+  // ── Context prompts ──
+  if (possession === 'player' && ballState === 'held' && !dunking && !shotCharging) {
+    const dh = dist(P.x+P.w/2, P.y, hoopR.x, hoopR.y);
+    if (dh < pl.dunkRange + 25 && !P.onG) {
+      X.fillStyle = 'rgba(239,68,68,0.85)';
+      X.font = 'bold 13px Inter';
+      X.textAlign = 'center';
+      X.fillText('DUNK!', P.x + P.w/2, P.y - 26);
     }
   }
 
-  // ── Possession arrow ──
-  const holder=possession==='player'||possession==='player_shot'?P:A;
-  if(ballState==='held'){
-    X.fillStyle=possession==='player'?'#10B981':'#EF4444';
+  if (possession === 'ai' && ballState === 'held' && stealCD <= 0) {
+    const ds = dist(P.x+P.w/2, P.y+P.h/2, A.x+A.w/2, A.y+A.h/2);
+    if (ds < 85) {
+      X.fillStyle = 'rgba(245,158,11,0.75)';
+      X.font = 'bold 11px Inter';
+      X.textAlign = 'center';
+      X.fillText('Press S to STEAL', P.x + P.w/2, P.y - 24);
+    }
+  }
+
+  // ── Possession indicator arrow ──
+  if (ballState === 'held' && !dunking) {
+    const holder = possession === 'player' ? P : A;
+    X.fillStyle = possession === 'player' ? '#10B981' : '#EF4444';
     X.beginPath();
-    const ax=holder.x+holder.w/2,ay=holder.y-12;
-    X.moveTo(ax-5,ay-8);X.lineTo(ax+5,ay-8);X.lineTo(ax,ay);X.closePath();X.fill();
+    const ax = holder.x + holder.w/2;
+    const ay = holder.y - 18 + Math.sin(frameCount * 0.08) * 3;
+    X.moveTo(ax - 5, ay - 8);
+    X.lineTo(ax + 5, ay - 8);
+    X.lineTo(ax, ay);
+    X.closePath();
+    X.fill();
   }
 
   // ── Particles ──
-  particles.forEach(p=>{X.globalAlpha=p.life;X.fillStyle=p.color;X.beginPath();X.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);X.fill()});
-  X.globalAlpha=1;
+  particles.forEach(p => {
+    X.globalAlpha = p.life;
+    X.fillStyle = p.color;
+    X.beginPath(); X.arc(p.x, p.y, p.r * p.life, 0, Math.PI*2); X.fill();
+  });
+  X.globalAlpha = 1;
 
   // ── Float texts ──
-  floats.forEach(f=>{
-    X.globalAlpha=f.life;X.fillStyle=f.color;
-    X.font=`900 ${16+(1-f.life)*10}px Inter`;X.textAlign='center';
-    X.fillText(f.text,f.x,f.y);
+  floats.forEach(f => {
+    X.globalAlpha = f.life;
+    X.fillStyle = f.color;
+    const size = 16 + (1 - f.life) * 12;
+    X.font = '900 ' + size + 'px Inter';
+    X.textAlign = 'center';
+    // Outline
+    X.strokeStyle = 'rgba(0,0,0,0.5)';
+    X.lineWidth = 3;
+    X.strokeText(f.text, f.x, f.y);
+    X.fillText(f.text, f.x, f.y);
   });
-  X.globalAlpha=1;
+  X.globalAlpha = 1;
 }
 
-function drawHoop(h,side){
-  const bbX=side===1?h.x+h.rimW/2+5:h.x-h.rimW/2-5;
+function drawBall() {
+  // Shadow on ground
+  if (B.y < GY - 10) {
+    const shadowScale = clamp(1 - (GY - B.y) / 300, 0.3, 1);
+    X.fillStyle = 'rgba(0,0,0,' + (0.2 * shadowScale) + ')';
+    X.beginPath();
+    X.ellipse(B.x, GY + 2, 10 * shadowScale, 3 * shadowScale, 0, 0, Math.PI * 2);
+    X.fill();
+  }
+
+  X.save();
+  X.translate(B.x, B.y);
+  X.rotate(B.spin);
+
+  // Ball gradient
+  const bg = X.createRadialGradient(-2, -3, 1, 0, 0, B.r);
+  bg.addColorStop(0, '#F59E0B');
+  bg.addColorStop(0.7, '#D97706');
+  bg.addColorStop(1, '#92400E');
+  X.fillStyle = bg;
+  X.beginPath(); X.arc(0, 0, B.r, 0, Math.PI * 2); X.fill();
+
+  // Ball lines
+  X.strokeStyle = 'rgba(0,0,0,0.25)';
+  X.lineWidth = 1.2;
+  X.beginPath(); X.arc(0, 0, B.r, 0, Math.PI * 2); X.stroke();
+  X.beginPath(); X.moveTo(-B.r, 0); X.lineTo(B.r, 0); X.stroke();
+  X.beginPath(); X.moveTo(0, -B.r); X.quadraticCurveTo(B.r*0.4, 0, 0, B.r); X.stroke();
+  X.beginPath(); X.moveTo(0, -B.r); X.quadraticCurveTo(-B.r*0.4, 0, 0, B.r); X.stroke();
+
+  X.restore();
+}
+
+function drawHoop(h, side) {
+  const bbX = side === 1 ? h.x + h.rimW/2 + 5 : h.x - h.rimW/2 - 5;
 
   // Pole
-  X.fillStyle='rgba(255,255,255,0.06)';
-  X.fillRect(bbX-2,h.y+30,4,GY-h.y-30);
+  X.fillStyle = 'rgba(255,255,255,0.06)';
+  X.fillRect(bbX - 2, h.y + 35, 4, GY - h.y - 35);
+
+  // Pole highlight
+  X.fillStyle = 'rgba(255,255,255,0.02)';
+  X.fillRect(bbX - 1, h.y + 35, 2, GY - h.y - 35);
 
   // Backboard
-  X.fillStyle='rgba(255,255,255,0.12)';
-  X.fillRect(bbX-2,h.y-35,5,70);
-  X.strokeStyle='rgba(255,255,255,0.15)';X.lineWidth=1.5;
-  if(side===1)X.strokeRect(h.x+h.rimW/2-16,h.y-16,20,20);
-  else X.strokeRect(h.x-h.rimW/2-4,h.y-16,20,20);
+  const bbGrad = X.createLinearGradient(bbX - 3, h.y - 40, bbX + 6, h.y + 40);
+  bbGrad.addColorStop(0, 'rgba(255,255,255,0.15)');
+  bbGrad.addColorStop(1, 'rgba(255,255,255,0.06)');
+  X.fillStyle = bbGrad;
+  X.fillRect(bbX - 2, h.y - 40, 5, 80);
+
+  // Backboard target square
+  X.strokeStyle = 'rgba(255,255,255,0.18)';
+  X.lineWidth = 1.5;
+  if (side === 1) X.strokeRect(h.x + h.rimW/2 - 18, h.y - 18, 22, 22);
+  else X.strokeRect(h.x - h.rimW/2 - 4, h.y - 18, 22, 22);
 
   // Rim
-  X.strokeStyle='#EF4444';X.lineWidth=4;X.lineCap='round';
-  X.beginPath();X.moveTo(h.x-h.rimW/2,h.y);X.lineTo(h.x+h.rimW/2,h.y);X.stroke();
-  X.fillStyle='#EF4444';
-  [h.x-h.rimW/2,h.x+h.rimW/2].forEach(rx=>{X.beginPath();X.arc(rx,h.y,3.5,0,Math.PI*2);X.fill()});
+  X.strokeStyle = '#EF4444';
+  X.lineWidth = 4;
+  X.lineCap = 'round';
+  X.beginPath(); X.moveTo(h.x - h.rimW/2, h.y); X.lineTo(h.x + h.rimW/2, h.y); X.stroke();
+
+  // Rim ends (3D look)
+  X.fillStyle = '#DC2626';
+  [h.x - h.rimW/2, h.x + h.rimW/2].forEach(rx => {
+    X.beginPath(); X.arc(rx, h.y, 4, 0, Math.PI * 2); X.fill();
+  });
 
   // Net
-  X.strokeStyle='rgba(255,255,255,0.18)';X.lineWidth=1;
-  for(let i=0;i<=5;i++){
-    const t=i/5;const tx=h.x-h.rimW/2+t*h.rimW;const bx=h.x-h.rimW/4+t*h.rimW/2;
-    X.beginPath();X.moveTo(tx,h.y+2);X.lineTo(bx,h.y+28);X.stroke();
+  X.strokeStyle = 'rgba(255,255,255,0.2)';
+  X.lineWidth = 1;
+  const netSegments = 6;
+  for (let i = 0; i <= netSegments; i++) {
+    const t = i / netSegments;
+    const tx = h.x - h.rimW/2 + t * h.rimW;
+    const bx = h.x - h.rimW/4 + t * h.rimW/2;
+    const sway = Math.sin(frameCount * 0.02 + i) * 1.5;
+    X.beginPath(); X.moveTo(tx, h.y + 2); X.lineTo(bx + sway, h.y + 32); X.stroke();
   }
-  for(let j=0;j<3;j++){
-    const ny=h.y+7+j*7;const nf=1-j*0.15;
-    X.beginPath();X.moveTo(h.x-h.rimW/2*nf,ny);X.lineTo(h.x+h.rimW/2*nf,ny);X.stroke();
+  // Horizontal net lines
+  for (let j = 0; j < 3; j++) {
+    const ny = h.y + 8 + j * 8;
+    const nf = 1 - j * 0.18;
+    X.beginPath();
+    X.moveTo(h.x - h.rimW/2 * nf, ny);
+    X.lineTo(h.x + h.rimW/2 * nf, ny);
+    X.stroke();
   }
 }
 
-function drawEntity(e,bodyCol,headCol,label,stunned){
+function drawPlayer(ent) {
+  const e = ent.e;
+  const isRunning = Math.abs(e.vx) > 0.5 && e.onG;
+  const bob = isRunning ? Math.sin(e.animT) * 3 : 0;
+  const legPhase = isRunning ? Math.sin(e.animT) : 0;
+
   // Shadow
-  X.fillStyle='rgba(0,0,0,0.2)';X.beginPath();X.ellipse(e.x+e.w/2,GY+2,15,4,0,0,Math.PI*2);X.fill();
-  if(stunned)X.globalAlpha=0.4+Math.sin(Date.now()*0.02)*0.3;
+  X.fillStyle = 'rgba(0,0,0,0.3)';
+  X.beginPath();
+  X.ellipse(e.x + e.w/2, GY + 2, 18, 5, 0, 0, Math.PI * 2);
+  X.fill();
 
-  // Body
-  X.fillStyle=bodyCol;
-  rr(X,e.x+7,e.y+16,e.w-14,e.h-20,7);
+  if (ent.stunned) X.globalAlpha = 0.35 + Math.sin(frameCount * 0.15) * 0.25;
 
-  // Head
-  X.fillStyle=headCol;X.beginPath();X.arc(e.x+e.w/2,e.y+10,11,0,Math.PI*2);X.fill();
+  X.save();
+  X.translate(0, bob);
 
+  // ── Legs ──
+  const legY = e.y + e.h - 24;
+  const legSpread = isRunning ? legPhase * 6 : 0;
+
+  // Left leg
+  X.fillStyle = ent.jerseyCol;
+  X.fillRect(e.x + e.w/2 - 11 - legSpread, legY, 9, 16);
+  // Right leg
+  X.fillRect(e.x + e.w/2 + 2 + legSpread, legY, 9, 16);
+
+  // Shoes
+  X.fillStyle = ent.shoeCol;
+  roundRect(e.x + e.w/2 - 13 - legSpread, e.y + e.h - 9, 13, 9, 3);
+  roundRect(e.x + e.w/2 + 1 + legSpread, e.y + e.h - 9, 13, 9, 3);
+
+  // Shoe sole
+  X.fillStyle = '#111';
+  X.fillRect(e.x + e.w/2 - 13 - legSpread, e.y + e.h - 2, 13, 2);
+  X.fillRect(e.x + e.w/2 + 1 + legSpread, e.y + e.h - 2, 13, 2);
+
+  // ── Body / Jersey ──
+  X.fillStyle = ent.jerseyCol;
+  roundRect(e.x + 6, e.y + 16, e.w - 12, e.h - 34, 6);
+
+  // Jersey side stripe
+  X.fillStyle = 'rgba(255,255,255,0.08)';
+  X.fillRect(e.x + 7, e.y + 18, 3, e.h - 38);
+  X.fillRect(e.x + e.w - 10, e.y + 18, 3, e.h - 38);
+
+  // Jersey collar
+  X.fillStyle = 'rgba(255,255,255,0.15)';
+  roundRect(e.x + e.w/2 - 8, e.y + 14, 16, 5, 2);
+
+  // Jersey number
+  X.fillStyle = 'rgba(255,255,255,0.9)';
+  X.font = 'bold 15px Inter';
+  X.textAlign = 'center';
+  X.fillText(ent.number, e.x + e.w/2, e.y + 39);
+
+  // ── Arms ──
+  X.strokeStyle = ent.skinCol;
+  X.lineWidth = 5;
+  X.lineCap = 'round';
+
+  // Back arm
+  const armSwing = isRunning ? Math.sin(e.animT + Math.PI) * 8 : 0;
+  X.beginPath();
+  X.moveTo(e.x + e.w/2 - e.face * 8, e.y + 22);
+  X.lineTo(e.x + e.w/2 - e.face * 18, e.y + 32 + armSwing);
+  X.stroke();
+
+  // Front arm (ball holding side)
+  const holdingBall = (ent.type === 'player' && possession === 'player' && ballState === 'held') ||
+                      (ent.type === 'ai' && possession === 'ai' && ballState === 'held');
+  if (holdingBall) {
+    // Dribbling arm animation
+    const dribbleY = Math.sin(e.animT * 2) * 5;
+    X.beginPath();
+    X.moveTo(e.x + e.w/2 + e.face * 8, e.y + 22);
+    X.lineTo(e.x + e.w/2 + e.face * 18, e.y + 14 + dribbleY);
+    X.stroke();
+  } else if (dunking && ent.type === 'player') {
+    // Dunking arm up
+    X.beginPath();
+    X.moveTo(e.x + e.w/2 + e.face * 6, e.y + 20);
+    X.lineTo(e.x + e.w/2 + e.face * 4, e.y - 5);
+    X.stroke();
+  } else {
+    X.beginPath();
+    X.moveTo(e.x + e.w/2 + e.face * 8, e.y + 22);
+    X.lineTo(e.x + e.w/2 + e.face * 16, e.y + 30 - armSwing);
+    X.stroke();
+  }
+
+  // ── Head ──
+  X.fillStyle = ent.skinCol;
+  X.beginPath();
+  X.arc(e.x + e.w/2, e.y + 8, 13, 0, Math.PI * 2);
+  X.fill();
+
+  // ── Hair ──
+  X.fillStyle = ent.hairCol;
+  if (ent.hairStyle === 'wild') {
+    // Rodman wild hair
+    X.beginPath();
+    X.arc(e.x + e.w/2, e.y + 5, 14, Math.PI, 0);
+    X.fill();
+    // Spiky bits
+    for (let i = 0; i < 5; i++) {
+      const angle = Math.PI + (i / 4) * Math.PI;
+      const sx = e.x + e.w/2 + Math.cos(angle) * 12;
+      const sy = e.y + 5 + Math.sin(angle) * 12;
+      X.beginPath();
+      X.arc(sx, sy - 3, 4, 0, Math.PI * 2);
+      X.fill();
+    }
+  } else if (ent.hairStyle === 'buzz') {
+    // Buzz cut
+    X.beginPath();
+    X.arc(e.x + e.w/2, e.y + 5, 13, Math.PI + 0.3, -0.3);
+    X.fill();
+  } else {
+    // Short hair
+    X.beginPath();
+    X.arc(e.x + e.w/2, e.y + 4, 13, Math.PI, 0);
+    X.fill();
+  }
+
+  // ── Face ──
   // Eyes
-  X.fillStyle='#1a1a2e';const eo=e.face*3;
-  X.beginPath();X.arc(e.x+e.w/2+eo-3,e.y+9,2,0,Math.PI*2);X.fill();
-  X.beginPath();X.arc(e.x+e.w/2+eo+3,e.y+9,2,0,Math.PI*2);X.fill();
+  X.fillStyle = '#1a1a2e';
+  const eyeOff = e.face * 3;
+  X.beginPath(); X.arc(e.x + e.w/2 + eyeOff - 4, e.y + 8, 1.8, 0, Math.PI * 2); X.fill();
+  X.beginPath(); X.arc(e.x + e.w/2 + eyeOff + 4, e.y + 8, 1.8, 0, Math.PI * 2); X.fill();
 
-  // Arms
-  X.strokeStyle=bodyCol;X.lineWidth=3;X.lineCap='round';
-  X.beginPath();X.moveTo(e.x+e.w/2,e.y+22);X.lineTo(e.x+e.w/2-e.face*14,e.y+30);X.stroke();
-  X.beginPath();X.moveTo(e.x+e.w/2,e.y+22);X.lineTo(e.x+e.w/2+e.face*14,e.y+18);X.stroke();
+  // Eyebrows
+  X.strokeStyle = '#1a1a2e';
+  X.lineWidth = 1.5;
+  X.beginPath();
+  X.moveTo(e.x + e.w/2 + eyeOff - 6, e.y + 5);
+  X.lineTo(e.x + e.w/2 + eyeOff - 2, e.y + 4.5);
+  X.stroke();
+  X.beginPath();
+  X.moveTo(e.x + e.w/2 + eyeOff + 2, e.y + 4.5);
+  X.lineTo(e.x + e.w/2 + eyeOff + 6, e.y + 5);
+  X.stroke();
 
-  // Legs
-  X.strokeStyle=darken(bodyCol);X.lineWidth=3;
-  X.beginPath();X.moveTo(e.x+e.w/2-5,e.y+e.h-8);X.lineTo(e.x+e.w/2-9,e.y+e.h);X.stroke();
-  X.beginPath();X.moveTo(e.x+e.w/2+5,e.y+e.h-8);X.lineTo(e.x+e.w/2+9,e.y+e.h);X.stroke();
+  // Mouth
+  if (ent.stunned) {
+    // O mouth when stunned
+    X.beginPath();
+    X.arc(e.x + e.w/2 + eyeOff, e.y + 13, 2, 0, Math.PI * 2);
+    X.stroke();
+  }
 
-  X.globalAlpha=1;
+  X.restore(); // remove bob translation
 
-  // Label
-  X.fillStyle='rgba(255,255,255,0.4)';X.font='bold 10px Inter';X.textAlign='center';
-  X.fillText(label,e.x+e.w/2,e.y-4);
+  X.globalAlpha = 1;
+
+  // ── Name label ──
+  X.fillStyle = ent.type === 'player' ? 'rgba(16,185,129,0.7)' : 'rgba(239,68,68,0.6)';
+  X.font = 'bold 10px Inter';
+  X.textAlign = 'center';
+  X.fillText(ent.name, e.x + e.w/2, e.y - 8);
 }
 
-function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();c.fill()}
-function darken(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return`rgb(${Math.max(0,r-50)},${Math.max(0,g-50)},${Math.max(0,b-50)})`}
+function roundRect(x, y, w, h, r) {
+  X.beginPath();
+  X.moveTo(x + r, y);
+  X.lineTo(x + w - r, y);
+  X.quadraticCurveTo(x + w, y, x + w, y + r);
+  X.lineTo(x + w, y + h - r);
+  X.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  X.lineTo(x + r, y + h);
+  X.quadraticCurveTo(x, y + h, x, y + h - r);
+  X.lineTo(x, y + r);
+  X.quadraticCurveTo(x, y, x + r, y);
+  X.closePath();
+  X.fill();
+}
 
-// ═══ LOOP ═══
-function loop(){
-  update();draw();
+// ═══ GAME LOOP ═══
+let lastTime = 0;
+function loop(timestamp) {
+  // Fixed timestep at ~60fps
+  if (timestamp - lastTime >= 16) {
+    update();
+    lastTime = timestamp;
+  }
+  draw();
   requestAnimationFrame(loop);
 }
 requestAnimationFrame(loop);
