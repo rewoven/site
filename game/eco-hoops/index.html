@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Eco Hoops | Rewoven Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-50: #ECFDF5;
+  --green-100: #D1FAE5;
+  --green-200: #A7F3D0;
+  --green-400: #34D399;
+  --green-500: #10B981;
+  --green-600: #059669;
+  --green-700: #047857;
+  --green-800: #065F46;
+  --green-900: #064E3B;
+  --dark: #111827;
+  --gray-600: #4B5563;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--dark);
+  color: #fff;
+  min-height: 100vh;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(17,24,39,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(52,211,153,0.15);
+  padding: 0 24px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+nav a.logo {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700; font-size: 22px;
+  color: var(--green-400);
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+nav .nav-links { display: flex; gap: 20px; align-items: center; }
+nav .nav-links a {
+  font-size: 14px; font-weight: 500;
+  color: var(--green-200);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+nav .nav-links a:hover { color: var(--green-400); }
+
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  cursor: crosshair;
+}
+
+/* Overlays */
+.overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(17,24,39,0.92);
+  backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+  padding: 24px;
+}
+.overlay.active { display: flex; }
+.overlay-box {
+  background: rgba(6,78,59,0.6);
+  border: 1px solid rgba(52,211,153,0.3);
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  animation: popIn 0.3s ease-out;
+}
+@keyframes popIn {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.overlay-box h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--green-400);
+  margin-bottom: 12px;
+}
+.overlay-box p {
+  color: var(--green-100);
+  line-height: 1.6;
+  font-size: 15px;
+  margin-bottom: 16px;
+}
+
+.pill-btn {
+  display: inline-block;
+  padding: 12px 32px;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600; font-size: 15px;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(16,185,129,0.3);
+  margin: 6px;
+}
+.pill-btn.primary {
+  background: linear-gradient(135deg, var(--green-500), var(--green-600));
+  color: #fff;
+}
+.pill-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(16,185,129,0.45);
+}
+.pill-btn.secondary {
+  background: rgba(255,255,255,0.08);
+  color: var(--green-200);
+  border: 1px solid rgba(52,211,153,0.3);
+}
+.pill-btn.secondary:hover {
+  background: rgba(255,255,255,0.12);
+  transform: translateY(-2px);
+}
+
+/* Trivia */
+#trivia-overlay .timer-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+#trivia-overlay .timer-fill {
+  height: 100%;
+  background: var(--green-400);
+  border-radius: 3px;
+  transition: width 0.1s linear;
+}
+.trivia-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+.trivia-opt {
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(52,211,153,0.25);
+  background: rgba(255,255,255,0.05);
+  color: var(--green-100);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+}
+.trivia-opt:hover {
+  background: rgba(52,211,153,0.12);
+  border-color: var(--green-400);
+}
+.trivia-opt.correct {
+  background: rgba(16,185,129,0.3);
+  border-color: var(--green-400);
+  color: #fff;
+}
+.trivia-opt.wrong {
+  background: rgba(239,68,68,0.3);
+  border-color: #EF4444;
+  color: #fff;
+}
+
+/* HUD */
+#hud {
+  position: fixed;
+  top: 64px; left: 12px; right: 12px;
+  z-index: 150;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+.hud-left, .hud-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hud-item {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green-200);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+}
+.hud-item span { color: var(--green-400); }
+.hud-right { align-items: flex-end; }
+
+/* Game over stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0;
+}
+.stat-card {
+  background: rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 16px 12px;
+  text-align: center;
+}
+.stat-card .stat-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--green-400);
+}
+.stat-card .stat-label {
+  font-size: 12px;
+  color: var(--green-200);
+  margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+  .overlay-box { padding: 28px 20px; }
+  .trivia-options { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card .stat-val { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Rewoven</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/game/">Games</a>
+  </div>
+</nav>
+
+<div id="hud">
+  <div class="hud-left">
+    <div class="hud-item">Score: <span id="hud-score">0</span></div>
+    <div class="hud-item">Streak: <span id="hud-streak">0</span> <span id="hud-multi"></span></div>
+  </div>
+  <div class="hud-right">
+    <div class="hud-item" id="hud-lives"></div>
+    <div class="hud-item">Baskets: <span id="hud-baskets">0</span></div>
+  </div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<!-- Start screen -->
+<div class="overlay active" id="start-overlay">
+  <div class="overlay-box">
+    <h2>Eco Hoops</h2>
+    <p>Shoot hoops and test your sustainability knowledge! Drag to aim and release to shoot. Make baskets, answer trivia, and build your streak.</p>
+    <p style="font-size:13px; color:var(--gray-600);">Drag back from the ball to set angle & power. Correct trivia answers double your points!</p>
+    <button class="pill-btn primary" onclick="startGame()">Play Now</button>
+  </div>
+</div>
+
+<!-- Trivia overlay -->
+<div class="overlay" id="trivia-overlay">
+  <div class="overlay-box">
+    <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+    <h2 id="trivia-q"></h2>
+    <div class="trivia-options" id="trivia-opts"></div>
+  </div>
+</div>
+
+<!-- Game over -->
+<div class="overlay" id="gameover-overlay">
+  <div class="overlay-box">
+    <h2>Game Over</h2>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val" id="go-score">0</div><div class="stat-label">Total Score</div></div>
+      <div class="stat-card"><div class="stat-val" id="go-baskets">0</div><div class="stat-label">Baskets Made</div></div>
+      <div class="stat-card"><div class="stat-val" id="go-accuracy">0%</div><div class="stat-label">Trivia Accuracy</div></div>
+      <div class="stat-card"><div class="stat-val" id="go-streak">0</div><div class="stat-label">Best Streak</div></div>
+    </div>
+    <p id="go-fact" style="font-size:13px; margin-bottom:20px;"></p>
+    <div>
+      <button class="pill-btn primary" onclick="startGame()">Play Again</button>
+      <a href="/game/" class="pill-btn secondary">Games Hub</a>
+    </div>
+    <button class="pill-btn secondary" style="margin-top:8px;" onclick="shareScore()">Share Score</button>
+  </div>
+</div>
+
+<script>
+// ========================
+// AUDIO
+// ========================
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function initAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
+
+function playSound(type) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  const t = audioCtx.currentTime;
+  if (type === 'swoosh') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(300, t);
+    osc.frequency.exponentialRampToValueAtTime(150, t + 0.3);
+    gain.gain.setValueAtTime(0.15, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    osc.start(t); osc.stop(t + 0.3);
+  } else if (type === 'swish') {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(800, t);
+    osc.frequency.exponentialRampToValueAtTime(1200, t + 0.15);
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+    osc.start(t); osc.stop(t + 0.2);
+  } else if (type === 'buzz') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(100, t);
+    gain.gain.setValueAtTime(0.12, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    osc.start(t); osc.stop(t + 0.4);
+  } else if (type === 'ding') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, t);
+    osc.frequency.setValueAtTime(1100, t + 0.1);
+    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+    osc.start(t); osc.stop(t + 0.4);
+  } else if (type === 'powerup') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(500, t);
+    osc.frequency.exponentialRampToValueAtTime(1500, t + 0.25);
+    gain.gain.setValueAtTime(0.15, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    osc.start(t); osc.stop(t + 0.3);
+  }
+}
+
+// ========================
+// TRIVIA
+// ========================
+const QUESTIONS = [
+  {q:"How many litres of water does it take to make one cotton t-shirt?", a:"2,700", opts:["500","2,700","10,000","800"]},
+  {q:"What percentage of textiles end up in landfills globally?", a:"73%", opts:["45%","73%","30%","90%"]},
+  {q:"Which material takes the longest to decompose?", a:"Polyester (200+ years)", opts:["Cotton","Wool","Polyester (200+ years)","Silk"]},
+  {q:"What percentage of global carbon emissions comes from fashion?", a:"10%", opts:["2%","5%","10%","25%"]},
+  {q:"How many times is the average garment worn before being discarded?", a:"7 times", opts:["3 times","7 times","15 times","30 times"]},
+  {q:"Which country is the largest exporter of used clothing?", a:"USA", opts:["China","India","USA","UK"]},
+  {q:"What does 'circular economy' mean?", a:"Products are reused, repaired, and recycled", opts:["Products are made faster","Products are reused, repaired, and recycled","Only natural materials are used","Everything is biodegradable"]},
+  {q:"How much textile waste does the fashion industry produce annually?", a:"92 million tonnes", opts:["12 million tonnes","50 million tonnes","92 million tonnes","200 million tonnes"]},
+  {q:"What is upcycling?", a:"Transforming waste into higher-value products", opts:["Recycling plastics","Transforming waste into higher-value products","Burning old clothes","Donating to charity"]},
+  {q:"Which fabric is most eco-friendly?", a:"Organic linen", opts:["Polyester","Nylon","Organic linen","Acrylic"]},
+  {q:"What year did the UAE host COP28?", a:"2023", opts:["2021","2022","2023","2024"]},
+  {q:"How much water can recycling one t-shirt save?", a:"Up to 2,700 litres", opts:["100 litres","Up to 2,700 litres","500 litres","50 litres"]},
+  {q:"What is greenwashing?", a:"Making false sustainability claims", opts:["Washing clothes in cold water","Making false sustainability claims","Using green dye","Eco-friendly laundry"]},
+  {q:"Which UAE city hosted COP28?", a:"Dubai", opts:["Abu Dhabi","Dubai","Sharjah","Doha"]},
+  {q:"How many garments are produced globally each year?", a:"Over 100 billion", opts:["10 billion","Over 100 billion","50 billion","1 trillion"]},
+  {q:"What is the most recycled fabric?", a:"Polyester", opts:["Cotton","Polyester","Wool","Silk"]},
+  {q:"What percentage of clothes can be recycled?", a:"Up to 95%", opts:["Up to 50%","Up to 95%","Up to 70%","Up to 30%"]},
+  {q:"What is fast fashion?", a:"Cheap, trendy clothing produced rapidly", opts:["Expensive designer clothes","Cheap, trendy clothing produced rapidly","Handmade garments","Vintage clothing"]},
+  {q:"How long does nylon take to decompose?", a:"30\u201340 years", opts:["5 years","30\u201340 years","100 years","1 year"]},
+  {q:"What is the Higg Index?", a:"A tool measuring environmental impact of apparel", opts:["A stock market index","A tool measuring environmental impact of apparel","A fashion magazine ranking","A fabric softness scale"]}
+];
+const FACTS = [
+  "The fashion industry uses 93 billion cubic metres of water annually.",
+  "It takes 2,700 litres of water to make a single cotton t-shirt.",
+  "Less than 1% of clothing is recycled into new garments.",
+  "The average person throws away 31.75 kg of clothing per year.",
+  "Washing synthetic clothes releases 500,000 tonnes of microfibres into the ocean yearly.",
+  "Extending clothing life by 9 months reduces its environmental impact by 20-30%.",
+  "The fashion industry is responsible for 10% of global carbon emissions."
+];
+let usedQs = [];
+
+function getQuestion() {
+  if (usedQs.length >= QUESTIONS.length) usedQs = [];
+  let avail = QUESTIONS.filter((_,i) => !usedQs.includes(i));
+  let idx = QUESTIONS.indexOf(avail[Math.floor(Math.random() * avail.length)]);
+  usedQs.push(idx);
+  let q = QUESTIONS[idx];
+  let shuffled = [...q.opts].sort(() => Math.random() - 0.5);
+  return { question: q.q, answer: q.a, options: shuffled };
+}
+
+// ========================
+// GAME STATE
+// ========================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+let state = 'start'; // start, aiming, flying, scored, trivia, gameover
+let ball, hoop, score, lives, baskets, streak, bestStreak, triviaCorrect, triviaTotal;
+let dragStart = null, dragCurrent = null;
+let particles = [], netAnim = 0, flashAlpha = 0, flashColor = '';
+let powerups = [], activePowerups = {};
+let gravity = 0.35;
+let difficultyLevel = 0;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+function resetBall() {
+  ball = {
+    x: W * 0.18,
+    y: H * 0.72,
+    vx: 0, vy: 0,
+    r: Math.min(18, W * 0.028),
+    active: false,
+    trail: []
+  };
+}
+
+function resetHoop() {
+  let level = Math.min(difficultyLevel, 12);
+  let minX = W * 0.5;
+  let maxX = W * 0.85;
+  let minY = H * 0.25;
+  let maxY = H * 0.55;
+
+  let hoopWidth = 60 - level * 2;
+  if (hoopWidth < 36) hoopWidth = 36;
+  if (activePowerups.bigHoop && activePowerups.bigHoop > 0) hoopWidth += 20;
+
+  hoop = {
+    x: minX + Math.random() * (maxX - minX),
+    y: minY + Math.random() * (maxY - minY),
+    w: hoopWidth,
+    rimH: 6,
+    netLen: 36,
+    scored: false
+  };
+}
+
+function initGame() {
+  score = 0; lives = 3; baskets = 0; streak = 0; bestStreak = 0;
+  triviaCorrect = 0; triviaTotal = 0;
+  difficultyLevel = 0;
+  particles = [];
+  powerups = [];
+  activePowerups = {};
+  usedQs = [];
+  resetBall();
+  resetHoop();
+  updateHUD();
+}
+
+// ========================
+// HUD
+// ========================
+function updateHUD() {
+  document.getElementById('hud-score').textContent = score;
+  document.getElementById('hud-streak').textContent = streak;
+  let multi = getMultiplier();
+  document.getElementById('hud-multi').textContent = multi > 1 ? `(x${multi})` : '';
+  document.getElementById('hud-baskets').textContent = baskets;
+  let hearts = '';
+  for (let i = 0; i < lives; i++) hearts += '\u2764\uFE0F ';
+  document.getElementById('hud-lives').innerHTML = hearts;
+}
+
+function getMultiplier() {
+  let m = 1;
+  if (streak >= 3) m = 2;
+  if (streak >= 6) m = 3;
+  if (streak >= 10) m = 5;
+  if (activePowerups.doublePoints && activePowerups.doublePoints > 0) m *= 2;
+  return m;
+}
+
+// ========================
+// POWER-UPS
+// ========================
+function spawnPowerup() {
+  if (powerups.length >= 2) return;
+  if (Math.random() > 0.25) return;
+  const types = [
+    { type: 'bigHoop', emoji: '\uD83C\uDF3F', label: 'Big Hoop' },
+    { type: 'timeFreeze', emoji: '\u23F0', label: 'Time Freeze' },
+    { type: 'extraLife', emoji: '\uD83D\uDC9A', label: 'Extra Life' },
+    { type: 'doublePoints', emoji: '2\uFE0F\u20E3', label: 'Double Pts' }
+  ];
+  let t = types[Math.floor(Math.random() * types.length)];
+  powerups.push({
+    ...t,
+    x: W + 30,
+    y: H * 0.2 + Math.random() * H * 0.35,
+    r: 22,
+    vx: -(1.2 + Math.random() * 1.5),
+    vy: Math.sin(Date.now()) * 0.5
+  });
+}
+
+function collectPowerup(p) {
+  playSound('powerup');
+  if (p.type === 'bigHoop') {
+    activePowerups.bigHoop = (activePowerups.bigHoop || 0) + 3;
+    hoop.w += 20;
+  } else if (p.type === 'timeFreeze') {
+    activePowerups.timeFreeze = true;
+  } else if (p.type === 'extraLife') {
+    lives = Math.min(lives + 1, 5);
+  } else if (p.type === 'doublePoints') {
+    activePowerups.doublePoints = (activePowerups.doublePoints || 0) + 3;
+  }
+  // flash green
+  flashColor = 'rgba(16,185,129,';
+  flashAlpha = 0.3;
+  updateHUD();
+}
+
+// ========================
+// DRAWING
+// ========================
+function drawCourt() {
+  // Sky gradient
+  let sky = ctx.createLinearGradient(0, 0, 0, H);
+  sky.addColorStop(0, '#064E3B');
+  sky.addColorStop(0.6, '#111827');
+  sky.addColorStop(1, '#0a0a0a');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H);
+
+  // Court floor
+  let floorY = H * 0.78;
+  ctx.fillStyle = '#1a3a2a';
+  ctx.fillRect(0, floorY, W, H - floorY);
+
+  // Court lines
+  ctx.strokeStyle = 'rgba(52,211,153,0.2)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, floorY);
+  ctx.lineTo(W, floorY);
+  ctx.stroke();
+
+  // Half court circle
+  ctx.beginPath();
+  ctx.arc(W * 0.5, floorY, 60, Math.PI, 0);
+  ctx.stroke();
+
+  // Subtle grid
+  ctx.strokeStyle = 'rgba(52,211,153,0.05)';
+  for (let x = 0; x < W; x += 80) {
+    ctx.beginPath(); ctx.moveTo(x, floorY); ctx.lineTo(x, H); ctx.stroke();
+  }
+}
+
+function drawBall(x, y, r) {
+  // Shadow
+  ctx.beginPath();
+  ctx.ellipse(x, H * 0.78, r * 0.8, r * 0.3, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fill();
+
+  // Ball
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  let grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+  grad.addColorStop(0, '#e8943a');
+  grad.addColorStop(0.7, '#c2690a');
+  grad.addColorStop(1, '#8a4a08');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = '#6b3a06';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Ball lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x - r, y);
+  ctx.lineTo(x + r, y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.7, -0.5, 0.5);
+  ctx.stroke();
+
+  // Recycling symbol
+  ctx.fillStyle = 'rgba(16,185,129,0.6)';
+  ctx.font = `${r * 0.9}px sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('\u267B', x, y);
+}
+
+function drawHoop() {
+  if (!hoop) return;
+  let { x, y, w, rimH, netLen } = hoop;
+
+  // Backboard
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.fillRect(x + w / 2 + 2, y - 40, 6, 80);
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x + w / 2 + 2, y - 40, 6, 80);
+
+  // Pole
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillRect(x + w / 2 + 4, y + 40, 4, H * 0.78 - y - 40);
+
+  // Rim
+  ctx.beginPath();
+  ctx.moveTo(x - w / 2, y);
+  ctx.lineTo(x + w / 2, y);
+  ctx.strokeStyle = '#EF4444';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  // Rim ends
+  ctx.beginPath();
+  ctx.arc(x - w / 2, y, 4, 0, Math.PI * 2);
+  ctx.fillStyle = '#DC2626';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x + w / 2, y, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Net
+  let segments = 6;
+  let netBottom = y + netLen + (netAnim > 0 ? Math.sin(netAnim * 5) * 8 : 0);
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= segments; i++) {
+    let tx = x - w / 2 + (w / segments) * i;
+    let bx = x - w * 0.3 / 2 + (w * 0.3 / segments) * i;
+    let sway = netAnim > 0 ? Math.sin(netAnim * 4 + i) * 4 : 0;
+    ctx.beginPath();
+    ctx.moveTo(tx, y + 2);
+    ctx.quadraticCurveTo(tx + sway, y + netLen * 0.5, bx + sway, netBottom);
+    ctx.stroke();
+  }
+  // Horizontal net lines
+  for (let j = 1; j <= 3; j++) {
+    let ny = y + 2 + (netLen * j / 4);
+    let nw = w * (1 - j * 0.18);
+    ctx.beginPath();
+    ctx.moveTo(x - nw / 2, ny);
+    ctx.lineTo(x + nw / 2, ny);
+    ctx.stroke();
+  }
+}
+
+function drawTrajectory() {
+  if (!dragStart || !dragCurrent || state !== 'aiming') return;
+  let dx = dragStart.x - dragCurrent.x;
+  let dy = dragStart.y - dragCurrent.y;
+  let power = Math.min(Math.sqrt(dx * dx + dy * dy), 200);
+  let angle = Math.atan2(dy, dx);
+  let vx = Math.cos(angle) * power * 0.12;
+  let vy = Math.sin(angle) * power * 0.12;
+
+  ctx.setLineDash([4, 8]);
+  ctx.strokeStyle = 'rgba(167,243,208,0.5)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  let px = ball.x, py = ball.y;
+  ctx.moveTo(px, py);
+  for (let i = 0; i < 40; i++) {
+    px += vx;
+    py += vy;
+    vy += gravity;
+    if (py > H * 0.78) break;
+    ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Power indicator
+  let barLen = power / 200;
+  ctx.fillStyle = `rgba(${barLen > 0.7 ? 239 : 52}, ${barLen > 0.7 ? 68 : 211}, ${barLen > 0.7 ? 68 : 153}, 0.6)`;
+  ctx.fillRect(ball.x - 25, ball.y + ball.r + 10, 50 * barLen, 4);
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.strokeRect(ball.x - 25, ball.y + ball.r + 10, 50, 4);
+}
+
+function drawPowerups() {
+  powerups.forEach(p => {
+    ctx.font = `${p.r * 1.5}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.emoji, p.x, p.y + Math.sin(Date.now() * 0.003 + p.x) * 5);
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r + 4, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(52,211,153,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawFlash() {
+  if (flashAlpha > 0) {
+    ctx.fillStyle = flashColor + flashAlpha + ')';
+    ctx.fillRect(0, 0, W, H);
+    flashAlpha -= 0.015;
+    if (flashAlpha < 0) flashAlpha = 0;
+  }
+}
+
+function drawActivePowerupIcons() {
+  let y = H * 0.78 - 10;
+  let x = 12;
+  ctx.font = '12px Inter, sans-serif';
+  ctx.textAlign = 'left';
+  if (activePowerups.bigHoop > 0) {
+    ctx.fillStyle = 'rgba(167,243,208,0.8)';
+    ctx.fillText(`\uD83C\uDF3F Big Hoop: ${activePowerups.bigHoop}`, x, y);
+    y -= 18;
+  }
+  if (activePowerups.doublePoints > 0) {
+    ctx.fillStyle = 'rgba(167,243,208,0.8)';
+    ctx.fillText(`2\uFE0F\u20E3 Double Pts: ${activePowerups.doublePoints}`, x, y);
+    y -= 18;
+  }
+  if (activePowerups.timeFreeze) {
+    ctx.fillStyle = 'rgba(167,243,208,0.8)';
+    ctx.fillText(`\u23F0 Time Freeze: Ready`, x, y);
+  }
+}
+
+// ========================
+// PARTICLES
+// ========================
+function spawnConfetti(x, y, count) {
+  let colors = ['#34D399','#10B981','#A7F3D0','#FBBF24','#F472B6','#60A5FA'];
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random() - 0.5) * 8,
+      vy: (Math.random() - 1) * 6,
+      size: 3 + Math.random() * 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 1
+    });
+  }
+}
+
+function spawnMissEffect() {
+  flashColor = 'rgba(239,68,68,';
+  flashAlpha = 0.35;
+}
+
+// ========================
+// PHYSICS & COLLISION
+// ========================
+function checkHoopCollision() {
+  if (hoop.scored) return false;
+  let bx = ball.x, by = ball.y, br = ball.r;
+  let hx = hoop.x, hy = hoop.y, hw = hoop.w / 2;
+
+  // Ball center passes through rim plane from above
+  if (by >= hy - 2 && by <= hy + 12 && ball.vy > 0) {
+    if (bx > hx - hw + br * 0.3 && bx < hx + hw - br * 0.3) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function checkPowerupCollision() {
+  for (let i = powerups.length - 1; i >= 0; i--) {
+    let p = powerups[i];
+    let dx = ball.x - p.x;
+    let dy = ball.y - p.y;
+    if (Math.sqrt(dx * dx + dy * dy) < ball.r + p.r) {
+      collectPowerup(p);
+      powerups.splice(i, 1);
+    }
+  }
+}
+
+// ========================
+// TRIVIA
+// ========================
+let currentTrivia = null;
+let triviaTimer = null;
+let triviaTimeLeft = 10;
+let triviaAnswered = false;
+
+function showTrivia() {
+  state = 'trivia';
+  triviaAnswered = false;
+  currentTrivia = getQuestion();
+  triviaTimeLeft = 10;
+  document.getElementById('trivia-q').textContent = currentTrivia.question;
+  let optsEl = document.getElementById('trivia-opts');
+  optsEl.innerHTML = '';
+  currentTrivia.options.forEach(opt => {
+    let btn = document.createElement('button');
+    btn.className = 'trivia-opt';
+    btn.textContent = opt;
+    btn.onclick = () => answerTrivia(opt, btn);
+    optsEl.appendChild(btn);
+  });
+  document.getElementById('trivia-overlay').classList.add('active');
+  document.getElementById('timer-fill').style.width = '100%';
+
+  if (activePowerups.timeFreeze) {
+    activePowerups.timeFreeze = false;
+    // Timer frozen - give them full 10s but don't count down
+    triviaTimer = null;
+    document.getElementById('timer-fill').style.width = '100%';
+    return;
+  }
+
+  clearInterval(triviaTimer);
+  let startTime = Date.now();
+  triviaTimer = setInterval(() => {
+    triviaTimeLeft = 10 - (Date.now() - startTime) / 1000;
+    if (triviaTimeLeft <= 0) {
+      triviaTimeLeft = 0;
+      clearInterval(triviaTimer);
+      if (!triviaAnswered) answerTrivia(null, null);
+    }
+    document.getElementById('timer-fill').style.width = (triviaTimeLeft / 10 * 100) + '%';
+  }, 50);
+}
+
+function answerTrivia(chosen, btnEl) {
+  if (triviaAnswered) return;
+  triviaAnswered = true;
+  clearInterval(triviaTimer);
+  triviaTotal++;
+
+  let correct = chosen === currentTrivia.answer;
+  let allBtns = document.querySelectorAll('.trivia-opt');
+
+  allBtns.forEach(b => {
+    if (b.textContent === currentTrivia.answer) b.classList.add('correct');
+    else if (b === btnEl && !correct) b.classList.add('wrong');
+    b.style.pointerEvents = 'none';
+  });
+
+  let shotPoints = 100;
+  if (correct) {
+    triviaCorrect++;
+    shotPoints *= 2;
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    playSound('ding');
+    spawnConfetti(W / 2, H / 2, 30);
+  } else {
+    streak = 0;
+    playSound('buzz');
+  }
+
+  let multi = getMultiplier();
+  score += shotPoints * multi;
+  updateHUD();
+
+  setTimeout(() => {
+    document.getElementById('trivia-overlay').classList.remove('active');
+    // Decrease powerup counts
+    if (activePowerups.bigHoop > 0) {
+      activePowerups.bigHoop--;
+      if (activePowerups.bigHoop <= 0) {
+        // hoop width will reset on next resetHoop
+      }
+    }
+    if (activePowerups.doublePoints > 0) activePowerups.doublePoints--;
+
+    difficultyLevel = Math.floor(baskets / 5);
+    resetBall();
+    resetHoop();
+    spawnPowerup();
+    state = 'aiming';
+  }, 1400);
+}
+
+// ========================
+// INPUT
+// ========================
+function getPos(e) {
+  if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  return { x: e.clientX, y: e.clientY };
+}
+
+canvas.addEventListener('mousedown', onDown);
+canvas.addEventListener('mousemove', onMove);
+canvas.addEventListener('mouseup', onUp);
+canvas.addEventListener('touchstart', e => { e.preventDefault(); onDown(e); }, { passive: false });
+canvas.addEventListener('touchmove', e => { e.preventDefault(); onMove(e); }, { passive: false });
+canvas.addEventListener('touchend', e => { e.preventDefault(); onUp(e); }, { passive: false });
+
+function onDown(e) {
+  if (state !== 'aiming') return;
+  initAudio();
+  let pos = getPos(e);
+  let dx = pos.x - ball.x;
+  let dy = pos.y - ball.y;
+  // Allow drag from anywhere, but interpret relative to ball
+  dragStart = pos;
+  dragCurrent = pos;
+}
+
+function onMove(e) {
+  if (!dragStart || state !== 'aiming') return;
+  dragCurrent = getPos(e);
+}
+
+function onUp(e) {
+  if (!dragStart || state !== 'aiming') return;
+  let dx = dragStart.x - dragCurrent.x;
+  let dy = dragStart.y - dragCurrent.y;
+  let power = Math.min(Math.sqrt(dx * dx + dy * dy), 200);
+
+  if (power < 15) {
+    dragStart = null;
+    dragCurrent = null;
+    return;
+  }
+
+  let angle = Math.atan2(dy, dx);
+  ball.vx = Math.cos(angle) * power * 0.12;
+  ball.vy = Math.sin(angle) * power * 0.12;
+  ball.active = true;
+  state = 'flying';
+  playSound('swoosh');
+
+  dragStart = null;
+  dragCurrent = null;
+}
+
+// ========================
+// GAME LOOP
+// ========================
+function update() {
+  if (state === 'flying' && ball.active) {
+    ball.trail.push({ x: ball.x, y: ball.y });
+    if (ball.trail.length > 12) ball.trail.shift();
+
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+    ball.vy += gravity;
+
+    // Powerup collision
+    checkPowerupCollision();
+
+    // Hoop collision
+    if (checkHoopCollision()) {
+      hoop.scored = true;
+      baskets++;
+      netAnim = 1;
+      playSound('swish');
+      spawnConfetti(hoop.x, hoop.y + 20, 20);
+      ball.active = false;
+      state = 'scored';
+      updateHUD();
+
+      setTimeout(() => showTrivia(), 600);
+      return;
+    }
+
+    // Rim bounce
+    let rimL = hoop.x - hoop.w / 2;
+    let rimR = hoop.x + hoop.w / 2;
+    let rimY = hoop.y;
+    // Left rim
+    let dxL = ball.x - rimL, dyL = ball.y - rimY;
+    if (Math.sqrt(dxL * dxL + dyL * dyL) < ball.r + 4) {
+      ball.vx = Math.abs(ball.vx) * -0.5;
+      ball.vy *= 0.7;
+      ball.x = rimL - ball.r - 5;
+    }
+    // Right rim
+    let dxR = ball.x - rimR, dyR = ball.y - rimY;
+    if (Math.sqrt(dxR * dxR + dyR * dyR) < ball.r + 4) {
+      ball.vx = Math.abs(ball.vx) * 0.5;
+      ball.vy *= 0.7;
+      ball.x = rimR + ball.r + 5;
+    }
+
+    // Out of bounds or hit floor
+    if (ball.y > H * 0.78 - ball.r || ball.x > W + 50 || ball.x < -50 || ball.y < -200) {
+      ball.active = false;
+      if (!hoop.scored) {
+        lives--;
+        playSound('buzz');
+        spawnMissEffect();
+        updateHUD();
+        if (lives <= 0) {
+          state = 'gameover';
+          setTimeout(showGameOver, 800);
+        } else {
+          streak = 0;
+          updateHUD();
+          setTimeout(() => {
+            resetBall();
+            state = 'aiming';
+          }, 600);
+        }
+      }
+    }
+  }
+
+  // Update powerups
+  powerups.forEach(p => {
+    p.x += p.vx;
+    p.y += Math.sin(Date.now() * 0.003 + p.x * 0.01) * 0.5;
+  });
+  powerups = powerups.filter(p => p.x > -50);
+
+  // Update particles
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.15;
+    p.life -= 0.018;
+  });
+  particles = particles.filter(p => p.life > 0);
+
+  // Net animation decay
+  if (netAnim > 0) netAnim -= 0.02;
+  if (netAnim < 0) netAnim = 0;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  drawCourt();
+  drawHoop();
+
+  // Ball trail
+  if (ball.trail.length > 1) {
+    ctx.strokeStyle = 'rgba(200,120,30,0.15)';
+    ctx.lineWidth = ball.r * 1.5;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(ball.trail[0].x, ball.trail[0].y);
+    ball.trail.forEach(t => ctx.lineTo(t.x, t.y));
+    ctx.stroke();
+  }
+
+  drawBall(ball.x, ball.y, ball.r);
+  drawTrajectory();
+  drawPowerups();
+  drawParticles();
+  drawFlash();
+  drawActivePowerupIcons();
+}
+
+function gameLoop() {
+  if (state !== 'start' && state !== 'gameover' && state !== 'trivia') {
+    update();
+  }
+  if (state !== 'start') {
+    draw();
+  }
+  requestAnimationFrame(gameLoop);
+}
+
+// ========================
+// GAME OVER
+// ========================
+function showGameOver() {
+  document.getElementById('gameover-overlay').classList.add('active');
+  document.getElementById('go-score').textContent = score;
+  document.getElementById('go-baskets').textContent = baskets;
+  document.getElementById('go-accuracy').textContent = triviaTotal > 0 ? Math.round(triviaCorrect / triviaTotal * 100) + '%' : '0%';
+  document.getElementById('go-streak').textContent = bestStreak;
+  document.getElementById('go-fact').textContent = FACTS[Math.floor(Math.random() * FACTS.length)];
+
+  // Leaderboard
+  let lb = JSON.parse(localStorage.getItem('ecoHoopsLeaderboard') || '[]');
+  lb.push({ score, baskets, date: new Date().toISOString().slice(0, 10) });
+  lb.sort((a, b) => b.score - a.score);
+  lb = lb.slice(0, 10);
+  localStorage.setItem('ecoHoopsLeaderboard', JSON.stringify(lb));
+}
+
+function shareScore() {
+  let text = `I scored ${score} points in Eco Hoops by Rewoven! Made ${baskets} baskets with ${triviaTotal > 0 ? Math.round(triviaCorrect / triviaTotal * 100) : 0}% trivia accuracy. Play at rewovenapp.com/game/eco-hoops/`;
+  if (navigator.share) {
+    navigator.share({ title: 'Eco Hoops - Rewoven', text });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text);
+    alert('Score copied to clipboard!');
+  }
+}
+
+// ========================
+// START
+// ========================
+function startGame() {
+  document.getElementById('start-overlay').classList.remove('active');
+  document.getElementById('gameover-overlay').classList.remove('active');
+  document.getElementById('trivia-overlay').classList.remove('active');
+  initAudio();
+  initGame();
+  state = 'aiming';
+}
+
+gameLoop();
+</script>
+</body>
+</html>
