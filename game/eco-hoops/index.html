@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Eco Hoops | Rewoven Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --green-50: #ECFDF5;
@@ -19,6 +19,8 @@
   --green-900: #064E3B;
   --dark: #111827;
   --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -48,196 +50,477 @@ nav a.logo {
   font-weight: 700; font-size: 22px;
   color: var(--green-400);
   text-decoration: none;
-  letter-spacing: -0.5px;
 }
-nav .nav-links { display: flex; gap: 20px; align-items: center; }
+nav a.logo:hover { color: var(--green-200); }
+nav .nav-links { display: flex; gap: 16px; align-items: center; }
 nav .nav-links a {
-  font-size: 14px; font-weight: 500;
-  color: var(--green-200);
-  text-decoration: none;
-  transition: color 0.2s;
+  color: var(--green-200); text-decoration: none; font-size: 14px; font-weight: 500;
 }
-nav .nav-links a:hover { color: var(--green-400); }
+
+#game-container {
+  position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--dark);
+}
 
 canvas {
   display: block;
-  width: 100vw;
-  height: 100vh;
-  cursor: crosshair;
+  background: #111827;
+  image-rendering: pixelated;
 }
 
 /* Overlays */
 .overlay {
-  display: none;
-  position: fixed; inset: 0; z-index: 300;
-  background: rgba(17,24,39,0.92);
+  position: fixed; top: 56px; left: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(17,24,39,0.95);
+  z-index: 100;
   backdrop-filter: blur(8px);
-  align-items: center; justify-content: center;
-  padding: 24px;
+  transition: opacity 0.3s;
 }
-.overlay.active { display: flex; }
-.overlay-box {
-  background: rgba(6,78,59,0.6);
-  border: 1px solid rgba(52,211,153,0.3);
-  border-radius: 24px;
-  padding: 40px;
-  max-width: 520px;
-  width: 100%;
+.overlay.hidden { display: none; }
+
+/* Title Screen */
+#title-screen .title-content {
   text-align: center;
-  animation: popIn 0.3s ease-out;
+  max-width: 520px;
+  padding: 32px;
 }
-@keyframes popIn {
-  0% { transform: scale(0.85); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-.overlay-box h2 {
+#title-screen h1 {
   font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  color: var(--green-400);
-  margin-bottom: 12px;
+  font-size: 56px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--green-400), var(--green-200));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
 }
-.overlay-box p {
-  color: var(--green-100);
+#title-screen .subtitle {
+  font-size: 18px;
+  color: var(--green-200);
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+#title-screen .tagline {
+  font-size: 14px;
+  color: var(--gray-600);
+  margin-bottom: 40px;
   line-height: 1.6;
-  font-size: 15px;
-  margin-bottom: 16px;
 }
 
-.pill-btn {
-  display: inline-block;
-  padding: 12px 32px;
-  border-radius: 999px;
-  border: none;
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 36px;
+  border-radius: 50px;
   font-family: 'Inter', sans-serif;
-  font-weight: 600; font-size: 15px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
   cursor: pointer;
-  transition: all 0.25s;
-  text-decoration: none;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(16,185,129,0.3);
-  margin: 6px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(16,185,129,0.3);
 }
-.pill-btn.primary {
+.btn-primary {
   background: linear-gradient(135deg, var(--green-500), var(--green-600));
   color: #fff;
 }
-.pill-btn.primary:hover {
+.btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 28px rgba(16,185,129,0.45);
+  box-shadow: 0 6px 24px rgba(16,185,129,0.45);
 }
-.pill-btn.secondary {
-  background: rgba(255,255,255,0.08);
-  color: var(--green-200);
-  border: 1px solid rgba(52,211,153,0.3);
+.btn-secondary {
+  background: var(--gray-800);
+  color: var(--green-400);
+  border: 1px solid var(--green-800);
+  box-shadow: none;
 }
-.pill-btn.secondary:hover {
-  background: rgba(255,255,255,0.12);
-  transform: translateY(-2px);
+.btn-secondary:hover {
+  background: var(--gray-700);
 }
 
-/* Trivia */
-#trivia-overlay .timer-bar {
+/* Character Select */
+#select-screen .select-content {
+  text-align: center;
+  max-width: 800px;
+  padding: 24px;
   width: 100%;
-  height: 6px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 3px;
-  margin-bottom: 20px;
-  overflow: hidden;
 }
-#trivia-overlay .timer-fill {
-  height: 100%;
-  background: var(--green-400);
-  border-radius: 3px;
-  transition: width 0.1s linear;
+#select-screen h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: var(--green-400);
+  margin-bottom: 24px;
+}
+.archetype-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+@media (max-width: 700px) {
+  .archetype-grid { grid-template-columns: repeat(2, 1fr); }
+  #select-screen h2 { font-size: 24px; }
+}
+
+.archetype-card {
+  background: var(--gray-800);
+  border: 2px solid var(--green-900);
+  border-radius: 16px;
+  padding: 20px 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.archetype-card:hover, .archetype-card.selected {
+  border-color: var(--green-400);
+  background: rgba(16,185,129,0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(16,185,129,0.2);
+}
+.archetype-card .icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+.archetype-card .name {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--green-400);
+  margin-bottom: 4px;
+}
+.archetype-card .desc {
+  font-size: 11px;
+  color: var(--green-200);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.archetype-card .special {
+  font-size: 10px;
+  color: var(--green-500);
+  font-weight: 600;
+  background: rgba(16,185,129,0.1);
+  padding: 4px 8px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; margin-bottom: 3px;
+}
+.stat-row .label { color: var(--green-200); }
+.stat-row .stars { color: var(--green-400); font-size: 10px; letter-spacing: 1px; }
+
+/* Trivia overlay */
+#trivia-screen .trivia-content {
+  text-align: center;
+  max-width: 500px;
+  padding: 32px;
+  background: var(--gray-800);
+  border-radius: 24px;
+  border: 2px solid var(--green-800);
+  box-shadow: 0 16px 64px rgba(0,0,0,0.5);
+}
+#trivia-screen h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--green-400);
+  margin-bottom: 20px;
+}
+#trivia-question {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--green-100);
+  margin-bottom: 24px;
 }
 .trivia-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-top: 16px;
 }
-.trivia-opt {
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(52,211,153,0.25);
-  background: rgba(255,255,255,0.05);
-  color: var(--green-100);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-align: center;
-  font-family: 'Inter', sans-serif;
-}
-.trivia-opt:hover {
-  background: rgba(52,211,153,0.12);
-  border-color: var(--green-400);
-}
-.trivia-opt.correct {
-  background: rgba(16,185,129,0.3);
-  border-color: var(--green-400);
+.trivia-option {
+  padding: 12px 16px;
+  background: var(--gray-700);
+  border: 2px solid var(--green-900);
+  border-radius: 12px;
   color: #fff;
-}
-.trivia-opt.wrong {
-  background: rgba(239,68,68,0.3);
-  border-color: #EF4444;
-  color: #fff;
-}
-
-/* HUD */
-#hud {
-  position: fixed;
-  top: 64px; left: 12px; right: 12px;
-  z-index: 150;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  pointer-events: none;
-}
-.hud-left, .hud-right {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.hud-item {
   font-size: 14px;
   font-weight: 600;
-  color: var(--green-200);
-  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
 }
-.hud-item span { color: var(--green-400); }
-.hud-right { align-items: flex-end; }
+.trivia-option:hover {
+  border-color: var(--green-400);
+  background: rgba(16,185,129,0.15);
+}
+.trivia-option.correct {
+  border-color: var(--green-400);
+  background: rgba(16,185,129,0.3);
+  color: var(--green-200);
+}
+.trivia-option.wrong {
+  border-color: #EF4444;
+  background: rgba(239,68,68,0.2);
+  color: #FCA5A5;
+}
 
-/* Game over stats */
-.stats-grid {
+#trivia-result {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 20px;
+}
+
+/* Game Over */
+#gameover-screen .gameover-content {
+  text-align: center;
+  max-width: 480px;
+  padding: 32px;
+  background: var(--gray-800);
+  border-radius: 24px;
+  border: 2px solid var(--green-800);
+}
+#gameover-screen h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+#gameover-screen .final-score {
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--green-400);
+  margin-bottom: 16px;
+}
+#gameover-screen .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin: 20px 0;
+  margin-bottom: 24px;
 }
-.stat-card {
-  background: rgba(255,255,255,0.06);
-  border-radius: 14px;
-  padding: 16px 12px;
-  text-align: center;
+.stat-box {
+  background: var(--gray-700);
+  border-radius: 12px;
+  padding: 12px;
 }
-.stat-card .stat-val {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  font-weight: 700;
+.stat-box .val {
+  font-size: 24px;
+  font-weight: 800;
   color: var(--green-400);
 }
-.stat-card .stat-label {
+.stat-box .lbl {
+  font-size: 11px;
+  color: var(--green-200);
+  margin-top: 2px;
+}
+#gameover-screen .facts-learned {
+  text-align: left;
+  background: var(--gray-700);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+#gameover-screen .facts-learned h4 {
+  font-size: 13px;
+  color: var(--green-400);
+  margin-bottom: 8px;
+}
+#gameover-screen .facts-learned p {
+  font-size: 11px;
+  color: var(--green-200);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* Record display */
+.record { font-size: 12px; color: var(--gray-600); margin-top: 16px; }
+
+/* Mobile touch controls */
+#touch-controls {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 180px;
+  z-index: 50;
+  pointer-events: none;
+}
+#touch-controls > * { pointer-events: auto; }
+
+.touch-joystick {
+  position: absolute;
+  bottom: 30px; left: 30px;
+  width: 120px; height: 120px;
+  background: rgba(52,211,153,0.15);
+  border: 2px solid rgba(52,211,153,0.3);
+  border-radius: 50%;
+}
+.touch-joystick .knob {
+  position: absolute;
+  width: 44px; height: 44px;
+  background: rgba(52,211,153,0.5);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  transition: none;
+}
+
+.touch-btn {
+  position: absolute;
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+#btn-shoot {
+  bottom: 50px; right: 30px;
+  background: rgba(52,211,153,0.4);
+}
+#btn-special {
+  bottom: 130px; right: 30px;
+  background: rgba(234,179,8,0.4);
+  width: 52px; height: 52px;
+  font-size: 10px;
+}
+#btn-steal {
+  bottom: 50px; right: 110px;
+  background: rgba(239,68,68,0.3);
+  width: 52px; height: 52px;
+  font-size: 10px;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  #touch-controls { display: block; }
+}
+
+/* HUD overlay */
+#hud {
+  position: fixed; top: 56px; left: 0; right: 0;
+  z-index: 30;
+  display: none;
+  padding: 8px 16px;
+  pointer-events: none;
+}
+#hud.active { display: flex; justify-content: space-between; align-items: flex-start; }
+
+.score-panel {
+  background: rgba(17,24,39,0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 10px 20px;
+  border: 1px solid rgba(52,211,153,0.2);
+  text-align: center;
+  min-width: 200px;
+}
+.score-panel .team-scores {
+  display: flex; gap: 24px; justify-content: center; align-items: center;
+}
+.score-panel .team {
+  text-align: center;
+}
+.score-panel .team .name {
+  font-size: 10px;
+  color: var(--green-200);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.score-panel .team .pts {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--green-400);
+}
+.score-panel .vs {
+  font-size: 14px;
+  color: var(--gray-600);
+  font-weight: 700;
+}
+.score-panel .timer {
   font-size: 12px;
   color: var(--green-200);
   margin-top: 4px;
+  font-weight: 600;
+}
+.score-panel .round-info {
+  font-size: 10px;
+  color: var(--gray-600);
+  margin-top: 2px;
 }
 
-@media (max-width: 480px) {
-  .overlay-box { padding: 28px 20px; }
-  .trivia-options { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .stat-card .stat-val { font-size: 22px; }
+.special-meter-wrap {
+  background: rgba(17,24,39,0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 8px 16px;
+  border: 1px solid rgba(52,211,153,0.2);
+  min-width: 160px;
+}
+.special-meter-wrap .label {
+  font-size: 10px;
+  color: var(--green-200);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.special-bar-bg {
+  width: 100%;
+  height: 10px;
+  background: var(--gray-700);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.special-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-500), #EAB308);
+  border-radius: 5px;
+  width: 0%;
+  transition: width 0.3s;
+}
+.special-ready {
+  font-size: 10px;
+  color: #EAB308;
+  font-weight: 700;
+  margin-top: 3px;
+  display: none;
+}
+
+/* Powerup indicator */
+.powerup-indicator {
+  position: fixed;
+  top: 130px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  background: rgba(17,24,39,0.9);
+  border: 1px solid var(--green-600);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green-400);
+  display: none;
+  pointer-events: none;
+}
+.powerup-indicator.active { display: block; }
+
+/* Controls hint */
+.controls-hint {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  font-size: 10px;
+  color: var(--gray-600);
+  text-align: center;
+  pointer-events: none;
+}
+@media (hover: none) and (pointer: coarse) {
+  .controls-hint { display: none; }
 }
 </style>
 </head>
@@ -247,882 +530,1570 @@ canvas {
   <a href="/" class="logo">Rewoven</a>
   <div class="nav-links">
     <a href="/">Home</a>
-    <a href="/game/">Games</a>
+    <a href="/game">Games</a>
   </div>
 </nav>
 
+<div id="game-container">
+  <canvas id="court"></canvas>
+</div>
+
+<!-- HUD -->
 <div id="hud">
-  <div class="hud-left">
-    <div class="hud-item">Score: <span id="hud-score">0</span></div>
-    <div class="hud-item">Streak: <span id="hud-streak">0</span> <span id="hud-multi"></span></div>
+  <div class="special-meter-wrap">
+    <div class="label">Special Move</div>
+    <div class="special-bar-bg"><div class="special-bar-fill" id="special-fill"></div></div>
+    <div class="special-ready" id="special-ready">PRESS Q - READY!</div>
   </div>
-  <div class="hud-right">
-    <div class="hud-item" id="hud-lives"></div>
-    <div class="hud-item">Baskets: <span id="hud-baskets">0</span></div>
-  </div>
-</div>
-
-<canvas id="gameCanvas"></canvas>
-
-<!-- Start screen -->
-<div class="overlay active" id="start-overlay">
-  <div class="overlay-box">
-    <h2>Eco Hoops</h2>
-    <p>Shoot hoops and test your sustainability knowledge! Drag to aim and release to shoot. Make baskets, answer trivia, and build your streak.</p>
-    <p style="font-size:13px; color:var(--gray-600);">Drag back from the ball to set angle & power. Correct trivia answers double your points!</p>
-    <button class="pill-btn primary" onclick="startGame()">Play Now</button>
-  </div>
-</div>
-
-<!-- Trivia overlay -->
-<div class="overlay" id="trivia-overlay">
-  <div class="overlay-box">
-    <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
-    <h2 id="trivia-q"></h2>
-    <div class="trivia-options" id="trivia-opts"></div>
-  </div>
-</div>
-
-<!-- Game over -->
-<div class="overlay" id="gameover-overlay">
-  <div class="overlay-box">
-    <h2>Game Over</h2>
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-val" id="go-score">0</div><div class="stat-label">Total Score</div></div>
-      <div class="stat-card"><div class="stat-val" id="go-baskets">0</div><div class="stat-label">Baskets Made</div></div>
-      <div class="stat-card"><div class="stat-val" id="go-accuracy">0%</div><div class="stat-label">Trivia Accuracy</div></div>
-      <div class="stat-card"><div class="stat-val" id="go-streak">0</div><div class="stat-label">Best Streak</div></div>
+  <div class="score-panel">
+    <div class="team-scores">
+      <div class="team"><div class="name" id="p1-name">YOU</div><div class="pts" id="p1-score">0</div></div>
+      <div class="vs">VS</div>
+      <div class="team"><div class="name" id="p2-name">CPU</div><div class="pts" id="p2-score">0</div></div>
     </div>
-    <p id="go-fact" style="font-size:13px; margin-bottom:20px;"></p>
-    <div>
-      <button class="pill-btn primary" onclick="startGame()">Play Again</button>
-      <a href="/game/" class="pill-btn secondary">Games Hub</a>
-    </div>
-    <button class="pill-btn secondary" style="margin-top:8px;" onclick="shareScore()">Share Score</button>
+    <div class="timer" id="timer">2:00</div>
+    <div class="round-info" id="round-info">Round 1 / 5</div>
   </div>
+  <div style="min-width:160px"></div>
+</div>
+
+<div class="powerup-indicator" id="powerup-indicator"></div>
+<div class="controls-hint" id="controls-hint">WASD/Arrows: Move | SPACE: Shoot | S/Down: Steal | Q: Special</div>
+
+<!-- Title Screen -->
+<div class="overlay" id="title-screen">
+  <div class="title-content">
+    <h1>Eco Hoops</h1>
+    <div class="subtitle">Basketball Legends x Sustainability</div>
+    <div class="tagline">Choose your archetype. Outscore the AI. Answer sustainability questions to power up. First to 7 baskets or best of 5 rounds wins.</div>
+    <button class="btn btn-primary" onclick="showScreen('select')">Play Now</button>
+    <div class="record" id="title-record"></div>
+  </div>
+</div>
+
+<!-- Character Select -->
+<div class="overlay hidden" id="select-screen">
+  <div class="select-content">
+    <h2>Choose Your Archetype</h2>
+    <div class="archetype-grid" id="archetype-grid"></div>
+    <button class="btn btn-primary" id="start-btn" onclick="startGame()" style="opacity:0.4;pointer-events:none">Start Game</button>
+  </div>
+</div>
+
+<!-- Trivia -->
+<div class="overlay hidden" id="trivia-screen">
+  <div class="trivia-content">
+    <h3>Sustainability Challenge</h3>
+    <div id="trivia-question"></div>
+    <div class="trivia-options" id="trivia-options"></div>
+    <div id="trivia-result"></div>
+  </div>
+</div>
+
+<!-- Game Over -->
+<div class="overlay hidden" id="gameover-screen">
+  <div class="gameover-content">
+    <h2 id="gameover-title">Game Over</h2>
+    <div class="final-score" id="final-score">0 - 0</div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="facts-learned" id="facts-learned">
+      <h4>Sustainability Facts Learned</h4>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="showScreen('select')">Play Again</button>
+      <button class="btn btn-secondary" onclick="showScreen('title')">Menu</button>
+    </div>
+    <div class="record" id="gameover-record"></div>
+  </div>
+</div>
+
+<!-- Touch Controls -->
+<div id="touch-controls">
+  <div class="touch-joystick" id="joystick">
+    <div class="knob" id="joystick-knob"></div>
+  </div>
+  <div class="touch-btn" id="btn-shoot">SHOOT</div>
+  <div class="touch-btn" id="btn-steal">STEAL</div>
+  <div class="touch-btn" id="btn-special">SPL</div>
 </div>
 
 <script>
-// ========================
-// AUDIO
-// ========================
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx;
-function initAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
-
-function playSound(type) {
-  if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  const t = audioCtx.currentTime;
-  if (type === 'swoosh') {
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(300, t);
-    osc.frequency.exponentialRampToValueAtTime(150, t + 0.3);
-    gain.gain.setValueAtTime(0.15, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-    osc.start(t); osc.stop(t + 0.3);
-  } else if (type === 'swish') {
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(800, t);
-    osc.frequency.exponentialRampToValueAtTime(1200, t + 0.15);
-    gain.gain.setValueAtTime(0.2, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
-    osc.start(t); osc.stop(t + 0.2);
-  } else if (type === 'buzz') {
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(100, t);
-    gain.gain.setValueAtTime(0.12, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-    osc.start(t); osc.stop(t + 0.4);
-  } else if (type === 'ding') {
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, t);
-    osc.frequency.setValueAtTime(1100, t + 0.1);
-    gain.gain.setValueAtTime(0.2, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-    osc.start(t); osc.stop(t + 0.4);
-  } else if (type === 'powerup') {
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(500, t);
-    osc.frequency.exponentialRampToValueAtTime(1500, t + 0.25);
-    gain.gain.setValueAtTime(0.15, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-    osc.start(t); osc.stop(t + 0.3);
-  }
-}
-
-// ========================
-// TRIVIA
-// ========================
-const QUESTIONS = [
-  {q:"How many litres of water does it take to make one cotton t-shirt?", a:"2,700", opts:["500","2,700","10,000","800"]},
-  {q:"What percentage of textiles end up in landfills globally?", a:"73%", opts:["45%","73%","30%","90%"]},
-  {q:"Which material takes the longest to decompose?", a:"Polyester (200+ years)", opts:["Cotton","Wool","Polyester (200+ years)","Silk"]},
-  {q:"What percentage of global carbon emissions comes from fashion?", a:"10%", opts:["2%","5%","10%","25%"]},
-  {q:"How many times is the average garment worn before being discarded?", a:"7 times", opts:["3 times","7 times","15 times","30 times"]},
-  {q:"Which country is the largest exporter of used clothing?", a:"USA", opts:["China","India","USA","UK"]},
-  {q:"What does 'circular economy' mean?", a:"Products are reused, repaired, and recycled", opts:["Products are made faster","Products are reused, repaired, and recycled","Only natural materials are used","Everything is biodegradable"]},
-  {q:"How much textile waste does the fashion industry produce annually?", a:"92 million tonnes", opts:["12 million tonnes","50 million tonnes","92 million tonnes","200 million tonnes"]},
-  {q:"What is upcycling?", a:"Transforming waste into higher-value products", opts:["Recycling plastics","Transforming waste into higher-value products","Burning old clothes","Donating to charity"]},
-  {q:"Which fabric is most eco-friendly?", a:"Organic linen", opts:["Polyester","Nylon","Organic linen","Acrylic"]},
-  {q:"What year did the UAE host COP28?", a:"2023", opts:["2021","2022","2023","2024"]},
-  {q:"How much water can recycling one t-shirt save?", a:"Up to 2,700 litres", opts:["100 litres","Up to 2,700 litres","500 litres","50 litres"]},
-  {q:"What is greenwashing?", a:"Making false sustainability claims", opts:["Washing clothes in cold water","Making false sustainability claims","Using green dye","Eco-friendly laundry"]},
-  {q:"Which UAE city hosted COP28?", a:"Dubai", opts:["Abu Dhabi","Dubai","Sharjah","Doha"]},
-  {q:"How many garments are produced globally each year?", a:"Over 100 billion", opts:["10 billion","Over 100 billion","50 billion","1 trillion"]},
-  {q:"What is the most recycled fabric?", a:"Polyester", opts:["Cotton","Polyester","Wool","Silk"]},
-  {q:"What percentage of clothes can be recycled?", a:"Up to 95%", opts:["Up to 50%","Up to 95%","Up to 70%","Up to 30%"]},
-  {q:"What is fast fashion?", a:"Cheap, trendy clothing produced rapidly", opts:["Expensive designer clothes","Cheap, trendy clothing produced rapidly","Handmade garments","Vintage clothing"]},
-  {q:"How long does nylon take to decompose?", a:"30\u201340 years", opts:["5 years","30\u201340 years","100 years","1 year"]},
-  {q:"What is the Higg Index?", a:"A tool measuring environmental impact of apparel", opts:["A stock market index","A tool measuring environmental impact of apparel","A fashion magazine ranking","A fabric softness scale"]}
-];
-const FACTS = [
-  "The fashion industry uses 93 billion cubic metres of water annually.",
-  "It takes 2,700 litres of water to make a single cotton t-shirt.",
-  "Less than 1% of clothing is recycled into new garments.",
-  "The average person throws away 31.75 kg of clothing per year.",
-  "Washing synthetic clothes releases 500,000 tonnes of microfibres into the ocean yearly.",
-  "Extending clothing life by 9 months reduces its environmental impact by 20-30%.",
-  "The fashion industry is responsible for 10% of global carbon emissions."
-];
-let usedQs = [];
-
-function getQuestion() {
-  if (usedQs.length >= QUESTIONS.length) usedQs = [];
-  let avail = QUESTIONS.filter((_,i) => !usedQs.includes(i));
-  let idx = QUESTIONS.indexOf(avail[Math.floor(Math.random() * avail.length)]);
-  usedQs.push(idx);
-  let q = QUESTIONS[idx];
-  let shuffled = [...q.opts].sort(() => Math.random() - 0.5);
-  return { question: q.q, answer: q.a, options: shuffled };
-}
-
-// ========================
-// GAME STATE
-// ========================
-const canvas = document.getElementById('gameCanvas');
+// ==================== GAME ENGINE ====================
+const canvas = document.getElementById('court');
 const ctx = canvas.getContext('2d');
-let W, H;
 
-let state = 'start'; // start, aiming, flying, scored, trivia, gameover
-let ball, hoop, score, lives, baskets, streak, bestStreak, triviaCorrect, triviaTotal;
-let dragStart = null, dragCurrent = null;
-let particles = [], netAnim = 0, flashAlpha = 0, flashColor = '';
-let powerups = [], activePowerups = {};
-let gravity = 0.35;
-let difficultyLevel = 0;
+// Archetypes
+const ARCHETYPES = [
+  {
+    id: 'shooter', icon: '\u{1F3C0}', name: 'Shooter',
+    desc: 'High 3-point accuracy, lower speed',
+    special: 'Green Shot',
+    specialDesc: 'Guaranteed 3-pointer',
+    stats: { speed: 2, shooting: 5, defense: 2, power: 2 },
+    color: '#34D399', color2: '#059669'
+  },
+  {
+    id: 'speedster', icon: '\u{1F4A8}', name: 'Speedster',
+    desc: 'Fast movement, good steals',
+    special: 'Eco Sprint',
+    specialDesc: 'Unstoppable drive to basket',
+    stats: { speed: 5, shooting: 3, defense: 2, power: 2 },
+    color: '#60A5FA', color2: '#2563EB'
+  },
+  {
+    id: 'defender', icon: '\u{1F6E1}\u{FE0F}', name: 'Defender',
+    desc: 'Great blocks, rebounds',
+    special: 'Recycled Wall',
+    specialDesc: 'Blocks everything for 5 sec',
+    stats: { speed: 2, shooting: 2, defense: 5, power: 3 },
+    color: '#A78BFA', color2: '#7C3AED'
+  },
+  {
+    id: 'dunker', icon: '\u{1F525}', name: 'Dunker',
+    desc: 'Powerful dunks, strong inside game',
+    special: 'Upcycle Slam',
+    specialDesc: 'Unblockable dunk',
+    stats: { speed: 3, shooting: 2, defense: 2, power: 5 },
+    color: '#F87171', color2: '#DC2626'
+  }
+];
 
-function resize() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
+// Sustainability questions
+const QUESTIONS = [
+  { q: "How many litres of water does it take to make one cotton t-shirt?", a: "2,700", opts: ["500", "2,700", "10,000", "50"] },
+  { q: "What percentage of textiles end up in landfills globally?", a: "73%", opts: ["73%", "25%", "50%", "90%"] },
+  { q: "Which material takes the longest to decompose?", a: "Polyester", opts: ["Cotton", "Polyester", "Wool", "Silk"] },
+  { q: "What percentage of global carbon emissions come from fashion?", a: "10%", opts: ["2%", "5%", "10%", "25%"] },
+  { q: "On average, how many times is a garment worn before being discarded?", a: "7", opts: ["3", "7", "15", "25"] },
+  { q: "What does a circular economy prioritize?", a: "Reuse, repair, recycle", opts: ["Mass production", "Reuse, repair, recycle", "Cheaper materials", "Faster shipping"] },
+  { q: "How much textile waste is generated annually worldwide?", a: "92 million tonnes", opts: ["10 million tonnes", "92 million tonnes", "500 million tonnes", "1 billion tonnes"] },
+  { q: "What is upcycling?", a: "Transforming waste into higher-value products", opts: ["Throwing waste away", "Transforming waste into higher-value products", "Burning old clothes", "Exporting trash"] },
+  { q: "What is greenwashing?", a: "False sustainability claims", opts: ["Eco-friendly laundry", "False sustainability claims", "Green-dyed fabric", "Recycled packaging"] },
+  { q: "What year did the UAE host COP28?", a: "2023", opts: ["2021", "2022", "2023", "2024"] },
+  { q: "Which UAE city hosted COP28?", a: "Dubai", opts: ["Abu Dhabi", "Dubai", "Sharjah", "Doha"] },
+  { q: "What is fast fashion?", a: "Cheap, trendy clothing produced rapidly", opts: ["Luxury fashion", "Cheap, trendy clothing produced rapidly", "Athletic wear", "Vintage clothing"] },
+  { q: "How long does nylon take to decompose?", a: "30-40 years", opts: ["1-2 years", "5-10 years", "30-40 years", "200+ years"] },
+  { q: "What percentage of clothes can theoretically be recycled?", a: "Up to 95%", opts: ["Up to 30%", "Up to 50%", "Up to 95%", "100%"] },
+  { q: "Which fabric is considered most eco-friendly?", a: "Organic linen", opts: ["Polyester", "Nylon", "Organic linen", "Acrylic"] },
+  { q: "How many garments are produced globally each year?", a: "Over 100 billion", opts: ["10 billion", "50 billion", "Over 100 billion", "1 trillion"] },
+  { q: "What is the most recycled fabric worldwide?", a: "Polyester", opts: ["Cotton", "Polyester", "Wool", "Linen"] },
+  { q: "Which country exports the most used clothing?", a: "USA", opts: ["China", "USA", "India", "UK"] },
+  { q: "How much water can recycling one t-shirt save?", a: "Up to 2,700 litres", opts: ["100 litres", "Up to 2,700 litres", "500 litres", "50 litres"] },
+  { q: "What is the Higg Index?", a: "Tool measuring environmental impact of apparel", opts: ["Fashion trend tracker", "Tool measuring environmental impact of apparel", "Clothing size standard", "Fabric quality rating"] },
+];
+
+// Game state
+let G = {};
+let keys = {};
+let touchInput = { x: 0, y: 0, shoot: false, steal: false, special: false };
+let selectedArchetype = null;
+let gameRunning = false;
+let animFrame = null;
+let factsLearned = [];
+let usedQuestions = [];
+
+// Audio context
+let audioCtx = null;
+function initAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 }
-window.addEventListener('resize', resize);
-resize();
+function playSound(freq, dur, type='square', vol=0.1) {
+  if (!audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.value = vol;
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+  } catch(e) {}
+}
+function sfxScore() { playSound(523, 0.1); setTimeout(() => playSound(659, 0.1), 100); setTimeout(() => playSound(784, 0.15), 200); }
+function sfxBounce() { playSound(200, 0.05, 'sine', 0.08); }
+function sfxShoot() { playSound(440, 0.08, 'sine', 0.06); }
+function sfxBlock() { playSound(150, 0.15, 'triangle', 0.12); }
+function sfxSteal() { playSound(330, 0.06, 'sine', 0.08); setTimeout(() => playSound(440, 0.06, 'sine', 0.08), 60); }
+function sfxSpecial() { playSound(523, 0.1, 'sine', 0.15); setTimeout(() => playSound(784, 0.1, 'sine', 0.15), 100); setTimeout(() => playSound(1047, 0.2, 'sine', 0.15), 200); }
+function sfxWhistle() { playSound(880, 0.3, 'sine', 0.1); setTimeout(() => playSound(660, 0.3, 'sine', 0.1), 300); }
 
-function resetBall() {
-  ball = {
-    x: W * 0.18,
-    y: H * 0.72,
-    vx: 0, vy: 0,
-    r: Math.min(18, W * 0.028),
-    active: false,
-    trail: []
+// localStorage record
+function getRecord() {
+  try { return JSON.parse(localStorage.getItem('ecohoops_record')) || { w: 0, l: 0 }; } catch { return { w: 0, l: 0 }; }
+}
+function saveRecord(won) {
+  const r = getRecord();
+  if (won) r.w++; else r.l++;
+  localStorage.setItem('ecohoops_record', JSON.stringify(r));
+}
+function showRecord(el) {
+  const r = getRecord();
+  el.textContent = `Record: ${r.w}W - ${r.l}L`;
+}
+
+// Screen management
+function showScreen(name) {
+  ['title-screen','select-screen','trivia-screen','gameover-screen'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById('hud').classList.remove('active');
+  document.getElementById('touch-controls').style.display = 'none';
+  document.getElementById('powerup-indicator').classList.remove('active');
+  document.getElementById('controls-hint').style.display = 'none';
+  gameRunning = false;
+  if (animFrame) cancelAnimationFrame(animFrame);
+
+  if (name === 'title') {
+    document.getElementById('title-screen').classList.remove('hidden');
+    showRecord(document.getElementById('title-record'));
+  } else if (name === 'select') {
+    document.getElementById('select-screen').classList.remove('hidden');
+    selectedArchetype = null;
+    const btn = document.getElementById('start-btn');
+    btn.style.opacity = '0.4';
+    btn.style.pointerEvents = 'none';
+    buildArchetypeGrid();
+  } else if (name === 'game') {
+    document.getElementById('hud').classList.add('active');
+    document.getElementById('controls-hint').style.display = '';
+    if ('ontouchstart' in window) document.getElementById('touch-controls').style.display = 'block';
+    gameRunning = true;
+    gameLoop();
+  } else if (name === 'trivia') {
+    document.getElementById('trivia-screen').classList.remove('hidden');
+  } else if (name === 'gameover') {
+    document.getElementById('gameover-screen').classList.remove('hidden');
+    showRecord(document.getElementById('gameover-record'));
+  }
+}
+
+// Build archetype cards
+function buildArchetypeGrid() {
+  const grid = document.getElementById('archetype-grid');
+  grid.innerHTML = '';
+  ARCHETYPES.forEach((a, i) => {
+    const card = document.createElement('div');
+    card.className = 'archetype-card';
+    card.onclick = () => selectArchetype(i);
+    const stars = (n) => '\u2605'.repeat(n) + '\u2606'.repeat(5 - n);
+    card.innerHTML = `
+      <div class="icon">${a.icon}</div>
+      <div class="name">${a.name}</div>
+      <div class="desc">${a.desc}</div>
+      <div class="special">${a.special}</div>
+      <div class="stat-row"><span class="label">Speed</span><span class="stars">${stars(a.stats.speed)}</span></div>
+      <div class="stat-row"><span class="label">Shooting</span><span class="stars">${stars(a.stats.shooting)}</span></div>
+      <div class="stat-row"><span class="label">Defense</span><span class="stars">${stars(a.stats.defense)}</span></div>
+      <div class="stat-row"><span class="label">Power</span><span class="stars">${stars(a.stats.power)}</span></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function selectArchetype(i) {
+  initAudio();
+  selectedArchetype = ARCHETYPES[i];
+  document.querySelectorAll('.archetype-card').forEach((c, j) => {
+    c.classList.toggle('selected', j === i);
+  });
+  const btn = document.getElementById('start-btn');
+  btn.style.opacity = '1';
+  btn.style.pointerEvents = 'auto';
+  playSound(440, 0.05, 'sine', 0.05);
+}
+
+// ==================== GAME INIT ====================
+function startGame() {
+  if (!selectedArchetype) return;
+  initAudio();
+  factsLearned = [];
+  usedQuestions = [];
+  resizeCanvas();
+
+  const W = canvas.width;
+  const H = canvas.height;
+  const courtFloor = H * 0.72;
+  const playerH = H * 0.12;
+  const playerW = playerH * 0.4;
+
+  // Pick AI archetype (different from player)
+  const aiPool = ARCHETYPES.filter(a => a.id !== selectedArchetype.id);
+  const aiArch = aiPool[Math.floor(Math.random() * aiPool.length)];
+
+  G = {
+    W, H,
+    courtFloor,
+    playerW, playerH,
+    // Court
+    hoopLeftX: W * 0.08,
+    hoopRightX: W * 0.92,
+    hoopY: courtFloor - H * 0.28,
+    hoopW: W * 0.04,
+    rimRadius: W * 0.025,
+    backboardH: H * 0.15,
+    // Player
+    p1: {
+      x: W * 0.3, y: courtFloor,
+      vx: 0, vy: 0,
+      arch: selectedArchetype,
+      hasBall: true,
+      shooting: false,
+      shootTimer: 0,
+      dunking: false,
+      dunkTimer: 0,
+      facing: 1,
+      animFrame: 0,
+      animTimer: 0,
+      stunTimer: 0,
+      specialActive: false,
+      specialTimer: 0,
+    },
+    // AI
+    p2: {
+      x: W * 0.7, y: courtFloor,
+      vx: 0, vy: 0,
+      arch: aiArch,
+      hasBall: false,
+      shooting: false,
+      shootTimer: 0,
+      dunking: false,
+      dunkTimer: 0,
+      facing: -1,
+      animFrame: 0,
+      animTimer: 0,
+      stunTimer: 0,
+      specialActive: false,
+      specialTimer: 0,
+    },
+    // Ball
+    ball: {
+      x: W * 0.3, y: courtFloor - playerH * 0.4,
+      vx: 0, vy: 0,
+      holder: 'p1', // 'p1', 'p2', 'free', 'air'
+      airTimer: 0,
+      targetX: 0, targetY: 0,
+      scored: false,
+      bounceCount: 0,
+    },
+    // Scores
+    score1: 0,
+    score2: 0,
+    targetScore: 7,
+    round: 1,
+    maxRounds: 5,
+    roundTime: 120, // seconds
+    roundTimer: 120,
+    // Possession
+    offense: 'p1', // who's on offense
+    resetTimer: 0,
+    // Special meter
+    specialMeter: 0,
+    specialMax: 100,
+    // AI
+    aiDifficulty: 0.3,
+    aiDecisionTimer: 0,
+    aiTarget: { x: 0, y: 0 },
+    // Powerups
+    powerup: null,
+    powerupTimer: 0,
+    // Particles
+    particles: [],
+    // Messages
+    message: '',
+    messageTimer: 0,
+    // Shot clock
+    shotClock: 24,
+    // Game flags
+    paused: false,
+    gameOver: false,
+    roundOver: false,
+    roundScores: [],
+    // Stats
+    stats: { shots: 0, makes: 0, steals: 0, blocks: 0, dunks: 0, threes: 0, specials: 0, triviaCorrect: 0, triviaTotal: 0 },
   };
-}
 
-function resetHoop() {
-  let level = Math.min(difficultyLevel, 12);
-  let minX = W * 0.5;
-  let maxX = W * 0.85;
-  let minY = H * 0.25;
-  let maxY = H * 0.55;
+  document.getElementById('p1-name').textContent = selectedArchetype.name.toUpperCase();
+  document.getElementById('p2-name').textContent = aiArch.name.toUpperCase();
 
-  let hoopWidth = 60 - level * 2;
-  if (hoopWidth < 36) hoopWidth = 36;
-  if (activePowerups.bigHoop && activePowerups.bigHoop > 0) hoopWidth += 20;
-
-  hoop = {
-    x: minX + Math.random() * (maxX - minX),
-    y: minY + Math.random() * (maxY - minY),
-    w: hoopWidth,
-    rimH: 6,
-    netLen: 36,
-    scored: false
-  };
-}
-
-function initGame() {
-  score = 0; lives = 3; baskets = 0; streak = 0; bestStreak = 0;
-  triviaCorrect = 0; triviaTotal = 0;
-  difficultyLevel = 0;
-  particles = [];
-  powerups = [];
-  activePowerups = {};
-  usedQs = [];
-  resetBall();
-  resetHoop();
   updateHUD();
+  showScreen('game');
 }
 
-// ========================
-// HUD
-// ========================
-function updateHUD() {
-  document.getElementById('hud-score').textContent = score;
-  document.getElementById('hud-streak').textContent = streak;
-  let multi = getMultiplier();
-  document.getElementById('hud-multi').textContent = multi > 1 ? `(x${multi})` : '';
-  document.getElementById('hud-baskets').textContent = baskets;
-  let hearts = '';
-  for (let i = 0; i < lives; i++) hearts += '\u2764\uFE0F ';
-  document.getElementById('hud-lives').innerHTML = hearts;
+function resizeCanvas() {
+  const container = document.getElementById('game-container');
+  const maxW = container.clientWidth;
+  const maxH = container.clientHeight;
+  const ratio = 16 / 9;
+  let w = maxW;
+  let h = w / ratio;
+  if (h > maxH) { h = maxH; w = h * ratio; }
+  canvas.width = Math.floor(w);
+  canvas.height = Math.floor(h);
 }
 
-function getMultiplier() {
-  let m = 1;
-  if (streak >= 3) m = 2;
-  if (streak >= 6) m = 3;
-  if (streak >= 10) m = 5;
-  if (activePowerups.doublePoints && activePowerups.doublePoints > 0) m *= 2;
-  return m;
-}
-
-// ========================
-// POWER-UPS
-// ========================
-function spawnPowerup() {
-  if (powerups.length >= 2) return;
-  if (Math.random() > 0.25) return;
-  const types = [
-    { type: 'bigHoop', emoji: '\uD83C\uDF3F', label: 'Big Hoop' },
-    { type: 'timeFreeze', emoji: '\u23F0', label: 'Time Freeze' },
-    { type: 'extraLife', emoji: '\uD83D\uDC9A', label: 'Extra Life' },
-    { type: 'doublePoints', emoji: '2\uFE0F\u20E3', label: 'Double Pts' }
-  ];
-  let t = types[Math.floor(Math.random() * types.length)];
-  powerups.push({
-    ...t,
-    x: W + 30,
-    y: H * 0.2 + Math.random() * H * 0.35,
-    r: 22,
-    vx: -(1.2 + Math.random() * 1.5),
-    vy: Math.sin(Date.now()) * 0.5
-  });
-}
-
-function collectPowerup(p) {
-  playSound('powerup');
-  if (p.type === 'bigHoop') {
-    activePowerups.bigHoop = (activePowerups.bigHoop || 0) + 3;
-    hoop.w += 20;
-  } else if (p.type === 'timeFreeze') {
-    activePowerups.timeFreeze = true;
-  } else if (p.type === 'extraLife') {
-    lives = Math.min(lives + 1, 5);
-  } else if (p.type === 'doublePoints') {
-    activePowerups.doublePoints = (activePowerups.doublePoints || 0) + 3;
+window.addEventListener('resize', () => {
+  if (gameRunning) {
+    const oldW = G.W;
+    const oldH = G.H;
+    resizeCanvas();
+    const scaleX = canvas.width / oldW;
+    const scaleY = canvas.height / oldH;
+    G.W = canvas.width;
+    G.H = canvas.height;
+    G.courtFloor = G.H * 0.72;
+    G.playerH = G.H * 0.12;
+    G.playerW = G.playerH * 0.4;
+    G.hoopLeftX = G.W * 0.08;
+    G.hoopRightX = G.W * 0.92;
+    G.hoopY = G.courtFloor - G.H * 0.28;
+    G.hoopW = G.W * 0.04;
+    G.rimRadius = G.W * 0.025;
+    G.backboardH = G.H * 0.15;
+    G.p1.x *= scaleX;
+    G.p1.y = G.courtFloor;
+    G.p2.x *= scaleX;
+    G.p2.y = G.courtFloor;
+    if (G.ball.holder === 'free' || G.ball.holder === 'air') {
+      G.ball.x *= scaleX;
+      G.ball.y *= scaleY;
+    }
   }
-  // flash green
-  flashColor = 'rgba(16,185,129,';
-  flashAlpha = 0.3;
+});
+
+// ==================== INPUT ====================
+document.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; e.preventDefault(); });
+document.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+// Touch joystick
+(function() {
+  const joystick = document.getElementById('joystick');
+  const knob = document.getElementById('joystick-knob');
+  let joyActive = false;
+  let joyCenter = { x: 0, y: 0 };
+
+  function startJoy(e) {
+    joyActive = true;
+    const r = joystick.getBoundingClientRect();
+    joyCenter = { x: r.left + r.width/2, y: r.top + r.height/2 };
+    moveJoy(e);
+  }
+  function moveJoy(e) {
+    if (!joyActive) return;
+    const t = e.touches ? e.touches[0] : e;
+    let dx = t.clientX - joyCenter.x;
+    let dy = t.clientY - joyCenter.y;
+    const maxR = 40;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist > maxR) { dx = dx/dist*maxR; dy = dy/dist*maxR; }
+    knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    touchInput.x = dx / maxR;
+    touchInput.y = dy / maxR;
+  }
+  function endJoy() {
+    joyActive = false;
+    knob.style.transform = 'translate(-50%, -50%)';
+    touchInput.x = 0;
+    touchInput.y = 0;
+  }
+
+  joystick.addEventListener('touchstart', startJoy, { passive: true });
+  joystick.addEventListener('touchmove', moveJoy, { passive: true });
+  joystick.addEventListener('touchend', endJoy);
+  joystick.addEventListener('touchcancel', endJoy);
+
+  // Touch buttons
+  const shootBtn = document.getElementById('btn-shoot');
+  const stealBtn = document.getElementById('btn-steal');
+  const specialBtn = document.getElementById('btn-special');
+
+  shootBtn.addEventListener('touchstart', () => { touchInput.shoot = true; initAudio(); }, { passive: true });
+  shootBtn.addEventListener('touchend', () => { touchInput.shoot = false; });
+  stealBtn.addEventListener('touchstart', () => { touchInput.steal = true; }, { passive: true });
+  stealBtn.addEventListener('touchend', () => { touchInput.steal = false; });
+  specialBtn.addEventListener('touchstart', () => { touchInput.special = true; }, { passive: true });
+  specialBtn.addEventListener('touchend', () => { touchInput.special = false; });
+})();
+
+function getInput() {
+  let mx = 0;
+  if (keys['arrowleft'] || keys['a']) mx -= 1;
+  if (keys['arrowright'] || keys['d']) mx += 1;
+  if (touchInput.x !== 0) mx = touchInput.x;
+
+  const shoot = keys[' '] || keys['arrowup'] || keys['w'] || touchInput.shoot;
+  const steal = keys['arrowdown'] || keys['s'] || touchInput.steal;
+  const special = keys['q'] || touchInput.special;
+
+  return { mx, shoot, steal, special };
+}
+
+// ==================== UPDATE ====================
+let lastTime = 0;
+function gameLoop(timestamp) {
+  if (!gameRunning) return;
+  if (!lastTime) lastTime = timestamp;
+  const rawDt = (timestamp - lastTime) / 1000;
+  const dt = Math.min(rawDt, 0.05);
+  lastTime = timestamp;
+
+  if (!G.paused && !G.gameOver && !G.roundOver) {
+    update(dt);
+  }
+  render();
+  animFrame = requestAnimationFrame(gameLoop);
+}
+
+function update(dt) {
+  const { W, H, courtFloor, playerW, playerH } = G;
+  const p1 = G.p1;
+  const p2 = G.p2;
+  const ball = G.ball;
+
+  // Timer
+  G.roundTimer -= dt;
+  if (G.roundTimer <= 0) {
+    G.roundTimer = 0;
+    endRound();
+    return;
+  }
+
+  // Shot clock
+  G.shotClock -= dt;
+  if (G.shotClock <= 0) {
+    // Turnover
+    G.shotClock = 24;
+    switchPossession();
+    showMessage('SHOT CLOCK!');
+    return;
+  }
+
+  // Reset timer after score
+  if (G.resetTimer > 0) {
+    G.resetTimer -= dt;
+    if (G.resetTimer <= 0) {
+      resetAfterScore();
+    }
+    updateParticles(dt);
+    return;
+  }
+
+  // Message timer
+  if (G.messageTimer > 0) G.messageTimer -= dt;
+
+  // Powerup timer
+  if (G.powerupTimer > 0) {
+    G.powerupTimer -= dt;
+    if (G.powerupTimer <= 0) {
+      G.powerup = null;
+      document.getElementById('powerup-indicator').classList.remove('active');
+    }
+  }
+
+  // Special timers
+  if (p1.specialTimer > 0) {
+    p1.specialTimer -= dt;
+    if (p1.specialTimer <= 0) p1.specialActive = false;
+  }
+  if (p2.specialTimer > 0) {
+    p2.specialTimer -= dt;
+    if (p2.specialTimer <= 0) p2.specialActive = false;
+  }
+
+  // Stun timers
+  if (p1.stunTimer > 0) p1.stunTimer -= dt;
+  if (p2.stunTimer > 0) p2.stunTimer -= dt;
+
+  // -- Player 1 movement --
+  const input = getInput();
+  const baseSpeed = W * 0.004;
+  let p1Speed = baseSpeed * (0.6 + p1.arch.stats.speed * 0.16);
+  if (G.powerup === 'speed') p1Speed *= 1.5;
+  if (p1.specialActive && p1.arch.id === 'speedster') p1Speed *= 2;
+
+  if (p1.stunTimer <= 0 && !p1.shooting && !p1.dunking) {
+    p1.vx = input.mx * p1Speed;
+    p1.x += p1.vx;
+    if (input.mx !== 0) p1.facing = input.mx > 0 ? 1 : -1;
+  }
+
+  // Player animation
+  if (Math.abs(p1.vx) > 0.5) {
+    p1.animTimer += dt;
+    if (p1.animTimer > 0.15) { p1.animTimer = 0; p1.animFrame = (p1.animFrame + 1) % 4; }
+  } else {
+    p1.animFrame = 0;
+  }
+
+  // Clamp player positions
+  p1.x = Math.max(playerW, Math.min(W - playerW, p1.x));
+  p1.y = courtFloor;
+
+  // -- Shooting --
+  if (input.shoot && !p1.shooting && !p1.dunking && ball.holder === 'p1' && p1.stunTimer <= 0) {
+    const hoopX = G.offense === 'p1' ? G.hoopRightX : G.hoopLeftX;
+    const distToHoop = Math.abs(p1.x - hoopX);
+
+    // Check for dunk
+    if (distToHoop < W * 0.08 && p1.arch.stats.power >= 3) {
+      startDunk(p1, 'p1', hoopX);
+    } else if (distToHoop < W * 0.5) {
+      startShot(p1, 'p1', hoopX, distToHoop);
+    }
+  }
+
+  // Special move
+  if (input.special && G.specialMeter >= G.specialMax && !p1.specialActive && p1.stunTimer <= 0) {
+    activateSpecial(p1, 'p1');
+  }
+
+  // Steal attempt
+  if (input.steal && ball.holder === 'p2' && p1.stunTimer <= 0) {
+    const dist = Math.abs(p1.x - p2.x);
+    if (dist < playerW * 3) {
+      attemptSteal(p1, p2, 'p1');
+    }
+  }
+
+  // -- Shot animation --
+  if (p1.shooting) {
+    p1.shootTimer -= dt;
+    if (p1.shootTimer <= 0) {
+      p1.shooting = false;
+    }
+  }
+  if (p1.dunking) {
+    p1.dunkTimer -= dt;
+    if (p1.dunkTimer <= 0) {
+      p1.dunking = false;
+      p1.y = courtFloor;
+    } else {
+      // Move toward hoop during dunk
+      const hoopX = G.offense === 'p1' ? G.hoopRightX : G.hoopLeftX;
+      p1.x += (hoopX - p1.x) * 0.15;
+      p1.y = courtFloor - Math.sin(p1.dunkTimer / 0.6 * Math.PI) * playerH * 1.5;
+    }
+  }
+
+  // -- AI movement --
+  updateAI(dt);
+
+  // AI animation
+  if (Math.abs(p2.vx) > 0.5) {
+    p2.animTimer += dt;
+    if (p2.animTimer > 0.15) { p2.animTimer = 0; p2.animFrame = (p2.animFrame + 1) % 4; }
+  } else {
+    p2.animFrame = 0;
+  }
+
+  if (p2.shooting) {
+    p2.shootTimer -= dt;
+    if (p2.shootTimer <= 0) p2.shooting = false;
+  }
+  if (p2.dunking) {
+    p2.dunkTimer -= dt;
+    if (p2.dunkTimer <= 0) {
+      p2.dunking = false;
+      p2.y = courtFloor;
+    } else {
+      const hoopX = G.offense === 'p2' ? G.hoopLeftX : G.hoopRightX;
+      p2.x += (hoopX - p2.x) * 0.15;
+      p2.y = courtFloor - Math.sin(p2.dunkTimer / 0.6 * Math.PI) * playerH * 1.5;
+    }
+  }
+
+  p2.x = Math.max(playerW, Math.min(W - playerW, p2.x));
+
+  // -- Ball physics --
+  if (ball.holder === 'p1') {
+    ball.x = p1.x + p1.facing * playerW * 0.5;
+    ball.y = p1.y - playerH * 0.4;
+  } else if (ball.holder === 'p2') {
+    ball.x = p2.x + p2.facing * playerW * 0.5;
+    ball.y = p2.y - playerH * 0.4;
+  } else if (ball.holder === 'air') {
+    ball.airTimer -= dt;
+    // Animate ball in arc
+    const progress = 1 - ball.airTimer / ball.totalAirTime;
+    ball.x = ball.startX + (ball.targetX - ball.startX) * progress;
+    ball.y = ball.startY + (ball.targetY - ball.startY) * progress - Math.sin(progress * Math.PI) * G.H * 0.25;
+    ball.rotation = (ball.rotation || 0) + dt * 10;
+
+    if (ball.airTimer <= 0) {
+      // Check if scored
+      const hoopX = ball.targetIsLeftHoop ? G.hoopLeftX : G.hoopRightX;
+      if (ball.willScore) {
+        scoreBucket(ball.scorer, ball.points);
+      } else {
+        // Miss - ball bounces
+        ball.holder = 'free';
+        ball.vy = -2;
+        ball.vx = (Math.random() - 0.5) * 3;
+        showMessage('MISS!');
+      }
+    }
+  } else if (ball.holder === 'free') {
+    ball.vy += 15 * dt; // gravity
+    ball.x += ball.vx * W * 0.003;
+    ball.y += ball.vy;
+    // Bounce on floor
+    if (ball.y > courtFloor - 5) {
+      ball.y = courtFloor - 5;
+      ball.vy *= -0.5;
+      ball.vx *= 0.8;
+      ball.bounceCount++;
+      sfxBounce();
+      if (ball.bounceCount > 3) {
+        // Give to offensive team
+        if (G.offense === 'p1') {
+          ball.holder = 'p1';
+          p1.hasBall = true;
+        } else {
+          ball.holder = 'p2';
+          p2.hasBall = true;
+        }
+        ball.bounceCount = 0;
+      }
+    }
+    // Wall bounce
+    if (ball.x < 10 || ball.x > W - 10) ball.vx *= -1;
+
+    // Pickup
+    const d1 = Math.sqrt((ball.x - p1.x)**2 + (ball.y - (p1.y - playerH*0.5))**2);
+    const d2 = Math.sqrt((ball.x - p2.x)**2 + (ball.y - (p2.y - playerH*0.5))**2);
+    if (d1 < playerW * 2 && d1 < d2) {
+      ball.holder = 'p1'; p1.hasBall = true; p2.hasBall = false;
+      ball.bounceCount = 0;
+      if (G.offense !== 'p1') { G.offense = 'p1'; G.shotClock = 24; }
+    } else if (d2 < playerW * 2) {
+      ball.holder = 'p2'; p2.hasBall = true; p1.hasBall = false;
+      ball.bounceCount = 0;
+      if (G.offense !== 'p2') { G.offense = 'p2'; G.shotClock = 24; }
+    }
+  }
+
+  // -- Block check for shots in air --
+  if (ball.holder === 'air' && !ball.scored) {
+    // Defender can block
+    const defender = ball.scorer === 'p1' ? p2 : p1;
+    const defName = ball.scorer === 'p1' ? 'p2' : 'p1';
+    const dist = Math.sqrt((ball.x - defender.x)**2 + (ball.y - (defender.y - playerH))**2);
+    if (dist < playerW * 2.5 && ball.airTimer > ball.totalAirTime * 0.3) {
+      // Block chance
+      const blockChance = defender.arch.stats.defense * 0.08;
+      const isDefSpecial = defender.specialActive && defender.arch.id === 'defender';
+      if (isDefSpecial || Math.random() < blockChance) {
+        ball.holder = 'free';
+        ball.vy = -3;
+        ball.vx = (ball.scorer === 'p1' ? -1 : 1) * 3;
+        showMessage('BLOCKED!');
+        sfxBlock();
+        if (defName === 'p1') {
+          G.stats.blocks++;
+          addSpecialMeter(10);
+        }
+        spawnParticles(ball.x, ball.y, defender.arch.color, 12);
+      }
+    }
+  }
+
+  // Update particles
+  updateParticles(dt);
+
+  // Update HUD
   updateHUD();
-}
 
-// ========================
-// DRAWING
-// ========================
-function drawCourt() {
-  // Sky gradient
-  let sky = ctx.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, '#064E3B');
-  sky.addColorStop(0.6, '#111827');
-  sky.addColorStop(1, '#0a0a0a');
-  ctx.fillStyle = sky;
-  ctx.fillRect(0, 0, W, H);
-
-  // Court floor
-  let floorY = H * 0.78;
-  ctx.fillStyle = '#1a3a2a';
-  ctx.fillRect(0, floorY, W, H - floorY);
-
-  // Court lines
-  ctx.strokeStyle = 'rgba(52,211,153,0.2)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(0, floorY);
-  ctx.lineTo(W, floorY);
-  ctx.stroke();
-
-  // Half court circle
-  ctx.beginPath();
-  ctx.arc(W * 0.5, floorY, 60, Math.PI, 0);
-  ctx.stroke();
-
-  // Subtle grid
-  ctx.strokeStyle = 'rgba(52,211,153,0.05)';
-  for (let x = 0; x < W; x += 80) {
-    ctx.beginPath(); ctx.moveTo(x, floorY); ctx.lineTo(x, H); ctx.stroke();
+  // Check win
+  if (G.score1 >= G.targetScore || G.score2 >= G.targetScore) {
+    endRound();
   }
 }
 
-function drawBall(x, y, r) {
-  // Shadow
-  ctx.beginPath();
-  ctx.ellipse(x, H * 0.78, r * 0.8, r * 0.3, 0, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(0,0,0,0.2)';
-  ctx.fill();
+function updateAI(dt) {
+  const { W, H, courtFloor, playerW, playerH } = G;
+  const p1 = G.p1;
+  const p2 = G.p2;
+  const ball = G.ball;
 
-  // Ball
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  let grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
-  grad.addColorStop(0, '#e8943a');
-  grad.addColorStop(0.7, '#c2690a');
-  grad.addColorStop(1, '#8a4a08');
-  ctx.fillStyle = grad;
-  ctx.fill();
-  ctx.strokeStyle = '#6b3a06';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
+  if (p2.stunTimer > 0 || p2.shooting || p2.dunking) return;
 
-  // Ball lines
-  ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(x - r, y);
-  ctx.lineTo(x + r, y);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(x, y, r * 0.7, -0.5, 0.5);
-  ctx.stroke();
+  G.aiDecisionTimer -= dt;
+  if (G.aiDecisionTimer > 0) {
+    // Move toward target
+    const diff = G.aiTarget.x - p2.x;
+    let aiSpeed = W * 0.003 * (0.6 + p2.arch.stats.speed * 0.14) * (0.5 + G.aiDifficulty * 0.8);
+    if (p2.specialActive && p2.arch.id === 'speedster') aiSpeed *= 1.8;
 
-  // Recycling symbol
-  ctx.fillStyle = 'rgba(16,185,129,0.6)';
-  ctx.font = `${r * 0.9}px sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('\u267B', x, y);
-}
-
-function drawHoop() {
-  if (!hoop) return;
-  let { x, y, w, rimH, netLen } = hoop;
-
-  // Backboard
-  ctx.fillStyle = 'rgba(255,255,255,0.12)';
-  ctx.fillRect(x + w / 2 + 2, y - 40, 6, 80);
-  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(x + w / 2 + 2, y - 40, 6, 80);
-
-  // Pole
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  ctx.fillRect(x + w / 2 + 4, y + 40, 4, H * 0.78 - y - 40);
-
-  // Rim
-  ctx.beginPath();
-  ctx.moveTo(x - w / 2, y);
-  ctx.lineTo(x + w / 2, y);
-  ctx.strokeStyle = '#EF4444';
-  ctx.lineWidth = 4;
-  ctx.stroke();
-
-  // Rim ends
-  ctx.beginPath();
-  ctx.arc(x - w / 2, y, 4, 0, Math.PI * 2);
-  ctx.fillStyle = '#DC2626';
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(x + w / 2, y, 4, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Net
-  let segments = 6;
-  let netBottom = y + netLen + (netAnim > 0 ? Math.sin(netAnim * 5) * 8 : 0);
-  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= segments; i++) {
-    let tx = x - w / 2 + (w / segments) * i;
-    let bx = x - w * 0.3 / 2 + (w * 0.3 / segments) * i;
-    let sway = netAnim > 0 ? Math.sin(netAnim * 4 + i) * 4 : 0;
-    ctx.beginPath();
-    ctx.moveTo(tx, y + 2);
-    ctx.quadraticCurveTo(tx + sway, y + netLen * 0.5, bx + sway, netBottom);
-    ctx.stroke();
+    if (Math.abs(diff) > 5) {
+      p2.vx = Math.sign(diff) * aiSpeed;
+      p2.x += p2.vx;
+      p2.facing = Math.sign(diff);
+    } else {
+      p2.vx = 0;
+    }
+    return;
   }
-  // Horizontal net lines
-  for (let j = 1; j <= 3; j++) {
-    let ny = y + 2 + (netLen * j / 4);
-    let nw = w * (1 - j * 0.18);
-    ctx.beginPath();
-    ctx.moveTo(x - nw / 2, ny);
-    ctx.lineTo(x + nw / 2, ny);
-    ctx.stroke();
+
+  // Make new decision
+  G.aiDecisionTimer = 0.2 + Math.random() * 0.4 * (1.2 - G.aiDifficulty);
+
+  if (G.offense === 'p2' && ball.holder === 'p2') {
+    // AI on offense
+    const hoopX = G.hoopLeftX;
+    const distToHoop = Math.abs(p2.x - hoopX);
+
+    // Check for dunk opportunity
+    if (distToHoop < W * 0.08 && p2.arch.stats.power >= 3) {
+      if (Math.random() < 0.6 + G.aiDifficulty * 0.3) {
+        startDunk(p2, 'p2', hoopX);
+        return;
+      }
+    }
+
+    // Check for shot
+    if (distToHoop < W * 0.35 && Math.random() < 0.15 + G.aiDifficulty * 0.2) {
+      startShot(p2, 'p2', hoopX, distToHoop);
+      return;
+    }
+
+    // Special move
+    if (p2.arch.id === 'shooter' && p2.specialActive) {
+      if (distToHoop < W * 0.4) {
+        startShot(p2, 'p2', hoopX, distToHoop);
+        return;
+      }
+    }
+
+    // Drive toward hoop
+    G.aiTarget.x = hoopX + W * 0.05 + Math.random() * W * 0.15;
+
+    // Try to avoid defender
+    const dist = Math.abs(p1.x - p2.x);
+    if (dist < playerW * 4) {
+      // Juke
+      if (Math.random() < 0.3) {
+        G.aiTarget.x = p2.x + (Math.random() > 0.5 ? 1 : -1) * W * 0.1;
+      }
+    }
+  } else if (G.offense === 'p1') {
+    // AI on defense
+    if (ball.holder === 'p1') {
+      // Shadow the player between them and the hoop
+      const hoopX = G.hoopRightX;
+      G.aiTarget.x = p1.x + (hoopX - p1.x) * 0.3;
+
+      // Steal attempt
+      const dist = Math.abs(p1.x - p2.x);
+      if (dist < playerW * 3.5 && Math.random() < 0.05 + G.aiDifficulty * 0.1) {
+        attemptSteal(p2, p1, 'p2');
+      }
+    } else if (ball.holder === 'free') {
+      G.aiTarget.x = ball.x;
+    } else {
+      G.aiTarget.x = W * 0.5;
+    }
+  } else if (ball.holder === 'free') {
+    G.aiTarget.x = ball.x;
+  } else {
+    // Idle
+    G.aiTarget.x = G.offense === 'p2' ? W * 0.35 : W * 0.65;
   }
-}
 
-function drawTrajectory() {
-  if (!dragStart || !dragCurrent || state !== 'aiming') return;
-  let dx = dragStart.x - dragCurrent.x;
-  let dy = dragStart.y - dragCurrent.y;
-  let power = Math.min(Math.sqrt(dx * dx + dy * dy), 200);
-  let angle = Math.atan2(dy, dx);
-  let vx = Math.cos(angle) * power * 0.12;
-  let vy = Math.sin(angle) * power * 0.12;
-
-  ctx.setLineDash([4, 8]);
-  ctx.strokeStyle = 'rgba(167,243,208,0.5)';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  let px = ball.x, py = ball.y;
-  ctx.moveTo(px, py);
-  for (let i = 0; i < 40; i++) {
-    px += vx;
-    py += vy;
-    vy += gravity;
-    if (py > H * 0.78) break;
-    ctx.lineTo(px, py);
-  }
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Power indicator
-  let barLen = power / 200;
-  ctx.fillStyle = `rgba(${barLen > 0.7 ? 239 : 52}, ${barLen > 0.7 ? 68 : 211}, ${barLen > 0.7 ? 68 : 153}, 0.6)`;
-  ctx.fillRect(ball.x - 25, ball.y + ball.r + 10, 50 * barLen, 4);
-  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
-  ctx.strokeRect(ball.x - 25, ball.y + ball.r + 10, 50, 4);
-}
-
-function drawPowerups() {
-  powerups.forEach(p => {
-    ctx.font = `${p.r * 1.5}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(p.emoji, p.x, p.y + Math.sin(Date.now() * 0.003 + p.x) * 5);
-
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r + 4, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(52,211,153,0.3)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  });
-}
-
-function drawParticles() {
-  particles.forEach(p => {
-    ctx.globalAlpha = p.life;
-    ctx.fillStyle = p.color;
-    ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
-  });
-  ctx.globalAlpha = 1;
-}
-
-function drawFlash() {
-  if (flashAlpha > 0) {
-    ctx.fillStyle = flashColor + flashAlpha + ')';
-    ctx.fillRect(0, 0, W, H);
-    flashAlpha -= 0.015;
-    if (flashAlpha < 0) flashAlpha = 0;
+  // AI special activation
+  if (G.round > 1 && Math.random() < G.aiDifficulty * 0.02 && !p2.specialActive) {
+    if ((G.offense === 'p2' && ball.holder === 'p2') || (G.offense === 'p1' && p2.arch.id === 'defender')) {
+      activateSpecial(p2, 'p2');
+    }
   }
 }
 
-function drawActivePowerupIcons() {
-  let y = H * 0.78 - 10;
-  let x = 12;
-  ctx.font = '12px Inter, sans-serif';
-  ctx.textAlign = 'left';
-  if (activePowerups.bigHoop > 0) {
-    ctx.fillStyle = 'rgba(167,243,208,0.8)';
-    ctx.fillText(`\uD83C\uDF3F Big Hoop: ${activePowerups.bigHoop}`, x, y);
-    y -= 18;
-  }
-  if (activePowerups.doublePoints > 0) {
-    ctx.fillStyle = 'rgba(167,243,208,0.8)';
-    ctx.fillText(`2\uFE0F\u20E3 Double Pts: ${activePowerups.doublePoints}`, x, y);
-    y -= 18;
-  }
-  if (activePowerups.timeFreeze) {
-    ctx.fillStyle = 'rgba(167,243,208,0.8)';
-    ctx.fillText(`\u23F0 Time Freeze: Ready`, x, y);
+function startShot(player, who, hoopX, distToHoop) {
+  player.shooting = true;
+  player.shootTimer = 0.4;
+  player.hasBall = false;
+  G.stats.shots++;
+  sfxShoot();
+
+  const ball = G.ball;
+  ball.holder = 'air';
+  ball.startX = ball.x;
+  ball.startY = ball.y;
+  ball.targetX = hoopX;
+  ball.targetY = G.hoopY;
+  ball.scorer = who;
+  ball.rotation = 0;
+
+  const isThree = distToHoop > G.W * 0.25;
+  ball.points = isThree ? 3 : 2;
+
+  // Calculate success chance
+  let chance = 0.5;
+  chance += player.arch.stats.shooting * 0.08; // +0 to +0.40
+  chance -= (distToHoop / G.W) * 0.5; // distance penalty
+  if (G.powerup === 'hothand' && who === 'p1') chance += 0.25;
+  if (player.specialActive && player.arch.id === 'shooter') chance = 1.0; // guaranteed
+  chance = Math.max(0.1, Math.min(0.95, chance));
+
+  ball.willScore = Math.random() < chance;
+  ball.totalAirTime = 0.6 + distToHoop / G.W * 0.5;
+  ball.airTimer = ball.totalAirTime;
+
+  if (isThree) showMessage('THREE!');
+}
+
+function startDunk(player, who, hoopX) {
+  player.dunking = true;
+  player.dunkTimer = 0.6;
+  player.hasBall = false;
+  G.stats.shots++;
+  sfxShoot();
+
+  const ball = G.ball;
+  const isDunkerSpecial = player.specialActive && player.arch.id === 'dunker';
+
+  // Dunk success
+  let chance = 0.7 + player.arch.stats.power * 0.06;
+  if (isDunkerSpecial) chance = 1.0;
+  const willScore = Math.random() < chance;
+
+  ball.holder = 'air';
+  ball.startX = ball.x;
+  ball.startY = ball.y;
+  ball.targetX = hoopX;
+  ball.targetY = G.hoopY;
+  ball.scorer = who;
+  ball.points = 2;
+  ball.willScore = willScore;
+  ball.totalAirTime = 0.55;
+  ball.airTimer = 0.55;
+  ball.rotation = 0;
+
+  if (who === 'p1') G.stats.dunks++;
+  showMessage('DUNK!');
+}
+
+function attemptSteal(stealer, target, who) {
+  const stealChance = 0.15 + stealer.arch.stats.defense * 0.04 + (stealer.arch.id === 'speedster' ? 0.1 : 0);
+  if (Math.random() < stealChance) {
+    G.ball.holder = who;
+    stealer.hasBall = true;
+    target.hasBall = false;
+    G.offense = who;
+    G.shotClock = 24;
+    sfxSteal();
+    showMessage('STEAL!');
+    if (who === 'p1') {
+      G.stats.steals++;
+      addSpecialMeter(15);
+    }
+    target.stunTimer = 0.5;
+    spawnParticles(target.x, target.y - G.playerH * 0.5, '#EAB308', 8);
+  } else {
+    stealer.stunTimer = 0.3;
   }
 }
 
-// ========================
-// PARTICLES
-// ========================
-function spawnConfetti(x, y, count) {
-  let colors = ['#34D399','#10B981','#A7F3D0','#FBBF24','#F472B6','#60A5FA'];
+function activateSpecial(player, who) {
+  if (who === 'p1' && G.specialMeter < G.specialMax) return;
+  player.specialActive = true;
+  sfxSpecial();
+  G.stats.specials++;
+
+  if (player.arch.id === 'shooter') {
+    player.specialTimer = 5;
+    showMessage('GREEN SHOT!');
+  } else if (player.arch.id === 'speedster') {
+    player.specialTimer = 4;
+    showMessage('ECO SPRINT!');
+  } else if (player.arch.id === 'defender') {
+    player.specialTimer = 5;
+    showMessage('RECYCLED WALL!');
+  } else if (player.arch.id === 'dunker') {
+    player.specialTimer = 4;
+    showMessage('UPCYCLE SLAM!');
+  }
+
+  if (who === 'p1') G.specialMeter = 0;
+  spawnParticles(player.x, player.y - G.playerH, player.arch.color, 25);
+}
+
+function scoreBucket(who, pts) {
+  if (who === 'p1') {
+    G.score1 += pts;
+    G.stats.makes++;
+    if (pts === 3) G.stats.threes++;
+    addSpecialMeter(pts * 8);
+  } else {
+    G.score2 += pts;
+  }
+  sfxScore();
+  G.ball.scored = true;
+  G.ball.holder = 'free';
+  G.ball.vy = 2;
+  G.ball.vx = 0;
+  G.resetTimer = 1.5;
+  showMessage(pts === 3 ? 'THREE POINTER!' : 'SCORE!');
+
+  const hoopX = who === 'p1' ? G.hoopRightX : G.hoopLeftX;
+  spawnParticles(hoopX, G.hoopY, who === 'p1' ? '#34D399' : '#F87171', 20);
+}
+
+function switchPossession() {
+  G.offense = G.offense === 'p1' ? 'p2' : 'p1';
+  G.shotClock = 24;
+  resetPositions();
+}
+
+function resetAfterScore() {
+  // Switch possession to the team that was scored ON
+  G.offense = G.ball.scorer === 'p1' ? 'p2' : 'p1';
+  G.shotClock = 24;
+  resetPositions();
+  G.ball.scored = false;
+
+  // Check if score triggers trivia
+  const totalScore = G.score1 + G.score2;
+  if (totalScore > 0 && totalScore % 3 === 0) {
+    showTrivia();
+  }
+}
+
+function resetPositions() {
+  const { W, courtFloor } = G;
+  if (G.offense === 'p1') {
+    G.p1.x = W * 0.3;
+    G.p2.x = W * 0.65;
+    G.ball.holder = 'p1';
+    G.p1.hasBall = true;
+    G.p2.hasBall = false;
+  } else {
+    G.p2.x = W * 0.7;
+    G.p1.x = W * 0.35;
+    G.ball.holder = 'p2';
+    G.p2.hasBall = true;
+    G.p1.hasBall = false;
+  }
+  G.p1.y = courtFloor;
+  G.p2.y = courtFloor;
+  G.p1.shooting = false;
+  G.p1.dunking = false;
+  G.p2.shooting = false;
+  G.p2.dunking = false;
+  G.ball.bounceCount = 0;
+}
+
+function addSpecialMeter(amt) {
+  G.specialMeter = Math.min(G.specialMax, G.specialMeter + amt);
+}
+
+function showMessage(msg) {
+  G.message = msg;
+  G.messageTimer = 1.5;
+}
+
+function spawnParticles(x, y, color, count) {
   for (let i = 0; i < count; i++) {
-    particles.push({
+    G.particles.push({
       x, y,
       vx: (Math.random() - 0.5) * 8,
       vy: (Math.random() - 1) * 6,
-      size: 3 + Math.random() * 5,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      life: 1
+      life: 0.5 + Math.random() * 0.5,
+      maxLife: 1,
+      size: 2 + Math.random() * 4,
+      color,
     });
   }
 }
 
-function spawnMissEffect() {
-  flashColor = 'rgba(239,68,68,';
-  flashAlpha = 0.35;
-}
-
-// ========================
-// PHYSICS & COLLISION
-// ========================
-function checkHoopCollision() {
-  if (hoop.scored) return false;
-  let bx = ball.x, by = ball.y, br = ball.r;
-  let hx = hoop.x, hy = hoop.y, hw = hoop.w / 2;
-
-  // Ball center passes through rim plane from above
-  if (by >= hy - 2 && by <= hy + 12 && ball.vy > 0) {
-    if (bx > hx - hw + br * 0.3 && bx < hx + hw - br * 0.3) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function checkPowerupCollision() {
-  for (let i = powerups.length - 1; i >= 0; i--) {
-    let p = powerups[i];
-    let dx = ball.x - p.x;
-    let dy = ball.y - p.y;
-    if (Math.sqrt(dx * dx + dy * dy) < ball.r + p.r) {
-      collectPowerup(p);
-      powerups.splice(i, 1);
-    }
-  }
-}
-
-// ========================
-// TRIVIA
-// ========================
-let currentTrivia = null;
-let triviaTimer = null;
-let triviaTimeLeft = 10;
-let triviaAnswered = false;
-
-function showTrivia() {
-  state = 'trivia';
-  triviaAnswered = false;
-  currentTrivia = getQuestion();
-  triviaTimeLeft = 10;
-  document.getElementById('trivia-q').textContent = currentTrivia.question;
-  let optsEl = document.getElementById('trivia-opts');
-  optsEl.innerHTML = '';
-  currentTrivia.options.forEach(opt => {
-    let btn = document.createElement('button');
-    btn.className = 'trivia-opt';
-    btn.textContent = opt;
-    btn.onclick = () => answerTrivia(opt, btn);
-    optsEl.appendChild(btn);
-  });
-  document.getElementById('trivia-overlay').classList.add('active');
-  document.getElementById('timer-fill').style.width = '100%';
-
-  if (activePowerups.timeFreeze) {
-    activePowerups.timeFreeze = false;
-    // Timer frozen - give them full 10s but don't count down
-    triviaTimer = null;
-    document.getElementById('timer-fill').style.width = '100%';
-    return;
-  }
-
-  clearInterval(triviaTimer);
-  let startTime = Date.now();
-  triviaTimer = setInterval(() => {
-    triviaTimeLeft = 10 - (Date.now() - startTime) / 1000;
-    if (triviaTimeLeft <= 0) {
-      triviaTimeLeft = 0;
-      clearInterval(triviaTimer);
-      if (!triviaAnswered) answerTrivia(null, null);
-    }
-    document.getElementById('timer-fill').style.width = (triviaTimeLeft / 10 * 100) + '%';
-  }, 50);
-}
-
-function answerTrivia(chosen, btnEl) {
-  if (triviaAnswered) return;
-  triviaAnswered = true;
-  clearInterval(triviaTimer);
-  triviaTotal++;
-
-  let correct = chosen === currentTrivia.answer;
-  let allBtns = document.querySelectorAll('.trivia-opt');
-
-  allBtns.forEach(b => {
-    if (b.textContent === currentTrivia.answer) b.classList.add('correct');
-    else if (b === btnEl && !correct) b.classList.add('wrong');
-    b.style.pointerEvents = 'none';
-  });
-
-  let shotPoints = 100;
-  if (correct) {
-    triviaCorrect++;
-    shotPoints *= 2;
-    streak++;
-    if (streak > bestStreak) bestStreak = streak;
-    playSound('ding');
-    spawnConfetti(W / 2, H / 2, 30);
-  } else {
-    streak = 0;
-    playSound('buzz');
-  }
-
-  let multi = getMultiplier();
-  score += shotPoints * multi;
-  updateHUD();
-
-  setTimeout(() => {
-    document.getElementById('trivia-overlay').classList.remove('active');
-    // Decrease powerup counts
-    if (activePowerups.bigHoop > 0) {
-      activePowerups.bigHoop--;
-      if (activePowerups.bigHoop <= 0) {
-        // hoop width will reset on next resetHoop
-      }
-    }
-    if (activePowerups.doublePoints > 0) activePowerups.doublePoints--;
-
-    difficultyLevel = Math.floor(baskets / 5);
-    resetBall();
-    resetHoop();
-    spawnPowerup();
-    state = 'aiming';
-  }, 1400);
-}
-
-// ========================
-// INPUT
-// ========================
-function getPos(e) {
-  if (e.touches) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  return { x: e.clientX, y: e.clientY };
-}
-
-canvas.addEventListener('mousedown', onDown);
-canvas.addEventListener('mousemove', onMove);
-canvas.addEventListener('mouseup', onUp);
-canvas.addEventListener('touchstart', e => { e.preventDefault(); onDown(e); }, { passive: false });
-canvas.addEventListener('touchmove', e => { e.preventDefault(); onMove(e); }, { passive: false });
-canvas.addEventListener('touchend', e => { e.preventDefault(); onUp(e); }, { passive: false });
-
-function onDown(e) {
-  if (state !== 'aiming') return;
-  initAudio();
-  let pos = getPos(e);
-  let dx = pos.x - ball.x;
-  let dy = pos.y - ball.y;
-  // Allow drag from anywhere, but interpret relative to ball
-  dragStart = pos;
-  dragCurrent = pos;
-}
-
-function onMove(e) {
-  if (!dragStart || state !== 'aiming') return;
-  dragCurrent = getPos(e);
-}
-
-function onUp(e) {
-  if (!dragStart || state !== 'aiming') return;
-  let dx = dragStart.x - dragCurrent.x;
-  let dy = dragStart.y - dragCurrent.y;
-  let power = Math.min(Math.sqrt(dx * dx + dy * dy), 200);
-
-  if (power < 15) {
-    dragStart = null;
-    dragCurrent = null;
-    return;
-  }
-
-  let angle = Math.atan2(dy, dx);
-  ball.vx = Math.cos(angle) * power * 0.12;
-  ball.vy = Math.sin(angle) * power * 0.12;
-  ball.active = true;
-  state = 'flying';
-  playSound('swoosh');
-
-  dragStart = null;
-  dragCurrent = null;
-}
-
-// ========================
-// GAME LOOP
-// ========================
-function update() {
-  if (state === 'flying' && ball.active) {
-    ball.trail.push({ x: ball.x, y: ball.y });
-    if (ball.trail.length > 12) ball.trail.shift();
-
-    ball.x += ball.vx;
-    ball.y += ball.vy;
-    ball.vy += gravity;
-
-    // Powerup collision
-    checkPowerupCollision();
-
-    // Hoop collision
-    if (checkHoopCollision()) {
-      hoop.scored = true;
-      baskets++;
-      netAnim = 1;
-      playSound('swish');
-      spawnConfetti(hoop.x, hoop.y + 20, 20);
-      ball.active = false;
-      state = 'scored';
-      updateHUD();
-
-      setTimeout(() => showTrivia(), 600);
-      return;
-    }
-
-    // Rim bounce
-    let rimL = hoop.x - hoop.w / 2;
-    let rimR = hoop.x + hoop.w / 2;
-    let rimY = hoop.y;
-    // Left rim
-    let dxL = ball.x - rimL, dyL = ball.y - rimY;
-    if (Math.sqrt(dxL * dxL + dyL * dyL) < ball.r + 4) {
-      ball.vx = Math.abs(ball.vx) * -0.5;
-      ball.vy *= 0.7;
-      ball.x = rimL - ball.r - 5;
-    }
-    // Right rim
-    let dxR = ball.x - rimR, dyR = ball.y - rimY;
-    if (Math.sqrt(dxR * dxR + dyR * dyR) < ball.r + 4) {
-      ball.vx = Math.abs(ball.vx) * 0.5;
-      ball.vy *= 0.7;
-      ball.x = rimR + ball.r + 5;
-    }
-
-    // Out of bounds or hit floor
-    if (ball.y > H * 0.78 - ball.r || ball.x > W + 50 || ball.x < -50 || ball.y < -200) {
-      ball.active = false;
-      if (!hoop.scored) {
-        lives--;
-        playSound('buzz');
-        spawnMissEffect();
-        updateHUD();
-        if (lives <= 0) {
-          state = 'gameover';
-          setTimeout(showGameOver, 800);
-        } else {
-          streak = 0;
-          updateHUD();
-          setTimeout(() => {
-            resetBall();
-            state = 'aiming';
-          }, 600);
-        }
-      }
-    }
-  }
-
-  // Update powerups
-  powerups.forEach(p => {
-    p.x += p.vx;
-    p.y += Math.sin(Date.now() * 0.003 + p.x * 0.01) * 0.5;
-  });
-  powerups = powerups.filter(p => p.x > -50);
-
-  // Update particles
-  particles.forEach(p => {
+function updateParticles(dt) {
+  for (let i = G.particles.length - 1; i >= 0; i--) {
+    const p = G.particles[i];
     p.x += p.vx;
     p.y += p.vy;
-    p.vy += 0.15;
-    p.life -= 0.018;
-  });
-  particles = particles.filter(p => p.life > 0);
-
-  // Net animation decay
-  if (netAnim > 0) netAnim -= 0.02;
-  if (netAnim < 0) netAnim = 0;
+    p.vy += 8 * dt;
+    p.life -= dt;
+    if (p.life <= 0) G.particles.splice(i, 1);
+  }
 }
 
-function draw() {
-  ctx.clearRect(0, 0, W, H);
-  drawCourt();
-  drawHoop();
+function endRound() {
+  G.roundOver = true;
+  sfxWhistle();
+  G.roundScores.push({ s1: G.score1, s2: G.score2 });
 
-  // Ball trail
-  if (ball.trail.length > 1) {
-    ctx.strokeStyle = 'rgba(200,120,30,0.15)';
-    ctx.lineWidth = ball.r * 1.5;
-    ctx.lineCap = 'round';
+  // Check if game is over
+  if (G.score1 >= G.targetScore || G.score2 >= G.targetScore || G.round >= G.maxRounds) {
+    endGame();
+  } else {
+    // Show trivia then start next round
+    G.round++;
+    G.aiDifficulty = Math.min(0.9, G.aiDifficulty + 0.12);
+    showTrivia(() => {
+      G.roundOver = false;
+      G.roundTimer = G.roundTime;
+      G.shotClock = 24;
+      G.score1 = 0;
+      G.score2 = 0;
+      resetPositions();
+      showScreen('game');
+    });
+    return;
+  }
+}
+
+function endGame() {
+  const won = G.score1 > G.score2;
+  saveRecord(won);
+
+  document.getElementById('gameover-title').textContent = won ? 'Victory!' : 'Defeat';
+  document.getElementById('gameover-title').style.color = won ? 'var(--green-400)' : '#F87171';
+  document.getElementById('final-score').textContent = `${G.score1} - ${G.score2}`;
+
+  const sg = document.getElementById('stats-grid');
+  sg.innerHTML = `
+    <div class="stat-box"><div class="val">${G.stats.makes}/${G.stats.shots}</div><div class="lbl">FG Made</div></div>
+    <div class="stat-box"><div class="val">${G.stats.threes}</div><div class="lbl">3-Pointers</div></div>
+    <div class="stat-box"><div class="val">${G.stats.steals}</div><div class="lbl">Steals</div></div>
+    <div class="stat-box"><div class="val">${G.stats.blocks}</div><div class="lbl">Blocks</div></div>
+    <div class="stat-box"><div class="val">${G.stats.dunks}</div><div class="lbl">Dunks</div></div>
+    <div class="stat-box"><div class="val">${G.stats.triviaCorrect}/${G.stats.triviaTotal}</div><div class="lbl">Trivia</div></div>
+  `;
+
+  const fl = document.getElementById('facts-learned');
+  fl.innerHTML = '<h4>Sustainability Facts Learned</h4>';
+  if (factsLearned.length === 0) {
+    fl.innerHTML += '<p>No trivia questions answered yet!</p>';
+  } else {
+    factsLearned.forEach(f => {
+      fl.innerHTML += `<p>- ${f}</p>`;
+    });
+  }
+
+  gameRunning = false;
+  showScreen('gameover');
+}
+
+// ==================== TRIVIA ====================
+let triviaCallback = null;
+function showTrivia(cb) {
+  triviaCallback = cb || (() => { G.roundOver = false; showScreen('game'); });
+  G.paused = true;
+
+  // Pick unused question
+  let available = QUESTIONS.filter((_, i) => !usedQuestions.includes(i));
+  if (available.length === 0) { usedQuestions = []; available = QUESTIONS; }
+  const qi = QUESTIONS.indexOf(available[Math.floor(Math.random() * available.length)]);
+  usedQuestions.push(qi);
+  const q = QUESTIONS[qi];
+
+  document.getElementById('trivia-question').textContent = q.q;
+  document.getElementById('trivia-result').textContent = '';
+
+  const optsEl = document.getElementById('trivia-options');
+  // Shuffle options
+  const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
+  optsEl.innerHTML = '';
+  shuffled.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'trivia-option';
+    btn.textContent = opt;
+    btn.onclick = () => answerTrivia(opt, q.a, btn, optsEl);
+    optsEl.appendChild(btn);
+  });
+
+  showScreen('trivia');
+  // Keep game HUD visible
+  document.getElementById('hud').classList.add('active');
+}
+
+function answerTrivia(chosen, correct, btn, container) {
+  G.stats.triviaTotal++;
+  const isCorrect = chosen === correct;
+
+  // Disable all buttons
+  container.querySelectorAll('.trivia-option').forEach(b => {
+    b.style.pointerEvents = 'none';
+    if (b.textContent === correct) b.classList.add('correct');
+  });
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    G.stats.triviaCorrect++;
+    // Give random powerup
+    const powerups = [
+      { id: 'speed', name: 'Speed Boost', icon: '\u26A1', duration: 30 },
+      { id: 'hothand', name: 'Hot Hand', icon: '\u{1F3AF}', duration: 30 },
+      { id: 'ironwall', name: 'Iron Wall', icon: '\u{1F6E1}\u{FE0F}', duration: 30 },
+      { id: 'specialcharge', name: 'Special Charge', icon: '\u2B50' },
+    ];
+    const pu = powerups[Math.floor(Math.random() * powerups.length)];
+
+    if (pu.id === 'specialcharge') {
+      G.specialMeter = G.specialMax;
+      document.getElementById('trivia-result').innerHTML = `<span style="color:var(--green-400)">Correct! ${pu.icon} ${pu.name} - Special meter fully charged!</span>`;
+    } else {
+      G.powerup = pu.id;
+      G.powerupTimer = pu.duration;
+      const indicator = document.getElementById('powerup-indicator');
+      indicator.textContent = `${pu.icon} ${pu.name} (${pu.duration}s)`;
+      indicator.classList.add('active');
+      document.getElementById('trivia-result').innerHTML = `<span style="color:var(--green-400)">Correct! ${pu.icon} ${pu.name} for ${pu.duration}s!</span>`;
+    }
+    if (pu.id === 'ironwall') {
+      G.p1.arch.stats.defense = Math.min(5, G.p1.arch.stats.defense + 2);
+    }
+  } else {
+    btn.classList.add('wrong');
+    G.score2 += 1; // Free throw for opponent
+    document.getElementById('trivia-result').innerHTML = `<span style="color:#F87171">Wrong! The answer is "${correct}". Opponent gets a free throw!</span>`;
+  }
+
+  // Add to facts learned
+  const qi = QUESTIONS.findIndex(qq => qq.a === correct);
+  if (qi >= 0) factsLearned.push(`${QUESTIONS[qi].q} \u2192 ${correct}`);
+
+  playSound(isCorrect ? 523 : 220, 0.2, 'sine', 0.1);
+
+  setTimeout(() => {
+    G.paused = false;
+    if (triviaCallback) triviaCallback();
+  }, 2000);
+}
+
+// ==================== HUD ====================
+function updateHUD() {
+  document.getElementById('p1-score').textContent = G.score1;
+  document.getElementById('p2-score').textContent = G.score2;
+
+  const mins = Math.floor(G.roundTimer / 60);
+  const secs = Math.floor(G.roundTimer % 60);
+  document.getElementById('timer').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+  document.getElementById('round-info').textContent = `Round ${G.round} / ${G.maxRounds} | Shot: ${Math.ceil(G.shotClock)}`;
+
+  const pct = (G.specialMeter / G.specialMax) * 100;
+  document.getElementById('special-fill').style.width = pct + '%';
+  const readyEl = document.getElementById('special-ready');
+  if (G.specialMeter >= G.specialMax) {
+    readyEl.style.display = 'block';
+    readyEl.textContent = `PRESS Q - ${G.p1.arch.special.toUpperCase()}!`;
+  } else {
+    readyEl.style.display = 'none';
+  }
+}
+
+// ==================== RENDER ====================
+function render() {
+  const { W, H, courtFloor, playerW, playerH } = G;
+  ctx.clearRect(0, 0, W, H);
+
+  // -- Court background --
+  // Floor gradient
+  const floorGrad = ctx.createLinearGradient(0, courtFloor - H * 0.05, 0, H);
+  floorGrad.addColorStop(0, '#065F46');
+  floorGrad.addColorStop(0.3, '#047857');
+  floorGrad.addColorStop(1, '#064E3B');
+  ctx.fillStyle = floorGrad;
+  ctx.fillRect(0, courtFloor - 2, W, H - courtFloor + 2);
+
+  // Background wall
+  const wallGrad = ctx.createLinearGradient(0, 0, 0, courtFloor);
+  wallGrad.addColorStop(0, '#111827');
+  wallGrad.addColorStop(1, '#1F2937');
+  ctx.fillStyle = wallGrad;
+  ctx.fillRect(0, 0, W, courtFloor);
+
+  // Court lines
+  ctx.strokeStyle = 'rgba(167, 243, 208, 0.3)';
+  ctx.lineWidth = 2;
+  // Center line
+  ctx.beginPath();
+  ctx.moveTo(W/2, courtFloor);
+  ctx.lineTo(W/2, courtFloor - 2);
+  ctx.stroke();
+  // Center circle on floor
+  ctx.beginPath();
+  ctx.ellipse(W/2, courtFloor, W * 0.08, 4, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  // Three point lines (arcs on floor)
+  ctx.strokeStyle = 'rgba(167, 243, 208, 0.2)';
+  ctx.beginPath();
+  ctx.ellipse(G.hoopRightX, courtFloor, W * 0.22, 6, 0, Math.PI, 0);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(G.hoopLeftX, courtFloor, W * 0.22, 6, 0, Math.PI, 0);
+  ctx.stroke();
+  // Floor line
+  ctx.strokeStyle = 'rgba(167, 243, 208, 0.4)';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0, courtFloor);
+  ctx.lineTo(W, courtFloor);
+  ctx.stroke();
+
+  // -- Hoops --
+  drawHoop(G.hoopLeftX, G.hoopY, -1);
+  drawHoop(G.hoopRightX, G.hoopY, 1);
+
+  // -- Ball shadow --
+  if (G.ball.holder !== 'p1' && G.ball.holder !== 'p2') {
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
     ctx.beginPath();
-    ctx.moveTo(ball.trail[0].x, ball.trail[0].y);
-    ball.trail.forEach(t => ctx.lineTo(t.x, t.y));
+    ctx.ellipse(G.ball.x, courtFloor, 8, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // -- Players --
+  drawPlayer(G.p1, 'p1');
+  drawPlayer(G.p2, 'p2');
+
+  // -- Ball --
+  drawBall();
+
+  // -- Particles --
+  G.particles.forEach(p => {
+    ctx.globalAlpha = p.life / p.maxLife;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // -- Message --
+  if (G.messageTimer > 0) {
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, G.messageTimer);
+    ctx.font = `900 ${H * 0.08}px Inter`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#fff';
+    ctx.shadowColor = 'rgba(52,211,153,0.5)';
+    ctx.shadowBlur = 20;
+    ctx.fillText(G.message, W/2, H * 0.4);
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  // -- Possession arrow --
+  const offPlayer = G.offense === 'p1' ? G.p1 : G.p2;
+  ctx.fillStyle = G.offense === 'p1' ? '#34D399' : '#F87171';
+  ctx.beginPath();
+  const arrowX = offPlayer.x;
+  const arrowY = offPlayer.y - playerH - 15;
+  ctx.moveTo(arrowX, arrowY + 8);
+  ctx.lineTo(arrowX - 6, arrowY);
+  ctx.lineTo(arrowX + 6, arrowY);
+  ctx.fill();
+
+  // -- Special active indicator --
+  if (G.p1.specialActive) {
+    ctx.save();
+    ctx.globalAlpha = 0.3 + Math.sin(Date.now() * 0.01) * 0.2;
+    ctx.strokeStyle = G.p1.arch.color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(G.p1.x, G.p1.y - playerH * 0.5, playerW * 2.5, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+  if (G.p2.specialActive) {
+    ctx.save();
+    ctx.globalAlpha = 0.3 + Math.sin(Date.now() * 0.01) * 0.2;
+    ctx.strokeStyle = G.p2.arch.color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(G.p2.x, G.p2.y - playerH * 0.5, playerW * 2.5, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawHoop(x, y, dir) {
+  const { H, courtFloor, backboardH } = G;
+
+  // Pole
+  ctx.fillStyle = '#6B7280';
+  ctx.fillRect(x - 2 + dir * 2, y - 5, 4, courtFloor - y + 5);
+
+  // Backboard
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.fillRect(x + dir * 2 - 1, y - backboardH * 0.4, 4, backboardH);
+
+  // Rim
+  ctx.strokeStyle = '#EF4444';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(x + dir * 3, y + backboardH * 0.1);
+  ctx.lineTo(x - dir * G.rimRadius * 1.5, y + backboardH * 0.1);
+  ctx.stroke();
+
+  // Net (simple lines)
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 1;
+  const rimEnd = x - dir * G.rimRadius * 1.5;
+  const rimStart = x + dir * 3;
+  for (let i = 0; i < 4; i++) {
+    const t = i / 3;
+    const nx = rimStart + (rimEnd - rimStart) * t;
+    ctx.beginPath();
+    ctx.moveTo(nx, y + backboardH * 0.1);
+    ctx.lineTo(nx + (t - 0.5) * 6, y + backboardH * 0.1 + 20);
+    ctx.stroke();
+  }
+}
+
+function drawPlayer(p, who) {
+  const { playerW, playerH, courtFloor } = G;
+  const x = p.x;
+  const y = p.y;
+  const c1 = p.arch.color;
+  const c2 = p.arch.color2;
+
+  // Player shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.beginPath();
+  ctx.ellipse(x, courtFloor + 1, playerW * 1.2, 4, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Leg animation
+  const legOffset = Math.sin(p.animFrame * Math.PI / 2) * playerW * 0.4;
+
+  // Legs
+  ctx.strokeStyle = c2;
+  ctx.lineWidth = playerW * 0.4;
+  ctx.lineCap = 'round';
+  // Left leg
+  ctx.beginPath();
+  ctx.moveTo(x - playerW * 0.2, y - playerH * 0.15);
+  ctx.lineTo(x - playerW * 0.2 - legOffset, y);
+  ctx.stroke();
+  // Right leg
+  ctx.beginPath();
+  ctx.moveTo(x + playerW * 0.2, y - playerH * 0.15);
+  ctx.lineTo(x + playerW * 0.2 + legOffset, y);
+  ctx.stroke();
+
+  // Body
+  ctx.fillStyle = c1;
+  const bodyTop = y - playerH * 0.8;
+  const bodyH = playerH * 0.65;
+  const bodyW = playerW * 1.6;
+  ctx.beginPath();
+  ctx.roundRect(x - bodyW/2, bodyTop, bodyW, bodyH, 4);
+  ctx.fill();
+
+  // Jersey number / label
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.font = `800 ${playerH * 0.18}px Inter`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(who === 'p1' ? 'P1' : 'AI', x, bodyTop + bodyH * 0.5);
+
+  // Arms
+  ctx.strokeStyle = c2;
+  ctx.lineWidth = playerW * 0.35;
+  const armY = bodyTop + bodyH * 0.2;
+  // Left arm
+  ctx.beginPath();
+  ctx.moveTo(x - bodyW/2, armY);
+  const lax = p.shooting ? x - bodyW/2 - playerW * 0.2 : x - bodyW/2 - playerW * 0.5;
+  const lay = p.shooting ? armY - playerH * 0.3 : armY + playerH * 0.15;
+  ctx.lineTo(lax, lay);
+  ctx.stroke();
+  // Right arm
+  ctx.beginPath();
+  ctx.moveTo(x + bodyW/2, armY);
+  const rax = p.shooting ? x + bodyW/2 + playerW * 0.2 : x + bodyW/2 + playerW * 0.5;
+  const ray = p.shooting ? armY - playerH * 0.3 : armY + playerH * 0.15;
+  ctx.lineTo(rax, ray);
+  ctx.stroke();
+
+  // Head
+  const headR = playerW * 0.8;
+  const headY = bodyTop - headR * 0.6;
+  ctx.fillStyle = '#FCD34D';
+  ctx.beginPath();
+  ctx.arc(x, headY, headR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#111';
+  const eyeOff = headR * 0.3 * p.facing;
+  ctx.beginPath();
+  ctx.arc(x + eyeOff - headR * 0.15, headY - headR * 0.1, 2, 0, Math.PI * 2);
+  ctx.arc(x + eyeOff + headR * 0.15, headY - headR * 0.1, 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Name tag
+  ctx.fillStyle = c1;
+  ctx.font = `700 ${Math.max(9, playerH * 0.11)}px Inter`;
+  ctx.textAlign = 'center';
+  ctx.fillText(p.arch.name, x, headY - headR - 4);
+}
+
+function drawBall() {
+  const ball = G.ball;
+  const r = G.W * 0.012;
+
+  ctx.save();
+  if (ball.holder === 'air') {
+    ctx.translate(ball.x, ball.y);
+    ctx.rotate(ball.rotation || 0);
+    ctx.translate(-ball.x, -ball.y);
+  }
+
+  // Ball
+  ctx.fillStyle = '#F97316';
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, r, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Lines on ball
+  ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(ball.x - r, ball.y);
+  ctx.lineTo(ball.x + r, ball.y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(ball.x, ball.y - r);
+  ctx.lineTo(ball.x, ball.y + r);
+  ctx.stroke();
+
+  // Recycling symbol (simplified arrows)
+  ctx.strokeStyle = 'rgba(52,211,153,0.6)';
+  ctx.lineWidth = 1.5;
+  const sr = r * 0.45;
+  for (let i = 0; i < 3; i++) {
+    const angle = (i * Math.PI * 2 / 3) - Math.PI / 2;
+    const ax = ball.x + Math.cos(angle) * sr;
+    const ay = ball.y + Math.sin(angle) * sr;
+    const bAngle = angle + Math.PI * 2 / 3;
+    const bx = ball.x + Math.cos(bAngle) * sr;
+    const by = ball.y + Math.sin(bAngle) * sr;
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(bx, by);
+    ctx.stroke();
+    // Arrow head
+    const arrowAngle = Math.atan2(by - ay, bx - ax);
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(bx - Math.cos(arrowAngle - 0.5) * 3, by - Math.sin(arrowAngle - 0.5) * 3);
     ctx.stroke();
   }
 
-  drawBall(ball.x, ball.y, ball.r);
-  drawTrajectory();
-  drawPowerups();
-  drawParticles();
-  drawFlash();
-  drawActivePowerupIcons();
+  ctx.restore();
 }
 
-function gameLoop() {
-  if (state !== 'start' && state !== 'gameover' && state !== 'trivia') {
-    update();
-  }
-  if (state !== 'start') {
-    draw();
-  }
-  requestAnimationFrame(gameLoop);
-}
+// ==================== INIT ====================
+showScreen('title');
 
-// ========================
-// GAME OVER
-// ========================
-function showGameOver() {
-  document.getElementById('gameover-overlay').classList.add('active');
-  document.getElementById('go-score').textContent = score;
-  document.getElementById('go-baskets').textContent = baskets;
-  document.getElementById('go-accuracy').textContent = triviaTotal > 0 ? Math.round(triviaCorrect / triviaTotal * 100) + '%' : '0%';
-  document.getElementById('go-streak').textContent = bestStreak;
-  document.getElementById('go-fact').textContent = FACTS[Math.floor(Math.random() * FACTS.length)];
-
-  // Leaderboard
-  let lb = JSON.parse(localStorage.getItem('ecoHoopsLeaderboard') || '[]');
-  lb.push({ score, baskets, date: new Date().toISOString().slice(0, 10) });
-  lb.sort((a, b) => b.score - a.score);
-  lb = lb.slice(0, 10);
-  localStorage.setItem('ecoHoopsLeaderboard', JSON.stringify(lb));
-}
-
-function shareScore() {
-  let text = `I scored ${score} points in Eco Hoops by Rewoven! Made ${baskets} baskets with ${triviaTotal > 0 ? Math.round(triviaCorrect / triviaTotal * 100) : 0}% trivia accuracy. Play at rewovenapp.com/game/eco-hoops/`;
-  if (navigator.share) {
-    navigator.share({ title: 'Eco Hoops - Rewoven', text });
-  } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(text);
-    alert('Score copied to clipboard!');
-  }
-}
-
-// ========================
-// START
-// ========================
-function startGame() {
-  document.getElementById('start-overlay').classList.remove('active');
-  document.getElementById('gameover-overlay').classList.remove('active');
-  document.getElementById('trivia-overlay').classList.remove('active');
-  initAudio();
-  initGame();
-  state = 'aiming';
-}
-
-gameLoop();
+// Prevent scrolling
+document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+document.addEventListener('contextmenu', e => e.preventDefault());
 </script>
 </body>
 </html>
