@@ -140,7 +140,7 @@
     /* ── Hero ── */
     .hero {
       min-height: 100vh; display: flex; align-items: center;
-      background: linear-gradient(135deg, var(--bg-cream) 0%, var(--white) 50%, var(--green-50) 100%);
+      background: linear-gradient(180deg, var(--bg-cream) 0%, var(--green-50) 40%, var(--white) 100%);
       position: relative; padding-top: 72px; overflow: hidden;
     }
     .hero::before {
@@ -237,6 +237,12 @@
     /* ── Problem ── */
     .problem {
       padding: 120px 0; background: var(--white);
+      position: relative;
+    }
+    .problem::before {
+      content: ''; position: absolute; top: -80px; left: 0; right: 0; height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--white));
+      pointer-events: none;
     }
     .problem .container { text-align: center; }
     .problem-grid {
@@ -311,10 +317,10 @@
     .feature-demo-header span { font-size: 13px; font-weight: 600; color: var(--dark); }
     .feature-demo-row {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 8px 0; font-size: 13px;
+      padding: 8px 0; font-size: 13px; gap: 16px;
     }
-    .feature-demo-row .label { color: var(--gray-600); }
-    .feature-demo-row .value { font-weight: 700; color: var(--green-700); }
+    .feature-demo-row .label { color: var(--gray-600); white-space: nowrap; }
+    .feature-demo-row .value { font-weight: 700; color: var(--green-700); white-space: nowrap; }
     .feature-content .section-label { margin-bottom: 12px; }
     .feature-content h3 {
       font-family: 'Playfair Display', serif; font-size: 32px;
@@ -523,7 +529,7 @@
       color: var(--green-400);
     }
     [data-theme="dark"] .hero {
-      background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F2A1F 100%);
+      background: linear-gradient(180deg, #0F172A 0%, #0F2A1F 40%, #0F172A 100%);
     }
     [data-theme="dark"] .hero::before {
       background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%);
@@ -965,8 +971,8 @@
       <div class="impact-grid">
         <div class="impact-card fade-in">
           <div class="icon">👩‍🎓</div>
-          <div class="number">500+</div>
-          <div class="text">Active student users across 5+ UAE schools</div>
+          <div class="number">200+</div>
+          <div class="text">Active student users across 2 UAE schools</div>
         </div>
         <div class="impact-card fade-in">
           <div class="icon">🎯</div>
