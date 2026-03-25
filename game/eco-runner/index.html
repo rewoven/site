@@ -411,6 +411,8 @@ let speed = 6;
 let baseSpeed = 6;
 let maxSpeed = 15;
 let frameCount = 0;
+let lastFrameTime = 0;
+const TARGET_FRAME_MS = 1000 / 60; // normalize to 60fps
 let lastFactMilestone = 0;
 let groundY;
 let particles = [];
@@ -537,6 +539,7 @@ function startGame() {
   energySaved = 0;
   speed = baseSpeed;
   frameCount = 0;
+  lastFrameTime = 0;
   lastFactMilestone = 0;
   currentBg = 0;
   particles = [];
@@ -766,16 +769,20 @@ function spawnParticles(x, y, color, count) {
 }
 
 // ============ GAME LOOP ============
-function gameLoop() {
+function gameLoop(timestamp) {
   if (gameState !== 'playing') return;
-  update();
+  if (!lastFrameTime) lastFrameTime = timestamp;
+  const dt = Math.min((timestamp - lastFrameTime) / TARGET_FRAME_MS, 3); // delta factor, capped at 3 to avoid spiral
+  lastFrameTime = timestamp;
+  update(dt);
   draw();
   requestAnimationFrame(gameLoop);
 }
 
-function update() {
+function update(dt) {
+  if (!dt) dt = 1;
   frameCount++;
-  distance += speed * 0.05;
+  distance += speed * 0.05 * dt;
 
   // Increase speed over time
   speed = Math.min(maxSpeed, baseSpeed + distance * 0.002);
@@ -798,8 +805,8 @@ function update() {
 
   // Update player
   if (player.state === 'jump' || player.y + player.h < groundY) {
-    player.vy += player.gravity;
-    player.y += player.vy;
+    player.vy += player.gravity * dt;
+    player.y += player.vy * dt;
     if (player.y + player.h >= groundY) {
       player.y = groundY - player.h;
       player.vy = 0;
@@ -808,12 +815,12 @@ function update() {
     }
   }
   if (player.invincible > 0) player.invincible--;
-  player.runFrame += 0.15;
+  player.runFrame += 0.15 * dt;
 
   // Update bg layers
   for (let layer of bgLayers) {
     for (let el of layer.elements) {
-      el.x -= speed * layer.speed;
+      el.x -= speed * layer.speed * dt;
     }
     // Recycle elements
     const first = layer.elements[0];
@@ -839,14 +846,14 @@ function update() {
 
   // Update collectibles
   for (let c of collectibles) {
-    c.x -= speed;
-    c.glow += 0.05;
+    c.x -= speed * dt;
+    c.glow += 0.05 * dt;
   }
   collectibles = collectibles.filter(c => c.x > -50);
 
   // Update obstacles
   for (let o of obstacles) {
-    o.x -= speed;
+    o.x -= speed * dt;
   }
   obstacles = obstacles.filter(o => o.x > -100);
 
