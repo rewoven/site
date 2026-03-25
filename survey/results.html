@@ -305,8 +305,8 @@
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
+        const SUPABASE_URL = 'https://puagdyacwgqkebjdbbrz.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_LarSIrAtxsvXN4RLLicQyw_TJk8s92b';
         const PASSWORD = 'rewoven2026';
 
         let allResponses = [];
@@ -473,6 +473,8 @@
                 { field: 'desired_features', title: 'Most Desired App Features', type: 'bar' },
                 { field: 'discard_method', title: 'Clothing Disposal Methods', type: 'bar' },
                 { field: 'education_interest', title: 'Interest in Educational Content', type: 'doughnut' },
+                { field: 'unworn_items', title: 'Unworn Wardrobe Items', type: 'doughnut' },
+                { field: 'app_donate_exchange', title: 'Would Use App to Donate/Exchange', type: 'doughnut' },
             ];
 
             let html = '';
@@ -504,13 +506,13 @@
                 'submitted_at', 'age_range', 'location', 'clothing_frequency', 'monthly_spend',
                 'discard_method', 'waste_awareness', 'uae_climate_concern', 'fashion_climate_link',
                 'sustainable_fashion_knowledge', 'sustainability_barriers', 'app_interest',
-                'desired_features', 'education_interest', 'additional_thoughts'
+                'desired_features', 'education_interest', 'unworn_items', 'app_donate_exchange', 'additional_thoughts'
             ];
             const headers = [
                 'Date', 'Age', 'Location', 'Shopping Freq.', 'Monthly Spend',
                 'Disposal', 'Awareness', 'Climate Concern', 'Fashion-Climate Link',
                 'Sust. Knowledge', 'Barriers', 'App Interest',
-                'Desired Features', 'Education Interest', 'Additional Thoughts'
+                'Desired Features', 'Education Interest', 'Unworn Items', 'Donate/Exchange App', 'Additional Thoughts'
             ];
 
             let html = '<table><thead><tr>';
