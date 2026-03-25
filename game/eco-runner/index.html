@@ -407,9 +407,9 @@ let distance = 0;
 let itemsCollected = 0;
 let waterSaved = 0;
 let energySaved = 0;
-let speed = 6;
-let baseSpeed = 6;
-let maxSpeed = 15;
+let speed = 7;
+let baseSpeed = 7;
+let maxSpeed = 18;
 let frameCount = 0;
 let lastFrameTime = 0;
 const TARGET_FRAME_MS = 1000 / 60; // normalize to 60fps
@@ -785,7 +785,7 @@ function update(dt) {
   distance += speed * 0.05 * dt;
 
   // Increase speed over time
-  speed = Math.min(maxSpeed, baseSpeed + distance * 0.002);
+  speed = Math.min(maxSpeed, baseSpeed + distance * 0.005);
 
   // Background change every 500 pts
   const newBg = Math.min(3, Math.floor(score / 500));
