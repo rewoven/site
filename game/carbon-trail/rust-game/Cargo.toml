@@ -8,25 +8,8 @@ crate-type = ["cdylib"]
 
 [dependencies]
 wasm-bindgen = "0.2"
-web-sys = { version = "0.3", features = [
-    "Document",
-    "Element",
-    "HtmlElement",
-    "HtmlCanvasElement",
-    "CanvasRenderingContext2d",
-    "Window",
-    "MouseEvent",
-    "EventTarget",
-    "console",
-    "Node",
-    "NodeList",
-    "HtmlButtonElement",
-    "HtmlDivElement",
-    "CssStyleDeclaration",
-    "DomRect",
-    "Text",
-] }
-js-sys = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 [profile.release]
 opt-level = "s"

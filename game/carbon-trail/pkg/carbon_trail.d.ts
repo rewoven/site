@@ -1,20 +1,35 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export function main(): void;
+export function get_all_choice_labels(): string;
+
+export function get_grade(total_co2: number): string;
+
+export function get_industry_avg(): number;
+
+export function get_stage_info(stage_index: number): string;
+
+export function get_total_stages(): number;
+
+export function make_choice(state_json: string, stage_index: number, choice_index: number): string;
+
+export function new_game(): string;
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
-    readonly main: () => void;
-    readonly wasm_bindgen__convert__closures_____invoke__h0438fb621d932236: (a: number, b: number) => void;
+    readonly get_all_choice_labels: () => [number, number];
+    readonly get_grade: (a: number) => [number, number];
+    readonly get_industry_avg: () => number;
+    readonly get_stage_info: (a: number) => [number, number];
+    readonly get_total_stages: () => number;
+    readonly make_choice: (a: number, b: number, c: number, d: number) => [number, number];
+    readonly new_game: () => [number, number];
+    readonly __wbindgen_externrefs: WebAssembly.Table;
+    readonly __wbindgen_free: (a: number, b: number, c: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;
     readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
-    readonly __externref_table_alloc: () => number;
-    readonly __wbindgen_externrefs: WebAssembly.Table;
-    readonly __wbindgen_exn_store: (a: number) => void;
-    readonly __wbindgen_destroy_closure: (a: number, b: number) => void;
     readonly __wbindgen_start: () => void;
 }
 
