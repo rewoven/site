@@ -16,51 +16,64 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { start_url } = await req.json();
+    const { start_url, with_extension } = await req.json();
 
-    // Download extension zip
-    const extResponse = await fetch(EXTENSION_URL);
-    if (!extResponse.ok) {
-      throw new Error("Failed to download extension");
+    let body: BodyInit;
+    let headers: Record<string, string> = {
+      Authorization: `Bearer ${HYPERBEAM_API_KEY}`,
+    };
+
+    const sessionConfig: Record<string, unknown> = {
+      start_url: start_url || "https://www.zara.com",
+      kiosk: false,
+      dark: true,
+      adblock: true,
+      width: 1280,
+      height: 720,
+      fps: 30,
+      timeout: {
+        absolute: 300,
+        inactive: 120,
+        offline: 30,
+      },
+      region: "NA",
+    };
+
+    if (with_extension !== false) {
+      // Try to download and attach extension
+      try {
+        const extResponse = await fetch(EXTENSION_URL, { redirect: "follow" });
+        if (extResponse.ok) {
+          const extBlob = await extResponse.blob();
+          const formData = new FormData();
+          formData.append("ex", extBlob, "extension.zip");
+          sessionConfig.extension = { field: "ex" };
+          formData.append("body", JSON.stringify(sessionConfig));
+          body = formData;
+        } else {
+          // Extension download failed, proceed without it
+          headers["Content-Type"] = "application/json";
+          body = JSON.stringify(sessionConfig);
+        }
+      } catch {
+        // Extension download failed, proceed without it
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify(sessionConfig);
+      }
+    } else {
+      headers["Content-Type"] = "application/json";
+      body = JSON.stringify(sessionConfig);
     }
-    const extBlob = await extResponse.blob();
-
-    // Create multipart form data
-    const formData = new FormData();
-    formData.append("ex", extBlob, "extension.zip");
-    formData.append(
-      "body",
-      JSON.stringify({
-        start_url: start_url || "https://www.zara.com",
-        kiosk: false,
-        dark: true,
-        adblock: true,
-        width: 1280,
-        height: 720,
-        fps: 30,
-        timeout: {
-          absolute: 300, // 5 minute max session
-          inactive: 120, // 2 min idle timeout
-          offline: 30,
-        },
-        extension: {
-          field: "ex",
-        },
-        region: "NA",
-      })
-    );
 
     const response = await fetch("https://engine.hyperbeam.com/v0/vm", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${HYPERBEAM_API_KEY}`,
-      },
-      body: formData,
+      headers,
+      body,
     });
 
     if (!response.ok) {
       const error = await response.text();
-      return new Response(JSON.stringify({ error }), {
+      return new Response(JSON.stringify({ error, status: response.status }), {
         status: 502,
         headers: {
           "Content-Type": "application/json",
@@ -85,7 +98,7 @@ Deno.serve(async (req) => {
     );
   } catch (err) {
     return new Response(
-      JSON.stringify({ error: (err as Error).message }),
+      JSON.stringify({ error: (err as Error).message, stack: (err as Error).stack }),
       {
         status: 500,
         headers: {
