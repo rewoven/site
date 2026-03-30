@@ -16,59 +16,29 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { start_url, with_extension } = await req.json();
-
-    let body: BodyInit;
-    let headers: Record<string, string> = {
-      Authorization: `Bearer ${HYPERBEAM_API_KEY}`,
-    };
-
-    const sessionConfig: Record<string, unknown> = {
-      start_url: start_url || "https://www.zara.com",
-      kiosk: false,
-      dark: true,
-      adblock: true,
-      width: 1280,
-      height: 720,
-      fps: 30,
-      timeout: {
-        absolute: 300,
-        inactive: 120,
-        offline: 30,
-      },
-      region: "NA",
-    };
-
-    if (with_extension !== false) {
-      // Try to download and attach extension
-      try {
-        const extResponse = await fetch(EXTENSION_URL, { redirect: "follow" });
-        if (extResponse.ok) {
-          const extBlob = await extResponse.blob();
-          const formData = new FormData();
-          formData.append("ex", extBlob, "extension.zip");
-          sessionConfig.extension = { field: "ex" };
-          formData.append("body", JSON.stringify(sessionConfig));
-          body = formData;
-        } else {
-          // Extension download failed, proceed without it
-          headers["Content-Type"] = "application/json";
-          body = JSON.stringify(sessionConfig);
-        }
-      } catch {
-        // Extension download failed, proceed without it
-        headers["Content-Type"] = "application/json";
-        body = JSON.stringify(sessionConfig);
-      }
-    } else {
-      headers["Content-Type"] = "application/json";
-      body = JSON.stringify(sessionConfig);
-    }
+    const { start_url } = await req.json();
 
     const response = await fetch("https://engine.hyperbeam.com/v0/vm", {
       method: "POST",
-      headers,
-      body,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${HYPERBEAM_API_KEY}`,
+      },
+      body: JSON.stringify({
+        start_url: start_url || "https://www.zara.com",
+        kiosk: false,
+        dark: true,
+        adblock: true,
+        width: 1280,
+        height: 720,
+        fps: 30,
+        timeout: {
+          absolute: 300,
+          inactive: 120,
+          offline: 30,
+        },
+        region: "NA",
+      }),
     });
 
     if (!response.ok) {
