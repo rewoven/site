@@ -251,6 +251,38 @@
       70% { transform: translate(90px, -30px); }
     }
 
+    /* Factory Sort preview */
+    .preview-factory {
+      background: linear-gradient(135deg, var(--green-50), #E0F2FE);
+      position: relative;
+    }
+    .factory-bins {
+      position: absolute; bottom: 28px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 12px;
+    }
+    .fbin {
+      display: block; width: 40px; height: 50px;
+      border-radius: 4px 4px 6px 6px;
+      border: 2px solid rgba(0,0,0,0.08);
+      border-top: 3px solid rgba(0,0,0,0.12);
+    }
+    .fbin-blue { background: #3B82F6; }
+    .fbin-green { background: #22C55E; }
+    .fbin-yellow { background: #EAB308; }
+    .fbin-gray { background: #9CA3AF; }
+    .factory-item {
+      position: absolute; top: 24%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 44px;
+      animation: factoryFall 2.5s ease-in infinite;
+    }
+    @keyframes factoryFall {
+      0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+      80% { transform: translateX(-50%) translateY(60px); opacity: 1; }
+      100% { transform: translateX(-50%) translateY(60px); opacity: 0; }
+    }
+
     /* Card body */
     .card-body { padding: 28px; }
     .card-header {
@@ -419,6 +451,33 @@
           <p class="card-desc">Shoot hoops with recycled basketballs and answer sustainability trivia to double your score. Build streaks and learn eco facts!</p>
           <p class="card-genre">Basketball · Trivia</p>
           <a href="/game/eco-hoops/" class="play-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Play Now
+          </a>
+        </div>
+      </div>
+
+      <!-- Factory Sort -->
+      <div class="game-card">
+        <div class="card-preview preview-factory">
+          <div class="factory-bins">
+            <span class="fbin fbin-blue"></span>
+            <span class="fbin fbin-green"></span>
+            <span class="fbin fbin-yellow"></span>
+            <span class="fbin fbin-gray"></span>
+          </div>
+          <div class="factory-item">
+            <span>&#9879;</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-header">
+            <span class="card-title">Factory Sort</span>
+            <span class="badge badge-medium">Medium</span>
+          </div>
+          <p class="card-desc">Work in a textile recycling facility! Sort falling clothing items into the right bins based on their material and condition. Built with Rust &amp; WebAssembly.</p>
+          <p class="card-genre">Sorting &middot; Arcade &middot; WASM</p>
+          <a href="/game/factory-sort/" class="play-btn">
             <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             Play Now
           </a>
