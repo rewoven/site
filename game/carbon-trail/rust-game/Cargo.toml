@@ -1,0 +1,33 @@
+[package]
+name = "carbon-trail"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = [
+    "Document",
+    "Element",
+    "HtmlElement",
+    "HtmlCanvasElement",
+    "CanvasRenderingContext2d",
+    "Window",
+    "MouseEvent",
+    "EventTarget",
+    "console",
+    "Node",
+    "NodeList",
+    "HtmlButtonElement",
+    "HtmlDivElement",
+    "CssStyleDeclaration",
+    "DomRect",
+    "Text",
+] }
+js-sys = "0.3"
+
+[profile.release]
+opt-level = "s"
+lto = true

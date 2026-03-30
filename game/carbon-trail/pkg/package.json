@@ -1,0 +1,15 @@
+{
+  "name": "carbon-trail",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "carbon_trail_bg.wasm",
+    "carbon_trail.js",
+    "carbon_trail.d.ts"
+  ],
+  "main": "carbon_trail.js",
+  "types": "carbon_trail.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

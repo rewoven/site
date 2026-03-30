@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fashion Carbon Trail | Rewoven Games</title>
+<meta name="description" content="Trace a garment's journey and make choices to minimize its carbon footprint." />
+<link rel="icon" href="../../assets/logo.png" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: #0a1208;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #E2E8F0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Nav bar */
+.rw-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px;
+    background: linear-gradient(180deg, rgba(6,78,59,0.95), rgba(6,78,59,0.7) 80%, transparent);
+}
+.rw-bar a { color: #A7F3D0; text-decoration: none; font-weight: 700; font-size: 13px; }
+.rw-bar a:hover { color: #34D399; }
+.rw-bar .rw-title { color: #fff; font-weight: 800; font-size: 15px; }
+.rw-back { padding: 4px 12px; border: 1px solid rgba(167,243,208,0.3); border-radius: 8px; }
+
+/* Game container */
+#carbon-trail-game {
+    max-width: 640px;
+    width: 100%;
+    margin: 80px auto 40px;
+    padding: 0 16px;
+    flex: 1;
+}
+
+/* Header */
+.ct-header {
+    background: linear-gradient(135deg, #064E3B, #065F46);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(167,243,208,0.15);
+}
+.ct-stage-info {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px;
+}
+.ct-stage-num {
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    color: #A7F3D0;
+}
+.ct-stage-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-weight: 800; color: #fff;
+}
+.ct-stage-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; font-weight: 800; color: #34D399;
+    margin-bottom: 4px;
+}
+.ct-co2-display {
+    font-size: 32px; font-weight: 900; color: #34D399;
+    font-variant-numeric: tabular-nums;
+}
+.ct-co2-unit {
+    font-size: 14px; font-weight: 600; color: #A7F3D0;
+}
+.ct-progress-bar {
+    margin-top: 12px;
+    height: 6px; background: rgba(255,255,255,0.1);
+    border-radius: 3px; overflow: hidden;
+}
+.ct-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22C55E, #EAB308, #EF4444);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+/* Content area */
+.ct-content {
+    background: #111D13;
+    border: 1px solid rgba(167,243,208,0.1);
+    border-radius: 16px;
+    padding: 32px 24px;
+}
+.ct-stage-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #064E3B, #059669);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 900; color: #A7F3D0;
+    margin: 0 auto 20px;
+    border: 2px solid rgba(167,243,208,0.2);
+}
+.ct-description {
+    font-size: 15px; line-height: 1.7; color: #94A3B8;
+    margin-bottom: 28px; text-align: center;
+}
+
+/* Choice buttons */
+.ct-choices {
+    display: flex; flex-direction: column; gap: 12px;
+}
+.ct-choice-btn {
+    display: flex; flex-direction: column; gap: 4px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(167,243,208,0.12);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+}
+.ct-choice-btn:hover {
+    background: rgba(16,185,129,0.08);
+    border-color: #34D399;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(16,185,129,0.15);
+}
+.ct-choice-label {
+    font-size: 16px; font-weight: 700; color: #E2E8F0;
+}
+.ct-choice-eco {
+    font-size: 12px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px;
+    display: inline-block; width: fit-content;
+}
+.ct-eco-low { color: #22C55E; background: rgba(34,197,94,0.1); }
+.ct-eco-med { color: #EAB308; background: rgba(234,179,8,0.1); }
+.ct-eco-high { color: #EF4444; background: rgba(239,68,68,0.1); }
+
+/* Result view */
+.ct-result-view { text-align: center; }
+.ct-impact-badge {
+    display: inline-block;
+    font-size: 28px; font-weight: 900; color: #F97316;
+    margin-bottom: 20px;
+}
+.ct-fact-box {
+    background: rgba(6,78,59,0.3);
+    border: 1px solid rgba(167,243,208,0.15);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 28px;
+}
+.ct-fact-box p {
+    font-size: 14px; line-height: 1.7; color: #D1FAE5;
+}
+
+/* Results screen */
+.ct-results { text-align: center; }
+.ct-grade-circle {
+    width: 100px; height: 100px;
+    border: 4px solid; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; font-weight: 900;
+    margin: 0 auto 20px;
+    color: inherit;
+}
+.ct-result-text {
+    font-size: 16px; line-height: 1.7; color: #94A3B8;
+    margin-bottom: 20px;
+}
+.ct-result-text strong { color: #E2E8F0; }
+.ct-comparison-bar-container { margin-bottom: 20px; }
+.ct-comparison-label {
+    font-size: 12px; font-weight: 600; color: #64748B;
+    margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
+}
+.ct-comparison-track {
+    height: 20px; background: rgba(255,255,255,0.06);
+    border-radius: 10px; position: relative; overflow: visible;
+}
+.ct-comparison-fill {
+    height: 100%; border-radius: 10px;
+    transition: width 1s ease;
+}
+.ct-your-fill { position: relative; }
+.ct-comparison-marker {
+    position: absolute; top: -6px; transform: translateX(-50%);
+}
+.ct-marker-line {
+    width: 2px; height: 32px; background: #94A3B8;
+    margin: 0 auto;
+}
+.ct-marker-label {
+    font-size: 10px; font-weight: 700; color: #94A3B8;
+    text-align: center; margin-top: 2px;
+}
+.ct-comparison-text { font-size: 14px; }
+
+/* Buttons */
+.ct-btn {
+    padding: 14px 40px; border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+.ct-btn-primary {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(16,185,129,0.4);
+}
+.ct-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16,185,129,0.5);
+}
+
+/* Footer */
+.rw-footer {
+    text-align: center; padding: 20px;
+    font-size: 12px; color: #475569;
+}
+.rw-footer a { color: #10B981; text-decoration: none; }
+
+@media (max-width: 480px) {
+    #carbon-trail-game { margin-top: 64px; }
+    .ct-header { padding: 16px; }
+    .ct-content { padding: 24px 16px; }
+    .ct-co2-display { font-size: 24px; }
+    .ct-stage-title { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+
+<div class="rw-bar">
+    <a href="/game/" class="rw-back">&#8592; Games</a>
+    <span class="rw-title">Fashion Carbon Trail</span>
+    <span style="width:60px"></span>
+</div>
+
+<div id="carbon-trail-game"></div>
+
+<div class="rw-footer">
+    Made with care by <a href="/">Rewoven</a>
+</div>
+
+<script type="module">
+import init from './pkg/carbon_trail.js';
+async function run() {
+    await init();
+}
+run().catch(console.error);
+</script>
+
+</body>
+</html>
