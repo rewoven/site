@@ -509,7 +509,7 @@
       }
       var saved = localStorage.getItem('theme');
       if (saved) setTheme(saved);
-      else if (window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme('dark');
+      else setTheme('light');
       toggle.addEventListener('click', function() {
         setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
       });
