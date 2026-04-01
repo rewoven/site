@@ -687,9 +687,15 @@
   <!-- Search & Filters -->
   <div class="controls">
     <div class="container">
-      <div class="search-bar">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" placeholder="Search brands by name..." />
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;">
+        <div class="search-bar" style="flex:1;margin-bottom:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Search brands by name..." />
+        </div>
+        <a href="/swap/" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:#059669;color:#fff;border-radius:50px;font-weight:600;font-size:0.95rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='#047857'" onmouseout="this.style.background='#059669'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+          Swap It
+        </a>
       </div>
       <div class="filter-row">
         <div class="category-tabs" id="categoryTabs">
