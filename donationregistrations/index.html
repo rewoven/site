@@ -5,216 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donation Registrations | Rewoven Admin</title>
     <link rel="icon" href="../assets/logo.png" type="image/png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
         :root {
-            --green-500: #10B981;
-            --green-600: #059669;
-            --green-700: #047857;
-            --green-800: #065F46;
-            --green-900: #064E3B;
-            --green-50: #ECFDF5;
-            --green-100: #D1FAE5;
-            --green-200: #A7F3D0;
-            --heart: #E11D48;
-            --gold: #F59E0B;
-            --bg: #F0FDF4;
-            --surface: #FFFFFF;
-            --text: #111827;
-            --text-sec: #4B5563;
-            --border: #D1FAE5;
-            --radius: 14px;
-            --shadow: 0 2px 16px rgba(16,185,129,0.08);
+            --green-500: #10B981; --green-600: #059669; --green-800: #065F46;
+            --green-50: #ECFDF5; --green-100: #D1FAE5; --green-200: #A7F3D0;
+            --bg: #F0FDF4; --surface: #FFFFFF; --text: #111827; --text-sec: #4B5563;
+            --border: #D1FAE5; --radius: 14px;
         }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg); color: var(--text);
-            min-height: 100vh; line-height: 1.6;
-        }
-
-        /* Auth */
-        .auth-screen {
-            display: flex; align-items: center; justify-content: center;
-            min-height: 100vh; padding: 24px;
-        }
-        .auth-card {
-            background: var(--surface); border-radius: var(--radius);
-            padding: 44px 36px; box-shadow: var(--shadow);
-            border: 1px solid var(--border); text-align: center;
-            max-width: 420px; width: 100%;
-        }
-        .auth-card h2 { color: var(--green-900); margin-bottom: 6px; font-size: 1.5rem; }
+        .auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+        .auth-card { background: var(--surface); border-radius: var(--radius); padding: 44px 36px; border: 1px solid var(--border); text-align: center; max-width: 420px; width: 100%; box-shadow: 0 2px 16px rgba(16,185,129,0.08); }
+        .auth-card h2 { color: var(--green-800); margin-bottom: 6px; }
         .auth-card p { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 24px; }
-        .auth-input {
-            width: 100%; padding: 14px 18px;
-            border: 2px solid var(--border); border-radius: 10px;
-            font-size: 0.95rem; font-family: inherit;
-            margin-bottom: 16px; text-align: center; outline: none;
-        }
+        .auth-input { width: 100%; padding: 14px 18px; border: 2px solid var(--border); border-radius: 10px; font-size: 0.95rem; font-family: inherit; margin-bottom: 16px; text-align: center; outline: none; }
         .auth-input:focus { border-color: var(--green-500); }
-        .auth-error { color: var(--heart); font-size: 0.85rem; margin-bottom: 12px; display: none; }
-        .btn {
-            padding: 14px 28px; border-radius: 10px; font-size: 0.95rem;
-            font-weight: 600; border: none; cursor: pointer;
-            font-family: inherit; background: var(--green-500);
-            color: white; width: 100%; transition: all 0.2s;
-        }
+        .auth-error { color: #E11D48; font-size: 0.85rem; margin-bottom: 12px; display: none; }
+        .btn { padding: 14px 28px; border-radius: 10px; font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer; font-family: inherit; background: var(--green-500); color: white; width: 100%; }
         .btn:hover { background: var(--green-600); }
 
-        /* Dashboard */
         .dashboard { display: none; }
-        .header {
-            background: rgba(255,255,255,0.95); border-bottom: 1px solid var(--border);
-            padding: 16px 24px; position: sticky; top: 0; z-index: 100;
-            backdrop-filter: blur(12px);
-        }
-        .header-inner {
-            max-width: 1200px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .logo {
-            font-size: 1.2rem; font-weight: 800; color: var(--green-800);
-            text-decoration: none; display: flex; align-items: center; gap: 8px;
-        }
-        .logo small { font-weight: 400; font-size: 0.75rem; color: var(--text-sec); }
+        .header { background: rgba(255,255,255,0.95); border-bottom: 1px solid var(--border); padding: 16px 24px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+        .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 1.2rem; font-weight: 800; color: var(--green-800); text-decoration: none; }
+        .logo small { font-weight: 400; font-size: 0.75rem; color: var(--text-sec); margin-left: 6px; }
         .header-actions { display: flex; gap: 10px; align-items: center; }
-        .btn-sm {
-            padding: 8px 16px; border-radius: 8px; font-size: 0.8rem;
-            font-weight: 600; border: none; cursor: pointer;
-            font-family: inherit; transition: all 0.2s;
-        }
-        .btn-primary { background: var(--green-500); color: white; }
-        .btn-primary:hover { background: var(--green-600); }
-        .btn-outline {
-            background: transparent; color: var(--green-700);
-            border: 2px solid var(--border);
-        }
+        .btn-sm { padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; border: none; cursor: pointer; font-family: inherit; transition: all 0.2s; text-decoration: none; display: inline-block; }
+        .btn-green { background: var(--green-500); color: white; }
+        .btn-green:hover { background: var(--green-600); }
+        .btn-outline { background: transparent; color: var(--green-800); border: 2px solid var(--border); }
         .btn-outline:hover { border-color: var(--green-500); }
+        .count-badge { font-size: 0.8rem; color: var(--text-sec); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
 
-        /* Stats */
-        .stats-row {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px; margin-bottom: 28px;
-        }
-        .stat-card {
-            background: var(--surface); border-radius: var(--radius);
-            padding: 22px; border: 1px solid var(--border); box-shadow: var(--shadow);
-        }
-        .stat-card .label {
-            font-size: 0.75rem; font-weight: 700; color: var(--text-sec);
-            text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
-        }
-        .stat-card .value { font-size: 2rem; font-weight: 800; color: var(--green-800); }
-        .stat-card .sub { font-size: 0.78rem; color: var(--text-sec); margin-top: 2px; }
-
-        /* Charts */
-        .chart-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 18px; margin-bottom: 28px;
-        }
-        .chart-card {
-            background: var(--surface); border-radius: var(--radius);
-            padding: 22px; border: 1px solid var(--border); box-shadow: var(--shadow);
-        }
-        .chart-card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 14px; }
-        .chart-wrap { position: relative; width: 100%; max-height: 300px; }
-
-        /* Table */
-        .table-card {
-            background: var(--surface); border-radius: var(--radius);
-            border: 1px solid var(--border); box-shadow: var(--shadow);
-            overflow: hidden; margin-bottom: 28px;
-        }
-        .table-header {
-            padding: 18px 22px; display: flex; justify-content: space-between;
-            align-items: center; border-bottom: 1px solid var(--border);
-        }
-        .table-header h3 { font-size: 0.95rem; font-weight: 700; }
-        .table-scroll { overflow-x: auto; max-height: 600px; overflow-y: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-        th {
-            background: var(--green-50); padding: 10px 14px; text-align: left;
-            font-weight: 700; color: var(--text-sec); white-space: nowrap;
-            border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 1;
-        }
-        td {
-            padding: 10px 14px; border-bottom: 1px solid #eee;
-            max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
+        .table-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 2px 16px rgba(16,185,129,0.08); }
+        .table-header { padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .table-header h3 { font-size: 1rem; font-weight: 700; }
+        .table-scroll { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { background: var(--green-50); padding: 12px 16px; text-align: left; font-weight: 700; color: var(--text-sec); white-space: nowrap; border-bottom: 2px solid var(--border); position: sticky; top: 0; }
+        td { padding: 12px 16px; border-bottom: 1px solid #eee; white-space: nowrap; }
         tr:hover td { background: var(--green-50); }
 
-        .badge {
-            display: inline-block; padding: 2px 10px; border-radius: 20px;
-            font-size: 0.72rem; font-weight: 700;
-        }
+        .badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
         .badge-dropoff { background: #DBEAFE; color: #1E40AF; }
         .badge-pickup { background: #FEF3C7; color: #92400E; }
         .badge-ship { background: #EDE9FE; color: #5B21B6; }
-        .badge-items-low { background: #FEE2E2; color: #991B1B; }
-        .badge-items-mid { background: #FEF3C7; color: #92400E; }
-        .badge-items-high { background: #D1FAE5; color: #065F46; }
 
-        .empty-state {
-            text-align: center; padding: 60px 24px; color: var(--text-sec);
-        }
+        .empty-state { text-align: center; padding: 60px 24px; color: var(--text-sec); }
         .empty-state h3 { color: var(--text); margin-bottom: 8px; }
 
-        .source-info {
-            display: flex; gap: 10px; align-items: center; font-size: 0.8rem; color: var(--text-sec);
-        }
-        .source-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .source-dot.cloud { background: var(--green-500); }
-        .source-dot.local { background: #F59E0B; }
-
-        @media (max-width: 640px) {
-            .chart-grid { grid-template-columns: 1fr; }
-            .stats-row { grid-template-columns: repeat(2, 1fr); }
-            .header-inner { flex-direction: column; gap: 12px; }
-        }
+        @media (max-width: 640px) { .header-inner { flex-direction: column; gap: 12px; } }
     </style>
 </head>
 <body>
-
-    <!-- Auth -->
     <div class="auth-screen" id="authScreen">
         <div class="auth-card">
             <h2>Donation Admin</h2>
-            <p>Enter the password to view donation registrations.</p>
+            <p>Enter the password to view registrations.</p>
             <input type="password" class="auth-input" id="passwordInput" placeholder="Password" onkeydown="if(event.key==='Enter')authenticate()">
-            <div class="auth-error" id="authError">Incorrect password. Try again.</div>
+            <div class="auth-error" id="authError">Incorrect password.</div>
             <button class="btn" onclick="authenticate()">View Registrations</button>
         </div>
     </div>
 
-    <!-- Dashboard -->
     <div class="dashboard" id="dashboard">
         <header class="header">
             <div class="header-inner">
-                <a href="/donate/" class="logo">Rewoven <small>Donation Registrations</small></a>
+                <a href="/donate/" class="logo">Rewoven<small>Donation Registrations</small></a>
                 <div class="header-actions">
-                    <div class="source-info" id="sourceInfo"></div>
+                    <span class="count-badge" id="countBadge"></span>
                     <button class="btn-sm btn-outline" onclick="exportCSV()">Export CSV</button>
                     <button class="btn-sm btn-outline" onclick="loadData()">Refresh</button>
-                    <a href="/donate/" class="btn-sm btn-primary">Donation Page</a>
+                    <a href="/donate/" class="btn-sm btn-green">Donation Page</a>
                 </div>
             </div>
         </header>
-
         <div class="container">
-            <div class="stats-row" id="statsRow"></div>
-            <div class="chart-grid" id="chartGrid"></div>
             <div class="table-card">
                 <div class="table-header">
                     <h3>All Registrations</h3>
-                    <div id="tableCount" style="font-size:0.8rem;color:var(--text-sec);"></div>
                 </div>
                 <div class="table-scroll" id="tableContainer"></div>
             </div>
@@ -250,263 +123,60 @@
 
         async function loadData() {
             let supabaseData = [];
-            let localData = JSON.parse(localStorage.getItem('rewoven_donations') || '[]');
-
             try {
                 const res = await fetch(`${SUPABASE_URL}/rest/v1/donation_registrations?select=*&order=created_at.desc`, {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
-                    }
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
                 });
-                if (res.ok) {
-                    supabaseData = await res.json();
-                }
-            } catch (e) {
-                console.warn('Supabase fetch failed:', e);
-            }
+                if (res.ok) supabaseData = await res.json();
+            } catch (e) { console.warn('Supabase fetch failed:', e); }
 
-            // Merge and dedup
-            const seen = new Set();
-            allRegistrations = [];
-            for (const r of supabaseData) {
-                const key = r.email + r.created_at;
-                seen.add(key);
-                r._source = 'cloud';
-                allRegistrations.push(r);
-            }
-            for (const r of localData) {
-                const key = (r.email || '') + (r.created_at || '');
-                if (!seen.has(key)) {
-                    r._source = 'local';
-                    allRegistrations.push(r);
-                }
-            }
-
-            // Sort by date desc
-            allRegistrations.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
-
-            const cloudCount = supabaseData.length;
-            const localCount = allRegistrations.filter(r => r._source === 'local').length;
-            document.getElementById('sourceInfo').innerHTML =
-                `<span class="source-dot cloud"></span> ${cloudCount} cloud` +
-                (localCount > 0 ? ` &nbsp;<span class="source-dot local"></span> ${localCount} local` : '');
-
-            renderDashboard();
-        }
-
-        function renderDashboard() {
-            if (allRegistrations.length === 0) {
-                document.getElementById('statsRow').innerHTML = '';
-                document.getElementById('chartGrid').innerHTML = '';
-                document.getElementById('tableContainer').innerHTML =
-                    '<div class="empty-state"><h3>No registrations yet</h3><p>Share the donation page to start collecting registrations.</p></div>';
-                document.getElementById('tableCount').textContent = '';
-                return;
-            }
-
-            renderStats();
-            renderCharts();
+            allRegistrations = supabaseData;
+            document.getElementById('countBadge').textContent = `${allRegistrations.length} registrations`;
             renderTable();
         }
 
-        function renderStats() {
-            const total = allRegistrations.length;
-
-            // Estimate total items
-            let totalItems = 0;
-            for (const r of allRegistrations) {
-                const est = r.estimated_items || '';
-                if (est === '20+') totalItems += 25;
-                else if (est === '11-20') totalItems += 15;
-                else if (est === '5-10') totalItems += 7;
-                else if (est === '1-4') totalItems += 2;
-                else totalItems += 5;
-            }
-
-            const methods = countField('method');
-            const dropoffs = (methods['dropoff'] || 0);
-            const pickups = (methods['pickup'] || 0);
-            const ships = (methods['ship'] || 0);
-
-            const cities = countField('city');
-            const topCity = Object.entries(cities).sort((a, b) => b[1] - a[1])[0];
-
-            // Today's registrations
-            const today = new Date().toISOString().slice(0, 10);
-            const todayCount = allRegistrations.filter(r =>
-                (r.created_at || '').slice(0, 10) === today
-            ).length;
-
-            document.getElementById('statsRow').innerHTML = `
-                <div class="stat-card">
-                    <div class="label">Total Registrations</div>
-                    <div class="value">${total}</div>
-                    <div class="sub">${todayCount} today</div>
-                </div>
-                <div class="stat-card">
-                    <div class="label">Est. Items Donated</div>
-                    <div class="value">~${totalItems}</div>
-                    <div class="sub">across all donors</div>
-                </div>
-                <div class="stat-card">
-                    <div class="label">Drop-offs / Pickups</div>
-                    <div class="value">${dropoffs} / ${pickups}</div>
-                    <div class="sub">${ships} shipping</div>
-                </div>
-                <div class="stat-card">
-                    <div class="label">Top City</div>
-                    <div class="value" style="font-size:1.4rem;">${topCity ? topCity[0] : '-'}</div>
-                    <div class="sub">${topCity ? topCity[1] + ' donors' : ''}</div>
-                </div>
-            `;
-        }
-
-        function countField(field) {
-            const counts = {};
-            for (const r of allRegistrations) {
-                const val = r[field];
-                if (!val) continue;
-                const normalized = val.trim();
-                counts[normalized] = (counts[normalized] || 0) + 1;
-            }
-            return counts;
-        }
-
-        const palette = [
-            '#064E3B', '#047857', '#059669', '#10B981', '#34D399',
-            '#6EE7B7', '#A7F3D0', '#D1FAE5', '#F59E0B', '#E11D48'
-        ];
-
-        function makeChart(canvasId, type, labels, data) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            const colors = labels.map((_, i) => palette[i % palette.length]);
-            new Chart(ctx, {
-                type: type,
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: type === 'bar' ? 'rgba(16,185,129,0.7)' : colors,
-                        borderColor: type === 'bar' ? '#047857' : colors,
-                        borderWidth: type === 'bar' ? 1 : 2,
-                        borderRadius: type === 'bar' ? 6 : 0,
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            display: type !== 'bar',
-                            position: 'bottom',
-                            labels: { font: { family: 'Inter', size: 11 }, padding: 12 }
-                        }
-                    },
-                    scales: type === 'bar' ? {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } },
-                        x: { ticks: { font: { size: 11 }, maxRotation: 45 } }
-                    } : {}
-                }
-            });
-        }
-
-        function renderCharts() {
-            const charts = [
-                { field: 'method', title: 'Collection Method', type: 'doughnut',
-                  labelMap: { dropoff: 'Drop-off', pickup: 'Pickup', ship: 'Shipping' } },
-                { field: 'estimated_items', title: 'Items per Donor', type: 'doughnut' },
-                { field: 'city', title: 'Donors by City', type: 'bar' },
-            ];
-
-            let html = '';
-            charts.forEach((ch, i) => {
-                const counts = countField(ch.field);
-                if (Object.keys(counts).length === 0) return;
-                html += `<div class="chart-card">
-                    <h3>${ch.title}</h3>
-                    <div class="chart-wrap"><canvas id="chart${i}"></canvas></div>
-                </div>`;
-            });
-
-            document.getElementById('chartGrid').innerHTML = html;
-
-            requestAnimationFrame(() => {
-                charts.forEach((ch, i) => {
-                    const counts = countField(ch.field);
-                    if (Object.keys(counts).length === 0) return;
-                    let labels = Object.keys(counts);
-                    if (ch.labelMap) labels = labels.map(l => ch.labelMap[l] || l);
-                    makeChart(`chart${i}`, ch.type, labels, Object.values(counts));
-                });
-            });
-        }
-
         function methodBadge(method) {
-            const map = {
-                dropoff: ['Drop-off', 'badge-dropoff'],
-                pickup: ['Pickup', 'badge-pickup'],
-                ship: ['Shipping', 'badge-ship'],
-            };
-            const [label, cls] = map[method] || [method, ''];
+            const map = { dropoff: ['Drop-off', 'badge-dropoff'], pickup: ['Pickup', 'badge-pickup'], ship: ['Shipping', 'badge-ship'] };
+            const [label, cls] = map[method] || [method || '-', ''];
             return `<span class="badge ${cls}">${label}</span>`;
         }
 
-        function itemsBadge(items) {
-            if (items === '1-4') return `<span class="badge badge-items-low">${items}</span>`;
-            if (items === '5-10') return `<span class="badge badge-items-mid">${items}</span>`;
-            return `<span class="badge badge-items-high">${items}</span>`;
-        }
+        function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
         function renderTable() {
-            document.getElementById('tableCount').textContent = `${allRegistrations.length} registrations`;
+            if (allRegistrations.length === 0) {
+                document.getElementById('tableContainer').innerHTML = '<div class="empty-state"><h3>No registrations yet</h3><p>Share the donation page to start collecting.</p></div>';
+                return;
+            }
 
-            let html = '<table><thead><tr>';
-            const headers = ['Date', 'Name', 'Email', 'Phone', 'City', 'Items', 'Method', 'Notes', 'Source'];
-            headers.forEach(h => html += `<th>${h}</th>`);
-            html += '</tr></thead><tbody>';
-
+            let html = '<table><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>Items</th><th>Method</th><th>Notes</th></tr></thead><tbody>';
             for (const r of allRegistrations) {
-                const date = r.created_at
-                    ? new Date(r.created_at).toLocaleString('en-AE', { dateStyle: 'medium', timeStyle: 'short' })
-                    : '-';
+                const date = r.created_at ? new Date(r.created_at).toLocaleString('en-AE', { dateStyle: 'medium', timeStyle: 'short' }) : '-';
                 html += `<tr>
                     <td>${date}</td>
                     <td style="font-weight:600;">${esc(r.name)}</td>
                     <td><a href="mailto:${esc(r.email)}" style="color:var(--green-600);text-decoration:none;">${esc(r.email)}</a></td>
                     <td>${esc(r.phone) || '-'}</td>
                     <td>${esc(r.city)}</td>
-                    <td>${itemsBadge(r.estimated_items || '-')}</td>
-                    <td>${methodBadge(r.method || '-')}</td>
-                    <td title="${esc(r.notes || '')}">${esc(r.notes) || '-'}</td>
-                    <td><span class="source-dot ${r._source}" style="margin-right:4px;"></span>${r._source}</td>
+                    <td>${esc(r.estimated_items) || '-'}</td>
+                    <td>${methodBadge(r.method)}</td>
+                    <td>${esc(r.notes) || '-'}</td>
                 </tr>`;
             }
-
             html += '</tbody></table>';
             document.getElementById('tableContainer').innerHTML = html;
-        }
-
-        function esc(s) {
-            if (!s) return '';
-            const d = document.createElement('div');
-            d.textContent = s;
-            return d.innerHTML;
         }
 
         function exportCSV() {
             if (allRegistrations.length === 0) return;
             const fields = ['created_at', 'name', 'email', 'phone', 'city', 'estimated_items', 'method', 'notes'];
-            const headers = ['Date', 'Name', 'Email', 'Phone', 'City', 'Estimated Items', 'Method', 'Notes'];
+            const headers = ['Date', 'Name', 'Email', 'Phone', 'City', 'Items', 'Method', 'Notes'];
             let csv = headers.join(',') + '\n';
             for (const r of allRegistrations) {
-                csv += fields.map(f => {
-                    let v = String(r[f] || '').replace(/"/g, '""');
-                    return `"${v}"`;
-                }).join(',') + '\n';
+                csv += fields.map(f => `"${String(r[f] || '').replace(/"/g, '""')}"`).join(',') + '\n';
             }
-            const blob = new Blob([csv], { type: 'text/csv' });
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
+            a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
             a.download = `rewoven-donations-${new Date().toISOString().slice(0, 10)}.csv`;
             a.click();
         }
