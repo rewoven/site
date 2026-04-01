@@ -564,6 +564,30 @@
     </div>
   </section>
 
+  <!-- Drop-off Locations -->
+  <section style="padding:60px 24px;background:var(--white);">
+    <div class="section-label">Locations</div>
+    <div class="section-title">Drop-off Points</div>
+    <div class="section-sub">Bring your donations to either location, or we can pick up from you</div>
+    <div style="max-width:700px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;">
+      <a href="https://share.google/Zod1EuR4VK7gEBDUZ" target="_blank" style="text-decoration:none;background:var(--green-50);border:2px solid var(--green-200);border-radius:16px;padding:28px 20px;text-align:center;transition:all 0.3s;display:block;" onmouseover="this.style.borderColor='var(--green-400)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--green-200)';this.style.transform='none'">
+        <div style="font-size:36px;margin-bottom:10px;">&#128205;</div>
+        <div style="font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px;">Drop-off Point 1</div>
+        <div style="font-size:13px;color:var(--green-600);font-weight:600;">View on Map &rarr;</div>
+      </a>
+      <a href="https://share.google/vwmZJgnAAyftoKpSQ" target="_blank" style="text-decoration:none;background:var(--green-50);border:2px solid var(--green-200);border-radius:16px;padding:28px 20px;text-align:center;transition:all 0.3s;display:block;" onmouseover="this.style.borderColor='var(--green-400)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='var(--green-200)';this.style.transform='none'">
+        <div style="font-size:36px;margin-bottom:10px;">&#128205;</div>
+        <div style="font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px;">Drop-off Point 2</div>
+        <div style="font-size:13px;color:var(--green-600);font-weight:600;">View on Map &rarr;</div>
+      </a>
+      <div style="background:var(--warm);border:2px solid var(--gray-200);border-radius:16px;padding:28px 20px;text-align:center;">
+        <div style="font-size:36px;margin-bottom:10px;">&#128666;</div>
+        <div style="font-size:15px;font-weight:700;color:var(--dark);margin-bottom:4px;">We Pick Up</div>
+        <div style="font-size:13px;color:var(--gray-600);">Register below &amp; select pickup</div>
+      </div>
+    </div>
+  </section>
+
   <!-- Sign Up -->
   <section class="signup" id="signup">
     <div class="signup-inner">
@@ -611,7 +635,7 @@
               <textarea id="fnotes" rows="3" placeholder="Tell us about the items, preferred times, etc."></textarea>
             </div>
           </div>
-          <button type="submit" class="submit-btn">Register My Donation &#10084;&#65039;</button>
+          <button type="submit" class="submit-btn">Register My Donation</button>
         </form>
         <div class="form-note">We'll email you with drop-off details or pickup confirmation within 48 hours.</div>
         <div class="success-msg" id="successMsg">
@@ -632,7 +656,7 @@
     <div class="faq-list">
       <div class="faq-item">
         <div class="faq-q"><span>Where are the drop-off points?</span><span class="arrow">&#9660;</span></div>
-        <div class="faq-a">We're setting up collection points across the UAE. After registering, you'll receive the nearest drop-off location via email. We also offer pickup for larger donations.</div>
+        <div class="faq-a">We have two drop-off locations: <a href="https://share.google/Zod1EuR4VK7gEBDUZ" target="_blank" style="color:var(--green-400);">Drop-off Point 1</a> and <a href="https://share.google/vwmZJgnAAyftoKpSQ" target="_blank" style="color:var(--green-400);">Drop-off Point 2</a>. We can also arrange a pickup — just select "Arrange a pickup" in the registration form.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q"><span>How do I get my handbag or bookmark?</span><span class="arrow">&#9660;</span></div>
@@ -745,7 +769,7 @@
       e.target.style.display = 'none';
       document.getElementById('successMsg').classList.add('show');
       btn.disabled = false;
-      btn.textContent = 'Register My Donation \u2764\uFE0F';
+      btn.textContent = 'Register My Donation';
     });
   </script>
 </body>
