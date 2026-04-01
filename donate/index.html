@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donation Drive | Rewoven</title>
+  <meta name="description" content="Donate your old clothes to underprivileged kids in the Philippines and receive a handmade sustainable handbag or bookmark in return." />
+  <meta property="og:title" content="Rewoven Donation Drive" />
+  <meta property="og:description" content="Give your old clothes a second life. Donate to kids in the Philippines and receive a sustainable reward." />
+  <meta property="og:image" content="../assets/rewoven-logo.jpeg" />
+  <link rel="icon" href="../assets/logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --green-50: #ECFDF5; --green-100: #D1FAE5; --green-200: #A7F3D0;
+      --green-400: #34D399; --green-500: #10B981; --green-600: #059669;
+      --green-700: #047857; --green-800: #065F46; --green-900: #064E3B;
+      --gold: #F59E0B; --gold-dark: #D97706;
+      --dark: #111827; --gray-600: #4B5563; --gray-400: #9CA3AF;
+      --gray-200: #E5E7EB; --white: #FFFFFF; --bg-cream: #F0FDF4;
+      --radius: 16px;
+      --warm: #FEF3C7; --warm-dark: #92400E;
+      --heart: #E11D48; --heart-light: #FFF1F2;
+    }
+
+    [data-theme="dark"] {
+      --white: #0F172A; --bg-cream: #0F172A; --dark: #F1F5F9;
+      --gray-600: #94A3B8; --gray-400: #64748B; --gray-200: #334155;
+      --green-50: #0F2A1F; --green-100: #14332A;
+      --warm: #422006; --warm-dark: #FBBF24;
+      --heart-light: #1C1017;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--dark); background: var(--white);
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 72px;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(229,231,235,0.5);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    [data-theme="dark"] nav { background: rgba(15,23,42,0.85); }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--dark); }
+    .nav-logo img { width: 36px; height: 36px; border-radius: 10px; }
+    .nav-logo span { font-weight: 800; font-size: 20px; font-family: 'Playfair Display', serif; color: var(--green-800); }
+    [data-theme="dark"] .nav-logo span { color: var(--green-400); }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--gray-600); font-weight: 500; font-size: 15px; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--green-600); }
+    .nav-links a.active { color: var(--green-600); font-weight: 600; }
+    .theme-toggle {
+      background: var(--green-50); border: 1px solid var(--green-200);
+      border-radius: 50%; width: 38px; height: 38px; cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--dark); margin: 5px 0; border-radius: 2px; transition: 0.3s; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--white); flex-direction: column; padding: 24px; gap: 20px; border-bottom: 1px solid var(--gray-200); }
+      .nav-links.open { display: flex; }
+      .nav-hamburger { display: block; }
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 140px 24px 80px; text-align: center;
+      background: linear-gradient(135deg, var(--green-50) 0%, var(--warm) 50%, var(--heart-light) 100%);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle at 30% 70%, rgba(16,185,129,0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 30%, rgba(225,29,72,0.06) 0%, transparent 50%);
+      animation: heroFloat 20s ease-in-out infinite;
+    }
+    @keyframes heroFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2%, 2%); } }
+
+    .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 20px; border-radius: 50px; font-size: 14px; font-weight: 600;
+      background: rgba(225,29,72,0.1); color: var(--heart);
+      margin-bottom: 24px; border: 1px solid rgba(225,29,72,0.15);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif; font-size: 56px; font-weight: 800;
+      line-height: 1.1; margin-bottom: 20px;
+    }
+    .hero h1 .green { color: var(--green-600); }
+    .hero h1 .heart { color: var(--heart); }
+    .hero p {
+      font-size: 20px; color: var(--gray-600); max-width: 600px;
+      margin: 0 auto 36px; line-height: 1.6;
+    }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 16px 36px; border-radius: 50px; font-weight: 700;
+      font-size: 16px; text-decoration: none; transition: all 0.3s;
+      border: none; cursor: pointer; font-family: inherit;
+    }
+    .btn-heart {
+      background: var(--heart); color: white;
+      box-shadow: 0 4px 20px rgba(225,29,72,0.3);
+    }
+    .btn-heart:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(225,29,72,0.4); }
+    .btn-outline {
+      background: transparent; color: var(--dark);
+      border: 2px solid var(--gray-200);
+    }
+    .btn-outline:hover { border-color: var(--green-500); color: var(--green-600); transform: translateY(-2px); }
+
+    /* ── How It Works ── */
+    .how-it-works { padding: 80px 24px; background: var(--white); }
+    .section-label {
+      text-transform: uppercase; font-size: 13px; font-weight: 700;
+      letter-spacing: 2px; color: var(--green-500); text-align: center;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 800;
+      text-align: center; margin-bottom: 16px;
+    }
+    .section-sub {
+      text-align: center; color: var(--gray-600); font-size: 17px;
+      max-width: 600px; margin: 0 auto 48px;
+    }
+
+    .steps-grid {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+    }
+    .step-card {
+      text-align: center; padding: 32px 20px;
+      border-radius: var(--radius); background: var(--bg-cream);
+      border: 1px solid var(--green-100); position: relative;
+      transition: all 0.3s;
+    }
+    .step-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.06); }
+    .step-num {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--green-500); color: white;
+      font-weight: 800; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .step-icon { font-size: 40px; margin-bottom: 14px; }
+    .step-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .step-card p { font-size: 13px; color: var(--gray-600); line-height: 1.5; }
+
+    .step-arrow {
+      display: none; position: absolute; right: -18px; top: 50%;
+      transform: translateY(-50%); color: var(--green-400); font-size: 24px;
+    }
+    @media (min-width: 769px) {
+      .step-card:not(:last-child) .step-arrow { display: block; }
+    }
+
+    /* ── Impact Stats ── */
+    .impact {
+      padding: 60px 24px; background: var(--green-900); color: white;
+      position: relative; overflow: hidden;
+    }
+    .impact::before {
+      content: ''; position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23fff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .impact-grid {
+      max-width: 900px; margin: 0 auto; position: relative;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px;
+      text-align: center;
+    }
+    .impact-stat .num {
+      font-size: 48px; font-weight: 900; color: var(--green-400);
+      font-family: 'Playfair Display', serif;
+    }
+    .impact-stat .label { font-size: 15px; opacity: 0.8; margin-top: 4px; }
+
+    /* ── What You Get ── */
+    .rewards { padding: 80px 24px; background: var(--bg-cream); }
+    .rewards-grid {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    }
+    .reward-card {
+      background: var(--white); border-radius: 20px;
+      border: 2px solid var(--gray-200); padding: 40px;
+      text-align: center; transition: all 0.3s; position: relative;
+      overflow: hidden;
+    }
+    .reward-card:hover { border-color: var(--green-400); transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.06); }
+    .reward-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--green-500), var(--gold));
+    }
+    .reward-icon { font-size: 64px; margin-bottom: 16px; }
+    .reward-card h3 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    .reward-card .reward-detail {
+      font-size: 14px; color: var(--gray-600); line-height: 1.6; margin-bottom: 16px;
+    }
+    .reward-badge {
+      display: inline-block; padding: 6px 16px; border-radius: 50px;
+      font-size: 13px; font-weight: 700;
+      background: var(--green-50); color: var(--green-700);
+      border: 1px solid var(--green-200);
+    }
+
+    /* ── Where It Goes ── */
+    .destination { padding: 80px 24px; background: var(--white); }
+    .dest-layout {
+      max-width: 1000px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+    }
+    .dest-visual {
+      background: linear-gradient(135deg, var(--heart-light), var(--warm));
+      border-radius: 24px; padding: 48px; text-align: center;
+      position: relative; min-height: 360px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .dest-visual .flag { font-size: 80px; margin-bottom: 16px; }
+    .dest-visual .dest-map {
+      font-size: 14px; color: var(--gray-600); font-weight: 600;
+    }
+    .dest-visual .kids-icons { font-size: 48px; margin-top: 12px; letter-spacing: 8px; }
+    .dest-text h2 {
+      font-family: 'Playfair Display', serif; font-size: 34px;
+      font-weight: 800; margin-bottom: 16px; line-height: 1.2;
+    }
+    .dest-text p { color: var(--gray-600); line-height: 1.7; margin-bottom: 16px; font-size: 16px; }
+    .dest-fact {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 0; border-top: 1px solid var(--gray-200);
+    }
+    .dest-fact .fact-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+    .dest-fact .fact-text { font-size: 14px; color: var(--gray-600); line-height: 1.5; }
+    .dest-fact .fact-text strong { color: var(--dark); }
+
+    /* ── What We Accept ── */
+    .accept { padding: 80px 24px; background: var(--bg-cream); }
+    .accept-grid {
+      max-width: 800px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    }
+    .accept-card {
+      background: var(--white); border-radius: var(--radius);
+      border: 1px solid var(--gray-200); padding: 28px;
+    }
+    .accept-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--green-700); }
+    .accept-card ul { list-style: none; }
+    .accept-card ul li {
+      padding: 6px 0; font-size: 14px; color: var(--gray-600);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .accept-card ul li::before { content: ''; font-size: 14px; }
+    .accept-card.yes ul li::before { content: '\2714'; color: var(--green-500); }
+    .accept-card.no ul li::before { content: '\2718'; color: var(--heart); }
+    .accept-card.no h3 { color: var(--heart); }
+
+    /* ── Sign Up / Drop-off ── */
+    .signup {
+      padding: 80px 24px;
+      background: linear-gradient(135deg, var(--green-900), #064E3B);
+      color: white; position: relative; overflow: hidden;
+    }
+    .signup::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 20% 80%, rgba(52,211,153,0.1) 0%, transparent 50%);
+    }
+    .signup-inner {
+      max-width: 700px; margin: 0 auto; position: relative; z-index: 1;
+    }
+    .signup h2 {
+      font-family: 'Playfair Display', serif; font-size: 38px;
+      font-weight: 800; text-align: center; margin-bottom: 8px;
+    }
+    .signup .sub { text-align: center; opacity: 0.7; margin-bottom: 40px; font-size: 17px; }
+
+    .form-card {
+      background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; padding: 36px;
+    }
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-bottom: 20px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 13px; font-weight: 600; opacity: 0.8; }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 12px 16px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08); color: white;
+      font-size: 15px; font-family: inherit; outline: none;
+      transition: border 0.2s;
+    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.4); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--green-400);
+    }
+    .form-group select option { background: var(--green-900); color: white; }
+
+    .submit-btn {
+      width: 100%; padding: 16px; border-radius: 50px;
+      background: var(--green-400); color: var(--green-900);
+      font-size: 16px; font-weight: 800; border: none;
+      cursor: pointer; font-family: inherit; transition: all 0.3s;
+      margin-top: 8px;
+    }
+    .submit-btn:hover { background: var(--green-500); transform: translateY(-2px); }
+
+    .form-note {
+      text-align: center; font-size: 12px; opacity: 0.5; margin-top: 16px;
+    }
+
+    .success-msg {
+      display: none; text-align: center; padding: 40px 20px;
+    }
+    .success-msg.show { display: block; }
+    .success-msg .check { font-size: 64px; margin-bottom: 16px; }
+    .success-msg h3 { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+    .success-msg p { opacity: 0.7; font-size: 15px; }
+
+    /* ── FAQ ── */
+    .faq { padding: 80px 24px; background: var(--white); }
+    .faq-list { max-width: 700px; margin: 0 auto; }
+    .faq-item {
+      border-bottom: 1px solid var(--gray-200); padding: 20px 0;
+    }
+    .faq-q {
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; font-weight: 700; font-size: 16px;
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--green-600); }
+    .faq-q .arrow { transition: transform 0.3s; font-size: 20px; color: var(--gray-400); }
+    .faq-item.open .faq-q .arrow { transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s;
+      font-size: 14px; color: var(--gray-600); line-height: 1.6;
+    }
+    .faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
+
+    /* ── Footer ── */
+    footer {
+      padding: 40px 24px; text-align: center;
+      color: var(--gray-400); font-size: 14px;
+      border-top: 1px solid var(--gray-200);
+    }
+    footer a { color: var(--green-500); text-decoration: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero { padding: 120px 20px 60px; }
+      .hero h1 { font-size: 34px; }
+      .hero p { font-size: 17px; }
+      .steps-grid { grid-template-columns: 1fr 1fr; }
+      .impact-grid { grid-template-columns: 1fr; gap: 24px; }
+      .rewards-grid { grid-template-columns: 1fr; }
+      .dest-layout { grid-template-columns: 1fr; }
+      .accept-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .section-title { font-size: 28px; }
+    }
+
+    @media (max-width: 480px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <a href="../" class="nav-logo">
+        <img src="../assets/logo.png" alt="Rewoven" onerror="this.style.display='none'" />
+        <span>Rewoven</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/#features">Features</a></li>
+        <li><a href="/game/">Games</a></li>
+        <li><a href="/brands/">Brands</a></li>
+        <li><a href="/donate/" class="active">Donate</a></li>
+        <li><button class="theme-toggle" id="themeToggle">&#127769;</button></li>
+        <li><a href="https://apps.apple.com/us/app/rewoven/id6759314001" class="btn" style="padding:10px 24px;background:var(--green-500);color:white;font-size:14px;">Download App</a></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">&#10084;&#65039; Donation Drive Now Open</div>
+      <h1>Give Clothes a <span class="green">Second Life</span>, Give Kids a <span class="heart">Better One</span></h1>
+      <p>Donate your pre-loved clothes to underprivileged children in the Philippines. In return, receive a handmade handbag or bookmark crafted from sustainable fabric offcuts.</p>
+      <div class="hero-buttons">
+        <a href="#signup" class="btn btn-heart">Donate Now &#10084;&#65039;</a>
+        <a href="#how" class="btn btn-outline">How It Works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="how">
+    <div class="section-label">How It Works</div>
+    <div class="section-title">4 Simple Steps</div>
+    <div class="section-sub">From your closet to a child in need &mdash; here's how your donation makes a difference</div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-icon">&#128722;</div>
+        <h3>Gather Clothes</h3>
+        <p>Collect gently used clothing you no longer wear &mdash; any size, any style</p>
+        <div class="step-arrow">&#10141;</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-icon">&#128230;</div>
+        <h3>Drop Off or Ship</h3>
+        <p>Bring your items to a Rewoven drop-off point or arrange a pickup</p>
+        <div class="step-arrow">&#10141;</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-icon">&#9992;&#65039;</div>
+        <h3>We Ship to the Philippines</h3>
+        <p>Your clothes are sorted, packaged, and sent to communities in need</p>
+        <div class="step-arrow">&#10141;</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-icon">&#127873;</div>
+        <h3>Get Your Reward</h3>
+        <p>Receive a handmade sustainable handbag or bookmark as our thank you</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact Stats -->
+  <section class="impact">
+    <div class="impact-grid">
+      <div class="impact-stat">
+        <div class="num">92M</div>
+        <div class="label">tons of textile waste generated yearly</div>
+      </div>
+      <div class="impact-stat">
+        <div class="num">31M</div>
+        <div class="label">Filipino children live in poverty</div>
+      </div>
+      <div class="impact-stat">
+        <div class="num">95%</div>
+        <div class="label">of discarded clothes could be reused</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rewards -->
+  <section class="rewards">
+    <div class="section-label">Your Reward</div>
+    <div class="section-title">What You Get Back</div>
+    <div class="section-sub">Every donation earns you a handmade reward crafted from sustainable fabric offcuts</div>
+
+    <div class="rewards-grid">
+      <div class="reward-card">
+        <div class="reward-icon">&#128092;</div>
+        <h3>Sustainable Handbag</h3>
+        <div class="reward-detail">
+          A unique, one-of-a-kind tote bag handmade from upcycled fabric offcuts. No two bags are the same &mdash; each tells its own sustainability story.
+        </div>
+        <div class="reward-badge">Donate 5+ items</div>
+      </div>
+      <div class="reward-card">
+        <div class="reward-icon">&#128278;</div>
+        <h3>Fabric Bookmark</h3>
+        <div class="reward-detail">
+          A beautifully crafted bookmark made from sustainable fabric scraps, finished with a hand-stitched Rewoven tag. Perfect for eco-conscious readers.
+        </div>
+        <div class="reward-badge">Donate 1+ items</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Where It Goes -->
+  <section class="destination">
+    <div class="dest-layout">
+      <div class="dest-visual">
+        <div class="flag">&#127477;&#127469;</div>
+        <div class="dest-map">The Philippines</div>
+        <div class="kids-icons">&#128103;&#128102;&#128103;&#128102;</div>
+      </div>
+      <div class="dest-text">
+        <h2>Your Clothes Change Lives</h2>
+        <p>Your donated clothing goes directly to underprivileged children and families across communities in the Philippines who need them most.</p>
+        <div class="dest-fact">
+          <span class="fact-icon">&#127968;</span>
+          <div class="fact-text"><strong>Direct Distribution</strong> &mdash; We partner with local NGOs to ensure clothes reach children in communities with the greatest need</div>
+        </div>
+        <div class="dest-fact">
+          <span class="fact-icon">&#9851;&#65039;</span>
+          <div class="fact-text"><strong>Zero Waste</strong> &mdash; Items that can't be worn are repurposed into new products, nothing goes to landfill</div>
+        </div>
+        <div class="dest-fact">
+          <span class="fact-icon">&#128247;</span>
+          <div class="fact-text"><strong>Full Transparency</strong> &mdash; We share photos and updates showing where your donations end up</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What We Accept -->
+  <section class="accept">
+    <div class="section-label">Guidelines</div>
+    <div class="section-title">What We Accept</div>
+    <div class="section-sub">Please ensure donated items are clean and in wearable condition</div>
+
+    <div class="accept-grid">
+      <div class="accept-card yes">
+        <h3>We Accept</h3>
+        <ul>
+          <li>T-shirts, tops, and blouses</li>
+          <li>Jeans, trousers, and shorts</li>
+          <li>Dresses and skirts</li>
+          <li>Jackets and hoodies</li>
+          <li>Children's clothing (all sizes)</li>
+          <li>Shoes in good condition</li>
+          <li>Bags and accessories</li>
+          <li>School uniforms</li>
+        </ul>
+      </div>
+      <div class="accept-card no">
+        <h3>We Don't Accept</h3>
+        <ul>
+          <li>Torn or heavily stained items</li>
+          <li>Underwear or swimwear</li>
+          <li>Wet or mouldy clothing</li>
+          <li>Items with strong odours</li>
+          <li>Single socks or broken zippers</li>
+          <li>Pillows, duvets, or curtains</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sign Up -->
+  <section class="signup" id="signup">
+    <div class="signup-inner">
+      <h2>Register Your Donation</h2>
+      <div class="sub">Fill in the form below and we'll arrange everything</div>
+
+      <div class="form-card">
+        <form id="donateForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="fname" placeholder="Your name" required />
+            </div>
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" id="femail" placeholder="your@email.com" required />
+            </div>
+            <div class="form-group">
+              <label>Phone (optional)</label>
+              <input type="tel" id="fphone" placeholder="+971 ..." />
+            </div>
+            <div class="form-group">
+              <label>City / Location *</label>
+              <input type="text" id="fcity" placeholder="e.g. Dubai, Abu Dhabi" required />
+            </div>
+            <div class="form-group">
+              <label>Estimated Items</label>
+              <select id="fitems">
+                <option value="1-4">1-4 items (bookmark)</option>
+                <option value="5-10">5-10 items (handbag)</option>
+                <option value="11-20">11-20 items (handbag)</option>
+                <option value="20+">20+ items (handbag + bookmark)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Preferred Method</label>
+              <select id="fmethod">
+                <option value="dropoff">Drop-off at collection point</option>
+                <option value="pickup">Arrange a pickup</option>
+                <option value="ship">Ship to Rewoven</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Anything else? (optional)</label>
+              <textarea id="fnotes" rows="3" placeholder="Tell us about the items, preferred times, etc."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="submit-btn">Register My Donation &#10084;&#65039;</button>
+        </form>
+        <div class="form-note">We'll email you with drop-off details or pickup confirmation within 48 hours.</div>
+        <div class="success-msg" id="successMsg">
+          <div class="check">&#9989;</div>
+          <h3>Thank You!</h3>
+          <p>Your donation registration is confirmed. We'll email you within 48 hours with next steps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="section-label">FAQ</div>
+    <div class="section-title">Questions?</div>
+    <div class="section-sub">Everything you need to know about the donation drive</div>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q"><span>Where are the drop-off points?</span><span class="arrow">&#9660;</span></div>
+        <div class="faq-a">We're setting up collection points across the UAE. After registering, you'll receive the nearest drop-off location via email. We also offer pickup for larger donations.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How do I get my handbag or bookmark?</span><span class="arrow">&#9660;</span></div>
+        <div class="faq-a">After your donation is received and processed, we'll craft your reward and deliver it to you within 2-3 weeks. You'll get a tracking notification via email.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Can I donate from outside the UAE?</span><span class="arrow">&#9660;</span></div>
+        <div class="faq-a">Currently the drive is focused on the UAE, but you can ship items to us. Select "Ship to Rewoven" in the form and we'll provide a shipping address.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>How do I know my clothes reach the children?</span><span class="arrow">&#9660;</span></div>
+        <div class="faq-a">We provide full transparency. You'll receive photos and updates from our partners in the Philippines showing your donations being distributed to children and families.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>What happens to items that can't be worn?</span><span class="arrow">&#9660;</span></div>
+        <div class="faq-a">Nothing goes to waste. Items not suitable for wearing are repurposed into cleaning cloths, insulation material, or used to create the fabric offcut rewards like handbags and bookmarks.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Is there a deadline?</span><span class="arrow">&#9660;</span></div>
+        <div class="faq-a">The drive runs on a rolling basis, but we ship in batches. Register early to be part of the next shipment and receive your reward sooner!</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>Rewoven Donation Drive &mdash; <a href="mailto:hello@rewovenapp.com">hello@rewovenapp.com</a> &mdash; <a href="https://instagram.com/rewoven.app" target="_blank">@rewoven.app</a></p>
+    <p style="margin-top:8px;">&copy; 2026 Rewoven. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Theme
+    const toggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    function setTheme(t) {
+      html.setAttribute('data-theme', t);
+      toggle.innerHTML = t === 'dark' ? '&#9728;&#65039;' : '&#127769;';
+      localStorage.setItem('theme', t);
+    }
+    const saved = localStorage.getItem('theme');
+    if (saved) setTheme(saved);
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) setTheme('dark');
+    toggle.addEventListener('click', () => {
+      setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    // Mobile nav
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // Nav shadow
+    window.addEventListener('scroll', () => {
+      document.querySelector('nav').style.boxShadow =
+        window.scrollY > 10 ? '0 4px 20px rgba(0,0,0,0.06)' : 'none';
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-q').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.closest('.faq-item');
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+
+    // Form submission
+    const SUPABASE_URL = 'https://puagdyacwgqkebjdbbrz.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_LarSIrAtxsvXN4RLLicQyw_TJk8s92b';
+
+    document.getElementById('donateForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('.submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      const data = {
+        name: document.getElementById('fname').value,
+        email: document.getElementById('femail').value,
+        phone: document.getElementById('fphone').value || null,
+        city: document.getElementById('fcity').value,
+        estimated_items: document.getElementById('fitems').value,
+        method: document.getElementById('fmethod').value,
+        notes: document.getElementById('fnotes').value || null,
+        created_at: new Date().toISOString(),
+      };
+
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/donation_registrations`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'return=minimal',
+          },
+          body: JSON.stringify(data),
+        });
+      } catch (err) {
+        console.log('Supabase submission failed, storing locally:', err);
+      }
+
+      // Also store locally as backup
+      const local = JSON.parse(localStorage.getItem('rewoven_donations') || '[]');
+      local.push(data);
+      localStorage.setItem('rewoven_donations', JSON.stringify(local));
+
+      // Show success
+      e.target.style.display = 'none';
+      document.getElementById('successMsg').classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Register My Donation \u2764\uFE0F';
+    });
+  </script>
+</body>
+</html>
