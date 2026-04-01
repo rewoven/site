@@ -1208,10 +1208,45 @@
           ${certs ? `<div class="modal-certs">${certs}</div>` : ''}
           <div class="modal-summary">${brand.summary || ''}</div>
           ${brand.website ? `<a class="modal-website" href="${brand.website}" target="_blank" rel="noopener">Visit Website &rarr;</a>` : ''}
+          <div id="modalAlternatives" style="margin-top:20px;"></div>
         `;
+
+        // Fetch alternatives if score < 70
+        if (brand.overall_score < 70) {
+          fetchAlternatives(brand);
+        }
       } catch (err) {
         content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-600);">Could not load brand details.</div>';
       }
+    }
+
+    async function fetchAlternatives(brand) {
+      try {
+        const data = await apiFetch(`/api/brands/${brand.slug}/alternatives?limit=6`);
+        if (data.alternatives && data.alternatives.length > 0) {
+          const altEl = document.getElementById('modalAlternatives');
+          if (!altEl) return;
+          altEl.innerHTML = `
+            <div style="border-top:1px solid var(--gray-200);padding-top:20px;">
+              <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--green-600);">🔄 Sustainable Alternatives</div>
+              <div style="font-size:12px;color:var(--gray-400);margin-bottom:14px;">Higher-rated brands with similar style and price range</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;">
+                ${data.alternatives.map(a => `
+                  <div style="background:var(--green-50);border:1px solid var(--green-200);border-radius:10px;padding:12px;cursor:pointer;transition:all 0.2s;"
+                       onclick="event.stopPropagation();openModal('${a.slug}')"
+                       onmouseover="this.style.borderColor='var(--green-400)';this.style.transform='translateY(-2px)'"
+                       onmouseout="this.style.borderColor='var(--green-200)';this.style.transform='none'">
+                    <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;">${a.name}</div>
+                    <div style="font-size:20px;font-weight:900;color:${scoreColor(a.overall_score)};">${a.overall_score}<span style="font-size:11px;color:var(--gray-400)">/100</span></div>
+                    <div style="font-size:11px;color:var(--gray-400);margin-top:4px;">${a.category} · ${a.price_range}</div>
+                    <div style="font-size:11px;font-weight:600;color:var(--green-600);margin-top:6px;">+${a.overall_score - brand.overall_score} points higher</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+      } catch (e) { console.log('Alternatives not available:', e); }
     }
 
     document.getElementById('modalClose').addEventListener('click', () => {
