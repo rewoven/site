@@ -307,13 +307,20 @@
     <script>
         const SUPABASE_URL = 'https://puagdyacwgqkebjdbbrz.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_LarSIrAtxsvXN4RLLicQyw_TJk8s92b';
-        const PASSWORD = 'rewoven2026';
+        const PASSWORD_HASH = '2080172f82628bd07dca43db71d0ab9d3b78a9f0ba2bc32d2a9a50a70e5d4401';
 
         let allResponses = [];
 
-        function authenticate() {
+        async function hashPassword(pw) {
+            const data = new TextEncoder().encode(pw);
+            const buf = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function authenticate() {
             const pw = document.getElementById('passwordInput').value;
-            if (pw === PASSWORD) {
+            const hashed = await hashPassword(pw);
+            if (hashed === PASSWORD_HASH) {
                 document.getElementById('authScreen').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
                 loadData();
