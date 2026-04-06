@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Documentation | Rewoven</title>
+  <meta name="description" content="Free public API for fashion brand sustainability ratings. 517 brands, 30 materials, 7 categories." />
+  <link rel="icon" href="../assets/logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --green-50: #ECFDF5; --green-100: #D1FAE5; --green-200: #A7F3D0;
+      --green-400: #34D399; --green-500: #10B981; --green-600: #059669;
+      --green-700: #047857; --green-800: #065F46; --green-900: #064E3B;
+      --dark: #111827; --gray-600: #4B5563; --gray-400: #9CA3AF;
+      --gray-200: #E5E7EB; --gray-100: #F3F4F6; --white: #FFFFFF;
+      --bg-cream: #F0FDF4; --radius: 16px;
+      --code-bg: #1E293B; --code-text: #E2E8F0;
+    }
+
+    [data-theme="dark"] {
+      --white: #0F172A; --bg-cream: #0F172A; --dark: #F1F5F9;
+      --gray-600: #94A3B8; --gray-400: #64748B; --gray-200: #334155;
+      --gray-100: #1E293B; --green-50: #0F2A1F; --green-100: #14332A;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--dark); background: var(--white);
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* Nav */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 72px;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(229,231,235,0.5);
+      transition: background 0.3s;
+    }
+    [data-theme="dark"] nav { background: rgba(15,23,42,0.85); }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { width: 36px; height: 36px; border-radius: 10px; }
+    .nav-logo span { font-weight: 800; font-size: 20px; font-family: 'Playfair Display', serif; color: var(--green-800); }
+    [data-theme="dark"] .nav-logo span { color: var(--green-400); }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--gray-600); font-weight: 500; font-size: 15px; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--green-600); }
+    .nav-links a.active { color: var(--green-600); font-weight: 600; }
+    .theme-toggle {
+      background: var(--green-50); border: 1px solid var(--green-200);
+      border-radius: 50%; width: 38px; height: 38px; cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+    }
+    .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--dark); margin: 5px 0; border-radius: 2px; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--white); flex-direction: column; padding: 24px; gap: 20px; border-bottom: 1px solid var(--gray-200); }
+      .nav-links.open { display: flex; }
+      .nav-hamburger { display: block; }
+    }
+
+    /* Layout */
+    .page { display: flex; max-width: 1200px; margin: 0 auto; padding-top: 72px; min-height: 100vh; }
+    .sidebar {
+      width: 240px; padding: 32px 20px; border-right: 1px solid var(--gray-200);
+      position: sticky; top: 72px; height: calc(100vh - 72px); overflow-y: auto;
+    }
+    .sidebar h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-400); margin: 20px 0 8px; font-weight: 700; }
+    .sidebar h3:first-child { margin-top: 0; }
+    .sidebar a {
+      display: block; padding: 6px 12px; font-size: 14px; color: var(--gray-600);
+      text-decoration: none; border-radius: 8px; margin-bottom: 2px; transition: all 0.15s;
+    }
+    .sidebar a:hover { background: var(--green-50); color: var(--green-700); }
+    .main { flex: 1; padding: 40px; max-width: 900px; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { padding: 24px; }
+    }
+
+    /* Typography */
+    h1 {
+      font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 800;
+      margin-bottom: 12px;
+    }
+    h1 .green { color: var(--green-600); }
+    .subtitle { font-size: 18px; color: var(--gray-600); line-height: 1.6; margin-bottom: 32px; }
+    h2 {
+      font-size: 24px; font-weight: 800; margin-top: 48px; margin-bottom: 8px;
+      padding-top: 24px; border-top: 1px solid var(--gray-200);
+    }
+    h2:first-of-type { border-top: none; margin-top: 32px; }
+    h3 { font-size: 16px; font-weight: 700; margin-top: 24px; margin-bottom: 8px; }
+    p { font-size: 15px; color: var(--gray-600); line-height: 1.7; margin-bottom: 16px; }
+
+    /* Base URL badge */
+    .base-url {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border-radius: 12px; font-size: 14px;
+      background: var(--code-bg); color: var(--green-400);
+      font-family: 'JetBrains Mono', monospace; font-weight: 500;
+      margin-bottom: 32px;
+    }
+    .base-url .label { color: var(--gray-400); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Endpoint card */
+    .endpoint {
+      background: var(--gray-100); border: 1px solid var(--gray-200);
+      border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+    }
+    .endpoint-header {
+      display: flex; align-items: center; gap: 12px; padding: 16px 20px;
+    }
+    .method {
+      padding: 4px 10px; border-radius: 6px; font-size: 12px;
+      font-weight: 700; font-family: 'JetBrains Mono', monospace;
+      background: var(--green-100); color: var(--green-700);
+    }
+    .endpoint-path {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600;
+    }
+    .endpoint-desc {
+      padding: 0 20px 16px; font-size: 14px; color: var(--gray-600);
+    }
+
+    /* Code block */
+    .code-block {
+      background: var(--code-bg); border-radius: 10px; padding: 20px;
+      overflow-x: auto; margin-bottom: 16px;
+    }
+    .code-block code {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      color: var(--code-text); line-height: 1.6; white-space: pre;
+    }
+    .code-block .comment { color: #64748B; }
+    .code-block .string { color: #34D399; }
+    .code-block .key { color: #93C5FD; }
+    .code-block .num { color: #FBBF24; }
+
+    /* Params table */
+    .params-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 14px; }
+    .params-table th {
+      text-align: left; padding: 10px 16px; background: var(--gray-100);
+      font-weight: 600; font-size: 12px; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--gray-400); border-bottom: 1px solid var(--gray-200);
+    }
+    .params-table td {
+      padding: 10px 16px; border-bottom: 1px solid var(--gray-200); color: var(--gray-600);
+    }
+    .params-table code {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      background: var(--green-50); color: var(--green-700);
+      padding: 2px 6px; border-radius: 4px;
+    }
+
+    /* Stats banner */
+    .stats-banner {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--green-50); border: 1px solid var(--green-200);
+      border-radius: 12px; padding: 20px; text-align: center;
+    }
+    .stat-card .num {
+      font-size: 32px; font-weight: 900; color: var(--green-600);
+      font-family: 'Playfair Display', serif;
+    }
+    .stat-card .label { font-size: 13px; color: var(--gray-600); margin-top: 4px; }
+
+    @media (max-width: 480px) {
+      .stats-banner { grid-template-columns: 1fr; }
+      h1 { font-size: 28px; }
+    }
+
+    /* Try it */
+    .try-it {
+      background: var(--green-50); border: 1px solid var(--green-200);
+      border-radius: 12px; padding: 20px; margin-bottom: 24px;
+    }
+    .try-it input {
+      width: 100%; padding: 12px 16px; border-radius: 8px;
+      border: 1px solid var(--green-200); font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; background: var(--white); color: var(--dark);
+      outline: none; margin-top: 8px;
+    }
+    .try-it input:focus { border-color: var(--green-500); }
+    .try-it button {
+      margin-top: 8px; padding: 10px 24px; border-radius: 8px;
+      background: var(--green-600); color: white; border: none;
+      font-weight: 700; cursor: pointer; font-family: inherit; font-size: 14px;
+    }
+    .try-it button:hover { background: var(--green-700); }
+    .try-it pre {
+      margin-top: 12px; background: var(--code-bg); border-radius: 8px;
+      padding: 16px; overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; color: var(--code-text); max-height: 300px; overflow-y: auto;
+      display: none; white-space: pre-wrap;
+    }
+
+    footer {
+      padding: 40px 24px; text-align: center;
+      color: var(--gray-400); font-size: 14px;
+      border-top: 1px solid var(--gray-200);
+    }
+    footer a { color: var(--green-500); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="../" class="nav-logo">
+        <img src="../assets/logo.png" alt="Rewoven" onerror="this.style.display='none'" />
+        <span>Rewoven</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/brands/">Brands</a></li>
+        <li><a href="/swap/">Swap</a></li>
+        <li><a href="/donate/">Donate</a></li>
+        <li><a href="/api/" class="active">API</a></li>
+        <li><button class="theme-toggle" id="themeToggle">&#127769;</button></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="page">
+    <aside class="sidebar">
+      <h3>Getting Started</h3>
+      <a href="#overview">Overview</a>
+      <a href="#base-url">Base URL</a>
+      <a href="#try">Try It</a>
+      <h3>Brands</h3>
+      <a href="#list-brands">List Brands</a>
+      <a href="#get-brand">Get Brand</a>
+      <a href="#search-brands">Search Brands</a>
+      <a href="#top-brands">Top Brands</a>
+      <a href="#worst-brands">Worst Brands</a>
+      <a href="#compare-brands">Compare Brands</a>
+      <a href="#alternatives">Alternatives</a>
+      <h3>Materials</h3>
+      <a href="#list-materials">List Materials</a>
+      <a href="#get-material">Get Material</a>
+      <h3>Other</h3>
+      <a href="#categories">Categories</a>
+      <a href="#stats">Stats</a>
+    </aside>
+
+    <main class="main">
+      <h1>Rewoven <span class="green">API</span></h1>
+      <p class="subtitle">Free, public REST API for fashion brand sustainability ratings. No API key required. Use it to build apps, extensions, research tools, or anything that promotes sustainable fashion.</p>
+
+      <div class="stats-banner">
+        <div class="stat-card">
+          <div class="num" id="statBrands">517</div>
+          <div class="label">Brands Rated</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">30</div>
+          <div class="label">Materials</div>
+        </div>
+        <div class="stat-card">
+          <div class="num">7</div>
+          <div class="label">Categories</div>
+        </div>
+      </div>
+
+      <h2 id="base-url">Base URL</h2>
+      <div class="base-url">
+        https://api.rewovenapp.com
+      </div>
+      <p>All endpoints return JSON. No authentication required. CORS is enabled for all origins.</p>
+
+      <!-- Try It -->
+      <h2 id="try">Try It</h2>
+      <div class="try-it">
+        <label style="font-weight:600;font-size:14px;">Enter an endpoint to test</label>
+        <input type="text" id="tryInput" value="/api/brands/nike" placeholder="/api/brands/zara" />
+        <button onclick="tryApi()">Send Request</button>
+        <pre id="tryResult"></pre>
+      </div>
+
+      <!-- LIST BRANDS -->
+      <h2 id="list-brands">List Brands</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/brands</span>
+        </div>
+        <div class="endpoint-desc">Returns a paginated list of all brands with sustainability scores.</div>
+      </div>
+
+      <h3>Query Parameters</h3>
+      <table class="params-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>page</code></td><td>number</td><td>Page number (default: 1)</td></tr>
+        <tr><td><code>limit</code></td><td>number</td><td>Results per page (default: 50)</td></tr>
+        <tr><td><code>category</code></td><td>string</td><td>Filter by category (e.g. "Fast Fashion", "Luxury")</td></tr>
+        <tr><td><code>min_score</code></td><td>number</td><td>Minimum overall score (0-100)</td></tr>
+        <tr><td><code>max_score</code></td><td>number</td><td>Maximum overall score (0-100)</td></tr>
+        <tr><td><code>search</code></td><td>string</td><td>Search by brand name</td></tr>
+        <tr><td><code>sort</code></td><td>string</td><td>Sort order: "score_asc", "score_desc", "name_asc", "name_desc"</td></tr>
+      </table>
+
+      <h3>Example</h3>
+      <div class="code-block"><code><span class="comment"># Get fast fashion brands scoring under 20</span>
+curl "https://api.rewovenapp.com/api/brands?category=Fast+Fashion&max_score=20&limit=3"</code></div>
+
+      <div class="code-block"><code>{
+  <span class="key">"brands"</span>: [
+    {
+      <span class="key">"name"</span>: <span class="string">"SHEIN"</span>,
+      <span class="key">"slug"</span>: <span class="string">"shein"</span>,
+      <span class="key">"overall_score"</span>: <span class="num">8</span>,
+      <span class="key">"grade"</span>: <span class="string">"F-"</span>,
+      <span class="key">"environmental_score"</span>: <span class="num">5</span>,
+      <span class="key">"labor_score"</span>: <span class="num">8</span>,
+      <span class="key">"transparency_score"</span>: <span class="num">5</span>,
+      <span class="key">"animal_welfare_score"</span>: <span class="num">14</span>,
+      <span class="key">"price_range"</span>: <span class="string">"$"</span>,
+      <span class="key">"country"</span>: <span class="string">"China"</span>,
+      <span class="key">"category"</span>: <span class="string">"Fast Fashion"</span>,
+      <span class="key">"certifications"</span>: [],
+      <span class="key">"summary"</span>: <span class="string">"Ultra-fast fashion model..."</span>,
+      <span class="key">"website"</span>: <span class="string">"https://www.shein.com"</span>
+    }
+  ],
+  <span class="key">"total"</span>: <span class="num">65</span>,
+  <span class="key">"page"</span>: <span class="num">1</span>,
+  <span class="key">"pages"</span>: <span class="num">22</span>
+}</code></div>
+
+      <!-- GET BRAND -->
+      <h2 id="get-brand">Get Brand</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/brands/{slug}</span>
+        </div>
+        <div class="endpoint-desc">Get detailed sustainability data for a single brand by its slug.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/brands/patagonia"</code></div>
+
+      <!-- SEARCH -->
+      <h2 id="search-brands">Search Brands</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/brands/search?q={query}</span>
+        </div>
+        <div class="endpoint-desc">Search brands by name. Returns matching brands sorted by relevance.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/brands/search?q=nike"</code></div>
+
+      <!-- TOP -->
+      <h2 id="top-brands">Top Brands</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/brands/top?limit={n}</span>
+        </div>
+        <div class="endpoint-desc">Get the highest-rated sustainable brands.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/brands/top?limit=5"</code></div>
+
+      <!-- WORST -->
+      <h2 id="worst-brands">Worst Brands</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/brands/worst?limit={n}</span>
+        </div>
+        <div class="endpoint-desc">Get the lowest-rated brands.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/brands/worst?limit=5"</code></div>
+
+      <!-- COMPARE -->
+      <h2 id="compare-brands">Compare Brands</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/brands/compare?brands={slug1},{slug2}</span>
+        </div>
+        <div class="endpoint-desc">Compare two or more brands side by side.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/brands/compare?brands=zara,hm,patagonia"</code></div>
+
+      <!-- ALTERNATIVES -->
+      <h2 id="alternatives">Alternatives</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/brands/{slug}/alternatives</span>
+        </div>
+        <div class="endpoint-desc">Get more sustainable alternatives for a brand, in the same category and price range.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/brands/shein/alternatives"</code></div>
+
+      <!-- MATERIALS -->
+      <h2 id="list-materials">List Materials</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/materials</span>
+        </div>
+        <div class="endpoint-desc">Get all fabric materials with environmental impact data including CO2, water usage, and sustainability scores.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/materials"</code></div>
+
+      <h3>Response Fields</h3>
+      <table class="params-table">
+        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>name</code></td><td>string</td><td>Material name</td></tr>
+        <tr><td><code>co2_kg_per_kg</code></td><td>number</td><td>CO2 emissions per kg of material</td></tr>
+        <tr><td><code>water_liters_per_kg</code></td><td>number</td><td>Water usage per kg</td></tr>
+        <tr><td><code>biodegradable</code></td><td>boolean</td><td>Whether the material is biodegradable</td></tr>
+        <tr><td><code>recyclable</code></td><td>boolean</td><td>Whether the material can be recycled</td></tr>
+        <tr><td><code>sustainability_score</code></td><td>number</td><td>Overall sustainability score (0-100)</td></tr>
+      </table>
+
+      <!-- GET MATERIAL -->
+      <h2 id="get-material">Get Material</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/materials/{slug}</span>
+        </div>
+        <div class="endpoint-desc">Get detailed impact data for a single material.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/materials/organic-cotton"</code></div>
+
+      <!-- CATEGORIES -->
+      <h2 id="categories">Categories</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/categories</span>
+        </div>
+        <div class="endpoint-desc">Get all brand categories with average scores and brand counts.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/categories"</code></div>
+
+      <!-- STATS -->
+      <h2 id="stats">Stats</h2>
+      <div class="endpoint">
+        <div class="endpoint-header">
+          <span class="method">GET</span>
+          <span class="endpoint-path">/api/stats</span>
+        </div>
+        <div class="endpoint-desc">Get overall statistics: total brands, average score, grade distribution, category breakdown, and more.</div>
+      </div>
+      <div class="code-block"><code>curl "https://api.rewovenapp.com/api/stats"</code></div>
+
+      <h2 style="border-top:none;margin-top:48px;">Grading Scale</h2>
+      <table class="params-table">
+        <tr><th>Grade</th><th>Score Range</th><th>Meaning</th></tr>
+        <tr><td><code>A+</code></td><td>90-100</td><td>Industry leader in sustainability</td></tr>
+        <tr><td><code>A</code></td><td>80-89</td><td>Excellent sustainability practices</td></tr>
+        <tr><td><code>B</code></td><td>70-79</td><td>Good, with room for improvement</td></tr>
+        <tr><td><code>C</code></td><td>60-69</td><td>Average, some initiatives in place</td></tr>
+        <tr><td><code>C-</code></td><td>50-59</td><td>Below average</td></tr>
+        <tr><td><code>D</code></td><td>40-49</td><td>Poor sustainability efforts</td></tr>
+        <tr><td><code>D-</code></td><td>30-39</td><td>Very poor</td></tr>
+        <tr><td><code>E</code></td><td>20-29</td><td>Minimal effort</td></tr>
+        <tr><td><code>F</code></td><td>10-19</td><td>Almost no sustainability</td></tr>
+        <tr><td><code>F-</code></td><td>0-9</td><td>No sustainability effort</td></tr>
+      </table>
+    </main>
+  </div>
+
+  <footer>
+    <p>Rewoven API &mdash; Free and open for everyone &mdash; <a href="mailto:hello@rewovenapp.com">hello@rewovenapp.com</a></p>
+    <p style="margin-top:8px;">&copy; 2026 Rewoven. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Theme
+    const toggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+    function setTheme(t) {
+      html.setAttribute('data-theme', t);
+      toggle.innerHTML = t === 'dark' ? '&#9728;&#65039;' : '&#127769;';
+      localStorage.setItem('theme', t);
+    }
+    const saved = localStorage.getItem('theme');
+    if (saved) setTheme(saved);
+    else setTheme('light');
+    toggle.addEventListener('click', () => {
+      setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    });
+
+    // Mobile nav
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // Try it
+    async function tryApi() {
+      const input = document.getElementById('tryInput');
+      const result = document.getElementById('tryResult');
+      const path = input.value.startsWith('/') ? input.value : '/' + input.value;
+      result.style.display = 'block';
+      result.textContent = 'Loading...';
+      try {
+        const res = await fetch('https://api.rewovenapp.com' + path);
+        const data = await res.json();
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        result.textContent = 'Error: ' + e.message;
+      }
+    }
+
+    document.getElementById('tryInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryApi();
+    });
+  </script>
+</body>
+</html>
