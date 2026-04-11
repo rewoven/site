@@ -1,0 +1,757 @@
+<!--
+  Rewoven Brain - Real-time Collaborative Notes
+
+  SQL to run in Supabase SQL Editor:
+  ====================================
+
+  -- Create the brain_pages table
+  CREATE TABLE brain_pages (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    title TEXT NOT NULL UNIQUE,
+    content TEXT DEFAULT '',
+    section TEXT NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now(),
+    updated_by TEXT DEFAULT 'Unknown'
+  );
+
+  -- Enable realtime
+  ALTER PUBLICATION supabase_realtime ADD TABLE brain_pages;
+
+  -- Enable RLS (but allow anon access since we use a password gate)
+  ALTER TABLE brain_pages ENABLE ROW LEVEL SECURITY;
+
+  CREATE POLICY "Allow all access" ON brain_pages
+    FOR ALL USING (true) WITH CHECK (true);
+
+  -- Insert default sections
+  INSERT INTO brain_pages (title, content, section, updated_by) VALUES
+    ('Marketing', '', 'Marketing', 'System'),
+    ('Partnerships', '', 'Partnerships', 'System'),
+    ('Tech', '', 'Tech', 'System'),
+    ('Ideas', '', 'Ideas', 'System'),
+    ('Growth', '', 'Growth', 'System'),
+    ('General', '', 'General', 'System');
+
+  -- Create the presence table for live indicators
+  CREATE TABLE brain_presence (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_name TEXT NOT NULL,
+    section TEXT,
+    last_seen TIMESTAMPTZ DEFAULT now()
+  );
+
+  ALTER TABLE brain_presence ENABLE ROW LEVEL SECURITY;
+
+  CREATE POLICY "Allow all access" ON brain_presence
+    FOR ALL USING (true) WITH CHECK (true);
+
+  ====================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rewoven Brain</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f172a;
+    --bg-sidebar: #1e293b;
+    --bg-input: #1e293b;
+    --bg-hover: #334155;
+    --accent: #10B981;
+    --accent-dim: #065f46;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-muted: #64748b;
+    --border: #334155;
+    --danger: #ef4444;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  /* ---- Password / Name Gate ---- */
+  .gate-overlay {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    transition: opacity .3s;
+  }
+  .gate-overlay.hidden { opacity: 0; pointer-events: none; }
+  .gate-box {
+    background: var(--bg-sidebar);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    width: 360px;
+    text-align: center;
+  }
+  .gate-box h1 {
+    font-size: 24px;
+    margin-bottom: 6px;
+    color: var(--accent);
+  }
+  .gate-box p {
+    color: var(--text-dim);
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+  .gate-box input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .gate-box input:focus { border-color: var(--accent); }
+  .gate-box button {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .gate-box button:hover { background: #0d9668; }
+  .gate-error {
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 10px;
+    min-height: 18px;
+  }
+
+  /* ---- App Layout ---- */
+  .app {
+    display: none;
+    height: 100vh;
+    flex-direction: row;
+  }
+  .app.active { display: flex; }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform .3s;
+  }
+  .sidebar-header {
+    padding: 20px 20px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-header h2 {
+    font-size: 18px;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .sidebar-header span {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .section-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+  .section-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-dim);
+    transition: all .15s;
+    border-left: 3px solid transparent;
+  }
+  .section-item:hover { background: var(--bg-hover); color: var(--text); }
+  .section-item.active {
+    background: rgba(16, 185, 129, 0.08);
+    color: var(--accent);
+    border-left-color: var(--accent);
+    font-weight: 600;
+  }
+  .section-item .delete-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all .15s;
+  }
+  .section-item:hover .delete-btn { opacity: 1; }
+  .section-item .delete-btn:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+
+  .add-section {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .add-section button {
+    width: 100%;
+    padding: 8px;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .add-section button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ---- Main Content ---- */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    min-height: 60px;
+  }
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .topbar h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .save-status {
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: color .2s;
+  }
+  .save-status.saving { color: #f59e0b; }
+  .save-status.saved { color: var(--accent); }
+  .save-status.error { color: var(--danger); }
+
+  .presence-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .presence-dot {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+  }
+  .presence-dot .pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: .6; }
+    100% { transform: scale(1.4); opacity: 0; }
+  }
+
+  .editor-wrap {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  #editor {
+    flex: 1;
+    width: 100%;
+    padding: 28px;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Cascadia Code', monospace;
+    font-size: 15px;
+    line-height: 1.75;
+    resize: none;
+    outline: none;
+    overflow-y: auto;
+  }
+  #editor::placeholder { color: var(--text-muted); }
+
+  .footer {
+    padding: 10px 28px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* ---- Scrollbar ---- */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ---- Mobile ---- */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 99;
+  }
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      z-index: 100;
+      transform: translateX(-100%);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-backdrop.open { display: block; }
+    .menu-toggle { display: block; }
+    #editor { padding: 20px 16px; font-size: 14px; }
+    .topbar { padding: 12px 16px; }
+    .footer { padding: 8px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Password Gate -->
+<div class="gate-overlay" id="passwordGate">
+  <div class="gate-box">
+    <h1>Rewoven Brain</h1>
+    <p>Enter the password to continue</p>
+    <input type="password" id="passwordInput" placeholder="Password" autocomplete="off">
+    <button onclick="checkPassword()">Enter</button>
+    <div class="gate-error" id="passwordError"></div>
+  </div>
+</div>
+
+<!-- Name Gate -->
+<div class="gate-overlay hidden" id="nameGate">
+  <div class="gate-box">
+    <h1>Who are you?</h1>
+    <p>Enter your name so others know who's editing</p>
+    <input type="text" id="nameInput" placeholder="e.g. Arhan" autocomplete="off">
+    <button onclick="setName()">Continue</button>
+  </div>
+</div>
+
+<!-- Sidebar Backdrop (mobile) -->
+<div class="sidebar-backdrop" id="backdrop" onclick="toggleSidebar()"></div>
+
+<!-- App -->
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Rewoven Brain</h2>
+      <span>Shared workspace</span>
+    </div>
+    <div class="section-list" id="sectionList"></div>
+    <div class="add-section">
+      <button onclick="addSection()">+ Add Section</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
+        <h1 id="currentTitle">Select a section</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="presence-dots" id="presenceDots"></div>
+        <span class="save-status" id="saveStatus"></span>
+      </div>
+    </div>
+    <div class="editor-wrap">
+      <textarea id="editor" placeholder="Start writing..."></textarea>
+    </div>
+    <div class="footer">
+      <span id="editInfo">Select a section to begin</span>
+      <span id="charCount"></span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
+const PASSWORD = 'rewoven2026';
+
+let supabase;
+let currentSection = null;
+let userName = '';
+let saveTimer = null;
+let realtimeChannel = null;
+let presenceChannel = null;
+let ignoreNextUpdate = false;
+
+// ---- Auth Gates ----
+
+function checkPassword() {
+  const input = document.getElementById('passwordInput').value;
+  if (input === PASSWORD) {
+    sessionStorage.setItem('brain_auth', 'true');
+    document.getElementById('passwordGate').classList.add('hidden');
+    checkName();
+  } else {
+    document.getElementById('passwordError').textContent = 'Wrong password';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordInput').focus();
+  }
+}
+
+document.getElementById('passwordInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+
+function checkName() {
+  const stored = sessionStorage.getItem('brain_name');
+  if (stored) {
+    userName = stored;
+    initApp();
+  } else {
+    document.getElementById('nameGate').classList.remove('hidden');
+    document.getElementById('nameInput').focus();
+  }
+}
+
+function setName() {
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name) return;
+  userName = name;
+  sessionStorage.setItem('brain_name', name);
+  document.getElementById('nameGate').classList.add('hidden');
+  initApp();
+}
+
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') setName();
+});
+
+// ---- Init ----
+
+function initApp() {
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  document.getElementById('app').classList.add('active');
+  loadSections();
+  setupPresence();
+}
+
+// On page load
+(function boot() {
+  if (sessionStorage.getItem('brain_auth') === 'true') {
+    document.getElementById('passwordGate').classList.add('hidden');
+    checkName();
+  } else {
+    document.getElementById('passwordInput').focus();
+  }
+})();
+
+// ---- Sections ----
+
+async function loadSections() {
+  const { data, error } = await supabase
+    .from('brain_pages')
+    .select('title, section')
+    .order('title');
+
+  if (error) { console.error(error); return; }
+
+  const list = document.getElementById('sectionList');
+  list.innerHTML = '';
+  data.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'section-item' + (currentSection === s.section ? ' active' : '');
+    el.innerHTML = `
+      <span>${escHtml(s.title)}</span>
+      <button class="delete-btn" onclick="event.stopPropagation(); deleteSection('${escAttr(s.section)}')" title="Delete">&times;</button>
+    `;
+    el.addEventListener('click', () => selectSection(s.section, s.title));
+    list.appendChild(el);
+  });
+}
+
+async function selectSection(section, title) {
+  currentSection = section;
+  document.getElementById('currentTitle').textContent = title;
+
+  // Update active state
+  document.querySelectorAll('.section-item').forEach(el => {
+    el.classList.toggle('active', el.querySelector('span').textContent === title);
+  });
+
+  // Load content
+  const { data, error } = await supabase
+    .from('brain_pages')
+    .select('*')
+    .eq('section', section)
+    .single();
+
+  if (error) { console.error(error); return; }
+
+  const editor = document.getElementById('editor');
+  editor.value = data.content || '';
+  updateEditInfo(data);
+  updateCharCount();
+
+  // Close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('open');
+
+  // Subscribe to realtime changes for this section
+  subscribeToSection(section);
+  broadcastPresence(section);
+}
+
+function updateEditInfo(data) {
+  const info = document.getElementById('editInfo');
+  if (data.updated_by && data.updated_at) {
+    const d = new Date(data.updated_at);
+    const time = d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    info.textContent = `Last edited by ${data.updated_by} at ${time}`;
+  } else {
+    info.textContent = '';
+  }
+}
+
+function updateCharCount() {
+  const len = document.getElementById('editor').value.length;
+  document.getElementById('charCount').textContent = len > 0 ? `${len} chars` : '';
+}
+
+async function addSection() {
+  const name = prompt('New section name:');
+  if (!name || !name.trim()) return;
+  const title = name.trim();
+
+  const { error } = await supabase
+    .from('brain_pages')
+    .insert({ title, section: title, content: '', updated_by: userName });
+
+  if (error) {
+    if (error.code === '23505') alert('A section with that name already exists.');
+    else alert('Error creating section: ' + error.message);
+    return;
+  }
+  await loadSections();
+  selectSection(title, title);
+}
+
+async function deleteSection(section) {
+  if (!confirm(`Delete "${section}"? This cannot be undone.`)) return;
+
+  const { error } = await supabase
+    .from('brain_pages')
+    .delete()
+    .eq('section', section);
+
+  if (error) { alert('Error: ' + error.message); return; }
+
+  if (currentSection === section) {
+    currentSection = null;
+    document.getElementById('editor').value = '';
+    document.getElementById('currentTitle').textContent = 'Select a section';
+    document.getElementById('editInfo').textContent = '';
+    document.getElementById('charCount').textContent = '';
+  }
+  await loadSections();
+}
+
+// ---- Editor & Saving ----
+
+document.getElementById('editor').addEventListener('input', () => {
+  updateCharCount();
+  if (!currentSection) return;
+  setSaveStatus('saving', 'Saving...');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveContent, 500);
+});
+
+async function saveContent() {
+  if (!currentSection) return;
+  const content = document.getElementById('editor').value;
+  ignoreNextUpdate = true;
+
+  const { error } = await supabase
+    .from('brain_pages')
+    .update({
+      content,
+      updated_by: userName,
+      updated_at: new Date().toISOString()
+    })
+    .eq('section', currentSection);
+
+  if (error) {
+    setSaveStatus('error', 'Error saving');
+    console.error(error);
+    ignoreNextUpdate = false;
+  } else {
+    setSaveStatus('saved', 'Saved');
+    document.getElementById('editInfo').textContent =
+      `Last edited by ${userName} at ${new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`;
+    setTimeout(() => ignoreNextUpdate = false, 1000);
+  }
+}
+
+function setSaveStatus(cls, text) {
+  const el = document.getElementById('saveStatus');
+  el.className = 'save-status ' + cls;
+  el.textContent = text;
+  if (cls === 'saved') setTimeout(() => { el.textContent = ''; el.className = 'save-status'; }, 2000);
+}
+
+// ---- Realtime ----
+
+function subscribeToSection(section) {
+  if (realtimeChannel) {
+    supabase.removeChannel(realtimeChannel);
+  }
+
+  realtimeChannel = supabase
+    .channel('brain-changes')
+    .on('postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'brain_pages', filter: `section=eq.${section}` },
+      (payload) => {
+        if (ignoreNextUpdate) return;
+        const data = payload.new;
+        const editor = document.getElementById('editor');
+        // Only update if content is different (to avoid cursor jump)
+        if (editor.value !== data.content) {
+          const start = editor.selectionStart;
+          const end = editor.selectionEnd;
+          editor.value = data.content || '';
+          // Try to preserve cursor position
+          editor.selectionStart = Math.min(start, editor.value.length);
+          editor.selectionEnd = Math.min(end, editor.value.length);
+        }
+        updateEditInfo(data);
+        updateCharCount();
+      }
+    )
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: 'brain_pages' },
+      () => { loadSections(); }
+    )
+    .subscribe();
+}
+
+// ---- Presence ----
+
+function setupPresence() {
+  presenceChannel = supabase.channel('brain-presence', {
+    config: { presence: { key: userName } }
+  });
+
+  presenceChannel
+    .on('presence', { event: 'sync' }, () => {
+      renderPresence();
+    })
+    .subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await presenceChannel.track({ user: userName, section: currentSection, online_at: new Date().toISOString() });
+      }
+    });
+}
+
+function broadcastPresence(section) {
+  if (presenceChannel) {
+    presenceChannel.track({ user: userName, section, online_at: new Date().toISOString() });
+  }
+}
+
+function renderPresence() {
+  if (!presenceChannel) return;
+  const state = presenceChannel.presenceState();
+  const container = document.getElementById('presenceDots');
+  container.innerHTML = '';
+
+  Object.keys(state).forEach(key => {
+    const presences = state[key];
+    presences.forEach(p => {
+      if (p.user === userName) return; // Don't show self
+      const dot = document.createElement('div');
+      dot.className = 'presence-dot';
+      dot.title = `${p.user}${p.section ? ' in ' + p.section : ''}`;
+      dot.innerHTML = `<span>${escHtml(p.user.charAt(0).toUpperCase())}</span><span class="pulse"></span>`;
+      container.appendChild(dot);
+    });
+  });
+}
+
+// ---- Sidebar Toggle ----
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('backdrop').classList.toggle('open');
+}
+
+// ---- Helpers ----
+
+function escHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function escAttr(s) {
+  return s.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
