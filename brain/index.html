@@ -6,27 +6,6 @@
     <title>Rewoven Brain</title>
     <link rel="icon" href="../assets/logo.png" type="image/png" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!--
-      SQL to run in Supabase SQL Editor:
-      CREATE TABLE brain_pages (
-        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-        title TEXT NOT NULL UNIQUE,
-        content TEXT DEFAULT '',
-        section TEXT NOT NULL,
-        updated_at TIMESTAMPTZ DEFAULT now(),
-        updated_by TEXT DEFAULT 'Unknown'
-      );
-      ALTER PUBLICATION supabase_realtime ADD TABLE brain_pages;
-      ALTER TABLE brain_pages ENABLE ROW LEVEL SECURITY;
-      CREATE POLICY "Allow all access" ON brain_pages FOR ALL USING (true) WITH CHECK (true);
-      INSERT INTO brain_pages (title, content, section, updated_by) VALUES
-        ('Marketing', '', 'Marketing', 'System'),
-        ('Partnerships', '', 'Partnerships', 'System'),
-        ('Tech', '', 'Tech', 'System'),
-        ('Ideas', '', 'Ideas', 'System'),
-        ('Growth', '', 'Growth', 'System'),
-        ('General', '', 'General', 'System');
-    -->
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -53,7 +32,7 @@
         .app-layout { display: flex; height: 100%; }
 
         /* Sidebar */
-        .sidebar { width: 260px; min-width: 260px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .sidebar { width: 280px; min-width: 280px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
         .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
         .sidebar-header h2 { font-size: 1.1rem; font-weight: 800; color: var(--green-800); }
         .sidebar-header small { font-size: 0.75rem; color: var(--text-sec); }
@@ -63,12 +42,15 @@
             padding: 10px 20px; cursor: pointer; font-size: 0.9rem; color: var(--text-sec);
             transition: all 0.15s; border-left: 3px solid transparent;
         }
+        .section-item.depth-1 { padding-left: 36px; font-size: 0.84rem; }
+        .section-item.depth-2 { padding-left: 52px; font-size: 0.8rem; }
         .section-item:hover { background: var(--green-50); color: var(--text); }
         .section-item.active { background: var(--green-50); color: var(--green-800); border-left-color: var(--green-500); font-weight: 600; }
         .section-item .del { opacity: 0; background: none; border: none; color: #ccc; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
         .section-item:hover .del { opacity: 1; }
         .section-item .del:hover { color: #E11D48; background: #FEE2E2; }
-        .add-btn { margin: 12px 20px; padding: 8px; border: 2px dashed var(--border); border-radius: 10px; background: transparent; color: var(--text-sec); font-size: 0.85rem; cursor: pointer; font-family: inherit; }
+        .sidebar-actions { padding: 12px 20px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+        .add-btn { flex: 1; padding: 8px; border: 2px dashed var(--border); border-radius: 10px; background: transparent; color: var(--text-sec); font-size: 0.8rem; cursor: pointer; font-family: inherit; }
         .add-btn:hover { border-color: var(--green-500); color: var(--green-500); }
 
         /* Main editor */
@@ -78,13 +60,33 @@
         .save-status { font-size: 0.8rem; color: var(--text-sec); }
         .save-status.saving { color: #F59E0B; }
         .save-status.saved { color: var(--green-500); }
+
+        /* Toolbar */
+        .toolbar { display: flex; align-items: center; gap: 4px; padding: 8px 28px; border-bottom: 1px solid var(--border); background: var(--surface); flex-wrap: wrap; }
+        .toolbar-btn {
+            padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface);
+            cursor: pointer; font-family: inherit; font-size: 0.82rem; color: var(--text-sec); transition: all 0.15s;
+            display: flex; align-items: center; justify-content: center; min-width: 32px; height: 32px;
+        }
+        .toolbar-btn:hover { background: var(--green-50); color: var(--green-800); border-color: var(--green-200); }
+        .toolbar-btn.active { background: var(--green-100); color: var(--green-800); border-color: var(--green-500); }
+        .toolbar-btn b { font-weight: 700; }
+        .toolbar-btn i { font-style: italic; }
+        .toolbar-sep { width: 1px; height: 20px; background: var(--border); margin: 0 6px; }
+        .font-size-select { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.82rem; font-family: inherit; color: var(--text-sec); background: var(--surface); cursor: pointer; outline: none; height: 32px; }
+        .font-size-select:hover { border-color: var(--green-200); }
+
+        /* Editor */
         .editor-area { flex: 1; overflow: hidden; display: flex; flex-direction: column; background: var(--surface); }
         #editor {
             flex: 1; width: 100%; padding: 28px; background: transparent; border: none;
-            color: var(--text); font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 0.95rem; line-height: 1.8; resize: none; outline: none; overflow-y: auto;
+            color: var(--text); font-family: 'Inter', sans-serif;
+            font-size: 0.95rem; line-height: 1.8; outline: none; overflow-y: auto;
+            min-height: 200px;
         }
-        #editor::placeholder { color: #ccc; }
+        #editor:empty:before { content: attr(data-placeholder); color: #ccc; }
+        #editor img { max-width: 100%; border-radius: 8px; margin: 12px 0; display: block; }
+        #editor.drag-over { background: var(--green-50); outline: 2px dashed var(--green-500); outline-offset: -8px; }
         .footer { padding: 8px 28px; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-sec); background: var(--surface); }
 
         /* Mobile */
@@ -92,6 +94,7 @@
             .sidebar { display: none; }
             #editor { padding: 20px 16px; font-size: 0.85rem; }
             .topbar { padding: 12px 16px; }
+            .toolbar { padding: 8px 16px; }
         }
     </style>
 </head>
@@ -114,15 +117,39 @@
                     <small>Shared workspace</small>
                 </div>
                 <div class="section-list" id="sectionList"></div>
-                <button class="add-btn" onclick="addSection()">+ Add Section</button>
+                <div class="sidebar-actions">
+                    <button class="add-btn" onclick="addSection()">+ Section</button>
+                    <button class="add-btn" onclick="addSubsection()">+ Subsection</button>
+                </div>
             </aside>
             <div class="main">
                 <div class="topbar">
                     <h1 id="sectionTitle">Select a section</h1>
                     <span class="save-status" id="saveStatus"></span>
                 </div>
+                <div class="toolbar" id="toolbar">
+                    <button class="toolbar-btn" onclick="fmt('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+                    <button class="toolbar-btn" onclick="fmt('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+                    <button class="toolbar-btn" onclick="fmt('underline')" title="Underline (Ctrl+U)"><span style="text-decoration:underline">U</span></button>
+                    <button class="toolbar-btn" onclick="fmt('strikeThrough')" title="Strikethrough"><span style="text-decoration:line-through">S</span></button>
+                    <div class="toolbar-sep"></div>
+                    <select class="font-size-select" onchange="setFontSize(this.value)" title="Font Size">
+                        <option value="">Size</option>
+                        <option value="1">Small</option>
+                        <option value="3">Normal</option>
+                        <option value="4">Medium</option>
+                        <option value="5">Large</option>
+                        <option value="6">X-Large</option>
+                    </select>
+                    <div class="toolbar-sep"></div>
+                    <button class="toolbar-btn" onclick="fmt('insertUnorderedList')" title="Bullet List">&#8226; List</button>
+                    <button class="toolbar-btn" onclick="fmt('insertOrderedList')" title="Numbered List">1. List</button>
+                    <div class="toolbar-sep"></div>
+                    <button class="toolbar-btn" onclick="insertImageFromFile()" title="Insert Image">IMG</button>
+                </div>
                 <div class="editor-area">
-                    <textarea id="editor" placeholder="Start writing..." disabled></textarea>
+                    <div id="editor" contenteditable="false" data-placeholder="Start writing..."></div>
+                    <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="handleImageFile(this.files)">
                 </div>
                 <div class="footer" id="footer">Select a section to begin</div>
             </div>
@@ -144,7 +171,7 @@
             return { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
         }
 
-        // ---- Auth (same pattern as donations page) ----
+        // ---- Auth ----
 
         async function hashPassword(pw) {
             var data = new TextEncoder().encode(pw);
@@ -167,10 +194,8 @@
 
         function askName() {
             var stored = sessionStorage.getItem('brain_name');
-            if (stored) {
-                userName = stored;
-                startApp();
-            } else {
+            if (stored) { userName = stored; startApp(); }
+            else {
                 var name = prompt('Enter your name (so others know who edited):');
                 if (!name || !name.trim()) name = 'Anonymous';
                 userName = name.trim();
@@ -183,6 +208,76 @@
             document.getElementById('app').style.display = 'block';
             loadSections();
         }
+
+        // ---- Toolbar / Formatting ----
+
+        function fmt(command) {
+            document.getElementById('editor').focus();
+            document.execCommand(command, false, null);
+            scheduleSave();
+        }
+
+        function setFontSize(val) {
+            if (!val) return;
+            document.getElementById('editor').focus();
+            document.execCommand('fontSize', false, val);
+            scheduleSave();
+        }
+
+        // ---- Image handling ----
+
+        function insertImageFromFile() {
+            document.getElementById('imageInput').click();
+        }
+
+        function handleImageFile(files) {
+            if (!files || !files.length) return;
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                if (!file.type.startsWith('image/')) continue;
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('editor').focus();
+                    document.execCommand('insertImage', false, e.target.result);
+                    scheduleSave();
+                };
+                reader.readAsDataURL(file);
+            }
+            document.getElementById('imageInput').value = '';
+        }
+
+        // Drag & drop images
+        (function() {
+            var ed = null;
+            document.addEventListener('DOMContentLoaded', function() {
+                ed = document.getElementById('editor');
+                ed.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    ed.classList.add('drag-over');
+                });
+                ed.addEventListener('dragleave', function() {
+                    ed.classList.remove('drag-over');
+                });
+                ed.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    ed.classList.remove('drag-over');
+                    var files = e.dataTransfer.files;
+                    if (files.length) handleImageFile(files);
+                });
+                // Also handle paste images
+                ed.addEventListener('paste', function(e) {
+                    var items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                    for (var i = 0; i < items.length; i++) {
+                        if (items[i].type.indexOf('image') !== -1) {
+                            e.preventDefault();
+                            var file = items[i].getAsFile();
+                            handleImageFile([file]);
+                            return;
+                        }
+                    }
+                });
+            });
+        })();
 
         // ---- Supabase REST calls ----
 
@@ -198,40 +293,73 @@
         function renderSidebar(sections) {
             var list = document.getElementById('sectionList');
             list.innerHTML = '';
+
+            // Separate top-level and subsections
+            var topLevel = [];
+            var children = {};
             for (var i = 0; i < sections.length; i++) {
                 var s = sections[i];
-                var div = document.createElement('div');
-                div.className = 'section-item' + (currentSection === s.section ? ' active' : '');
-                div.innerHTML = '<span>' + esc(s.title) + '</span><button class="del" onclick="event.stopPropagation();deleteSection(\'' + escAttr(s.section) + '\')">&times;</button>';
-                div.setAttribute('data-section', s.section);
-                div.onclick = (function(sec) { return function() { selectSection(sec); }; })(s.section);
-                list.appendChild(div);
+                var parts = s.section.split('/');
+                if (parts.length === 1) {
+                    topLevel.push(s);
+                    if (!children[s.section]) children[s.section] = [];
+                } else {
+                    var parent = parts[0];
+                    if (!children[parent]) children[parent] = [];
+                    children[parent].push(s);
+                }
+            }
+
+            // Sort top level
+            topLevel.sort(function(a, b) { return a.title.localeCompare(b.title); });
+
+            for (var i = 0; i < topLevel.length; i++) {
+                var s = topLevel[i];
+                addSidebarItem(list, s, 0);
+                // Render children
+                var kids = children[s.section] || [];
+                kids.sort(function(a, b) { return a.title.localeCompare(b.title); });
+                for (var j = 0; j < kids.length; j++) {
+                    addSidebarItem(list, kids[j], 1);
+                }
             }
         }
 
+        function addSidebarItem(list, s, depth) {
+            var div = document.createElement('div');
+            var depthClass = depth > 0 ? ' depth-' + depth : '';
+            div.className = 'section-item' + depthClass + (currentSection === s.section ? ' active' : '');
+            var displayName = s.title;
+            if (s.section.indexOf('/') !== -1) {
+                displayName = s.section.split('/').pop();
+            }
+            div.innerHTML = '<span>' + esc(displayName) + '</span><button class="del" onclick="event.stopPropagation();deleteSection(\'' + escAttr(s.section) + '\')">&times;</button>';
+            div.setAttribute('data-section', s.section);
+            div.onclick = (function(sec) { return function() { selectSection(sec); }; })(s.section);
+            list.appendChild(div);
+        }
+
         async function selectSection(section) {
-            // Save current before switching
             if (currentSection) saveNow();
 
             currentSection = section;
-            document.getElementById('sectionTitle').textContent = section;
-            document.getElementById('editor').disabled = false;
-            document.getElementById('editor').value = '';
-            document.getElementById('editor').placeholder = 'Loading...';
+            var displayTitle = section.indexOf('/') !== -1 ? section.split('/').pop() : section;
+            document.getElementById('sectionTitle').textContent = displayTitle;
+            var editor = document.getElementById('editor');
+            editor.contentEditable = 'true';
+            editor.innerHTML = '';
 
-            // Highlight active
             var items = document.querySelectorAll('.section-item');
             for (var i = 0; i < items.length; i++) {
-                items[i].className = 'section-item' + (items[i].getAttribute('data-section') === section ? ' active' : '');
+                items[i].className = items[i].className.replace(' active', '') + (items[i].getAttribute('data-section') === section ? ' active' : '');
             }
 
-            // Load content
             try {
                 var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages?section=eq.' + encodeURIComponent(section) + '&select=content,updated_by,updated_at', { headers: headers() });
                 if (res.ok) {
                     var data = await res.json();
                     if (data.length > 0) {
-                        document.getElementById('editor').value = data[0].content || '';
+                        editor.innerHTML = data[0].content || '';
                         lastSavedContent = data[0].content || '';
                         var time = data[0].updated_at ? new Date(data[0].updated_at).toLocaleString() : '';
                         document.getElementById('footer').textContent = 'Last edited by ' + (data[0].updated_by || '?') + (time ? ' at ' + time : '');
@@ -239,10 +367,7 @@
                 }
             } catch (e) { console.error(e); }
 
-            document.getElementById('editor').placeholder = 'Start writing...';
-            document.getElementById('editor').focus();
-
-            // Start polling for changes from others
+            editor.focus();
             if (pollTimer) clearInterval(pollTimer);
             pollTimer = setInterval(function() { pollChanges(); }, 3000);
         }
@@ -256,12 +381,9 @@
                 if (data.length > 0) {
                     var remote = data[0].content || '';
                     var editor = document.getElementById('editor');
-                    // Only update if content changed AND it wasn't us who saved it
                     if (remote !== lastSavedContent && data[0].updated_by !== userName) {
-                        var pos = editor.selectionStart;
-                        editor.value = remote;
+                        editor.innerHTML = remote;
                         lastSavedContent = remote;
-                        editor.selectionStart = editor.selectionEnd = Math.min(pos, remote.length);
                         var time = new Date(data[0].updated_at).toLocaleString();
                         document.getElementById('footer').textContent = 'Last edited by ' + data[0].updated_by + ' at ' + time;
                     }
@@ -271,18 +393,22 @@
 
         // ---- Save (debounced) ----
 
+        function scheduleSave() {
+            document.getElementById('saveStatus').textContent = 'Saving...';
+            document.getElementById('saveStatus').className = 'save-status saving';
+            if (saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(saveNow, 800);
+        }
+
         document.addEventListener('input', function(e) {
             if (e.target.id === 'editor' && currentSection) {
-                document.getElementById('saveStatus').textContent = 'Saving...';
-                document.getElementById('saveStatus').className = 'save-status saving';
-                if (saveTimer) clearTimeout(saveTimer);
-                saveTimer = setTimeout(saveNow, 800);
+                scheduleSave();
             }
         });
 
         async function saveNow() {
             if (!currentSection) return;
-            var content = document.getElementById('editor').value;
+            var content = document.getElementById('editor').innerHTML;
             lastSavedContent = content;
             try {
                 var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages?section=eq.' + encodeURIComponent(currentSection), {
@@ -311,16 +437,28 @@
             name = name.trim();
             try {
                 var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages', {
-                    method: 'POST',
-                    headers: headers(),
+                    method: 'POST', headers: headers(),
                     body: JSON.stringify({ title: name, section: name, content: '', updated_by: userName })
                 });
-                if (res.ok) {
-                    loadSections();
-                    selectSection(name);
-                } else {
-                    alert('Failed to add section. It may already exist.');
-                }
+                if (res.ok) { loadSections(); selectSection(name); }
+                else { alert('Failed to add section. It may already exist.'); }
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        async function addSubsection() {
+            if (!currentSection) { alert('Select a parent section first.'); return; }
+            var parent = currentSection.split('/')[0]; // Always nest under top-level
+            var name = prompt('Subsection name (under ' + parent + '):');
+            if (!name || !name.trim()) return;
+            name = name.trim();
+            var fullSection = parent + '/' + name;
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages', {
+                    method: 'POST', headers: headers(),
+                    body: JSON.stringify({ title: fullSection, section: fullSection, content: '', updated_by: userName })
+                });
+                if (res.ok) { loadSections(); selectSection(fullSection); }
+                else { alert('Failed to add subsection. It may already exist.'); }
             } catch (e) { alert('Error: ' + e.message); }
         }
 
@@ -328,14 +466,13 @@
             if (!confirm('Delete "' + section + '"? This cannot be undone.')) return;
             try {
                 var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages?section=eq.' + encodeURIComponent(section), {
-                    method: 'DELETE',
-                    headers: headers()
+                    method: 'DELETE', headers: headers()
                 });
                 if (res.ok) {
                     if (currentSection === section) {
                         currentSection = null;
-                        document.getElementById('editor').value = '';
-                        document.getElementById('editor').disabled = true;
+                        document.getElementById('editor').innerHTML = '';
+                        document.getElementById('editor').contentEditable = 'false';
                         document.getElementById('sectionTitle').textContent = 'Select a section';
                         document.getElementById('footer').textContent = 'Select a section to begin';
                     }
@@ -348,6 +485,14 @@
 
         function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
         function escAttr(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+        // ---- Keyboard shortcuts ----
+        document.addEventListener('keydown', function(e) {
+            if (e.target.id !== 'editor') return;
+            if ((e.ctrlKey || e.metaKey) && e.key === 'b') { e.preventDefault(); fmt('bold'); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'i') { e.preventDefault(); fmt('italic'); }
+            if ((e.ctrlKey || e.metaKey) && e.key === 'u') { e.preventDefault(); fmt('underline'); }
+        });
 
         // ---- Boot ----
         document.getElementById('passwordInput').focus();
