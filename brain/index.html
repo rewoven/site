@@ -427,31 +427,20 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
-const PASSWORD_HASH = '4314d9a52a45a17930f5d1127cfc9f640611376f7514530f6c5c782832dfec57';
-
-let supabase;
-let currentSection = null;
-let userName = '';
-let saveTimer = null;
-let realtimeChannel = null;
-let presenceChannel = null;
-let ignoreNextUpdate = false;
-
-// ---- Auth Gates ----
+// ---- Auth (standalone, no dependencies) ----
+var PASSWORD_HASH = '4314d9a52a45a17930f5d1127cfc9f640611376f7514530f6c5c782832dfec57';
+var userName = '';
 
 async function hashPassword(pw) {
-  const data = new TextEncoder().encode(pw);
-  const buf = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  var data = new TextEncoder().encode(pw);
+  var buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
 }
 
 async function checkPassword() {
-  const pw = document.getElementById('passwordInput').value;
-  const hashed = await hashPassword(pw);
+  var pw = document.getElementById('passwordInput').value;
+  var hashed = await hashPassword(pw);
   if (hashed === PASSWORD_HASH) {
     document.getElementById('passwordGate').style.display = 'none';
     checkName();
@@ -463,10 +452,10 @@ async function checkPassword() {
 }
 
 function checkName() {
-  const stored = sessionStorage.getItem('brain_name');
+  var stored = sessionStorage.getItem('brain_name');
   if (stored) {
     userName = stored;
-    initApp();
+    startApp();
   } else {
     document.getElementById('nameGate').classList.remove('hidden');
     document.getElementById('nameInput').focus();
@@ -474,22 +463,35 @@ function checkName() {
 }
 
 function setName() {
-  const name = document.getElementById('nameInput').value.trim();
+  var name = document.getElementById('nameInput').value.trim();
   if (!name) return;
   userName = name;
   sessionStorage.setItem('brain_name', name);
   document.getElementById('nameGate').classList.add('hidden');
-  initApp();
+  startApp();
 }
 
-document.getElementById('nameInput').addEventListener('keydown', e => {
+document.getElementById('nameInput').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') setName();
 });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
+
+var supabase_client;
+var currentSection = null;
+var saveTimer = null;
+var realtimeChannel = null;
+var presenceChannel = null;
+var ignoreNextUpdate = false;
 
 // ---- Init ----
 
-function initApp() {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+function startApp() {
+  supabase_client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   document.getElementById('app').classList.add('active');
   loadSections();
   setupPresence();
@@ -498,7 +500,7 @@ function initApp() {
 // On page load
 (function boot() {
   if (sessionStorage.getItem('brain_auth') === 'true') {
-    document.getElementById('passwordGate').classList.add('hidden');
+    document.getElementById('passwordGate').style.display = 'none';
     checkName();
   } else {
     document.getElementById('passwordInput').focus();
@@ -508,7 +510,7 @@ function initApp() {
 // ---- Sections ----
 
 async function loadSections() {
-  const { data, error } = await supabase
+  const { data, error } = await supabase_client
     .from('brain_pages')
     .select('title, section')
     .order('title');
@@ -539,7 +541,7 @@ async function selectSection(section, title) {
   });
 
   // Load content
-  const { data, error } = await supabase
+  const { data, error } = await supabase_client
     .from('brain_pages')
     .select('*')
     .eq('section', section)
@@ -582,7 +584,7 @@ async function addSection() {
   if (!name || !name.trim()) return;
   const title = name.trim();
 
-  const { error } = await supabase
+  const { error } = await supabase_client
     .from('brain_pages')
     .insert({ title, section: title, content: '', updated_by: userName });
 
@@ -598,7 +600,7 @@ async function addSection() {
 async function deleteSection(section) {
   if (!confirm(`Delete "${section}"? This cannot be undone.`)) return;
 
-  const { error } = await supabase
+  const { error } = await supabase_client
     .from('brain_pages')
     .delete()
     .eq('section', section);
@@ -630,7 +632,7 @@ async function saveContent() {
   const content = document.getElementById('editor').value;
   ignoreNextUpdate = true;
 
-  const { error } = await supabase
+  const { error } = await supabase_client
     .from('brain_pages')
     .update({
       content,
@@ -662,10 +664,10 @@ function setSaveStatus(cls, text) {
 
 function subscribeToSection(section) {
   if (realtimeChannel) {
-    supabase.removeChannel(realtimeChannel);
+    supabase_client.removeChannel(realtimeChannel);
   }
 
-  realtimeChannel = supabase
+  realtimeChannel = supabase_client
     .channel('brain-changes')
     .on('postgres_changes',
       { event: 'UPDATE', schema: 'public', table: 'brain_pages', filter: `section=eq.${section}` },
@@ -696,7 +698,7 @@ function subscribeToSection(section) {
 // ---- Presence ----
 
 function setupPresence() {
-  presenceChannel = supabase.channel('brain-presence', {
+  presenceChannel = supabase_client.channel('brain-presence', {
     config: { presence: { key: userName } }
   });
 
