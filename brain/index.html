@@ -264,17 +264,22 @@
                     var files = e.dataTransfer.files;
                     if (files.length) handleImageFile(files);
                 });
-                // Also handle paste images
+                // Handle paste - strip formatting, allow images
                 ed.addEventListener('paste', function(e) {
-                    var items = (e.clipboardData || e.originalEvent.clipboardData).items;
-                    for (var i = 0; i < items.length; i++) {
-                        if (items[i].type.indexOf('image') !== -1) {
+                    var clip = e.clipboardData || e.originalEvent.clipboardData;
+                    // Check for images first
+                    for (var i = 0; i < clip.items.length; i++) {
+                        if (clip.items[i].type.indexOf('image') !== -1) {
                             e.preventDefault();
-                            var file = items[i].getAsFile();
+                            var file = clip.items[i].getAsFile();
                             handleImageFile([file]);
                             return;
                         }
                     }
+                    // For text, always paste as plain text (strips background colors etc)
+                    e.preventDefault();
+                    var text = clip.getData('text/plain');
+                    document.execCommand('insertText', false, text);
                 });
             });
         })();
