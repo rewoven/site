@@ -374,7 +374,7 @@
   <div class="gate-box">
     <h1>Rewoven Brain</h1>
     <p>Enter the password to continue</p>
-    <input type="password" id="passwordInput" placeholder="Password" autocomplete="off">
+    <input type="password" id="passwordInput" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()">
     <button onclick="checkPassword()">Enter</button>
     <div class="gate-error" id="passwordError"></div>
   </div>
@@ -431,7 +431,7 @@
 <script>
 const SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
-const PASSWORD_HASH = '51dc6cd6a99d668967f8a5a1621dce77a39b66f388df30bad56b4e318194304d';
+const PASSWORD_HASH = '4314d9a52a45a17930f5d1127cfc9f640611376f7514530f6c5c782832dfec57';
 
 let supabase;
 let currentSection = null;
@@ -444,28 +444,23 @@ let ignoreNextUpdate = false;
 // ---- Auth Gates ----
 
 async function hashPassword(pw) {
-  const encoded = new TextEncoder().encode(pw);
-  const buffer = await crypto.subtle.digest('SHA-256', encoded);
-  return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const data = new TextEncoder().encode(pw);
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 async function checkPassword() {
-  const input = document.getElementById('passwordInput').value;
-  const hashed = await hashPassword(input);
+  const pw = document.getElementById('passwordInput').value;
+  const hashed = await hashPassword(pw);
   if (hashed === PASSWORD_HASH) {
-    sessionStorage.setItem('brain_auth', 'true');
-    document.getElementById('passwordGate').classList.add('hidden');
+    document.getElementById('passwordGate').style.display = 'none';
     checkName();
   } else {
-    document.getElementById('passwordError').textContent = 'Wrong password';
+    document.getElementById('passwordError').textContent = 'Incorrect password.';
     document.getElementById('passwordInput').value = '';
     document.getElementById('passwordInput').focus();
   }
 }
-
-document.getElementById('passwordInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') checkPassword();
-});
 
 function checkName() {
   const stored = sessionStorage.getItem('brain_name');
