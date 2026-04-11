@@ -1,761 +1,356 @@
-<!--
-  Rewoven Brain - Real-time Collaborative Notes
-
-  SQL to run in Supabase SQL Editor:
-  ====================================
-
-  -- Create the brain_pages table
-  CREATE TABLE brain_pages (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    title TEXT NOT NULL UNIQUE,
-    content TEXT DEFAULT '',
-    section TEXT NOT NULL,
-    updated_at TIMESTAMPTZ DEFAULT now(),
-    updated_by TEXT DEFAULT 'Unknown'
-  );
-
-  -- Enable realtime
-  ALTER PUBLICATION supabase_realtime ADD TABLE brain_pages;
-
-  -- Enable RLS (but allow anon access since we use a password gate)
-  ALTER TABLE brain_pages ENABLE ROW LEVEL SECURITY;
-
-  CREATE POLICY "Allow all access" ON brain_pages
-    FOR ALL USING (true) WITH CHECK (true);
-
-  -- Insert default sections
-  INSERT INTO brain_pages (title, content, section, updated_by) VALUES
-    ('Marketing', '', 'Marketing', 'System'),
-    ('Partnerships', '', 'Partnerships', 'System'),
-    ('Tech', '', 'Tech', 'System'),
-    ('Ideas', '', 'Ideas', 'System'),
-    ('Growth', '', 'Growth', 'System'),
-    ('General', '', 'General', 'System');
-
-  -- Create the presence table for live indicators
-  CREATE TABLE brain_presence (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    user_name TEXT NOT NULL,
-    section TEXT,
-    last_seen TIMESTAMPTZ DEFAULT now()
-  );
-
-  ALTER TABLE brain_presence ENABLE ROW LEVEL SECURITY;
-
-  CREATE POLICY "Allow all access" ON brain_presence
-    FOR ALL USING (true) WITH CHECK (true);
-
-  ====================================
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rewoven Brain</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewoven Brain</title>
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!--
+      SQL to run in Supabase SQL Editor:
+      CREATE TABLE brain_pages (
+        id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+        title TEXT NOT NULL UNIQUE,
+        content TEXT DEFAULT '',
+        section TEXT NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT now(),
+        updated_by TEXT DEFAULT 'Unknown'
+      );
+      ALTER PUBLICATION supabase_realtime ADD TABLE brain_pages;
+      ALTER TABLE brain_pages ENABLE ROW LEVEL SECURITY;
+      CREATE POLICY "Allow all access" ON brain_pages FOR ALL USING (true) WITH CHECK (true);
+      INSERT INTO brain_pages (title, content, section, updated_by) VALUES
+        ('Marketing', '', 'Marketing', 'System'),
+        ('Partnerships', '', 'Partnerships', 'System'),
+        ('Tech', '', 'Tech', 'System'),
+        ('Ideas', '', 'Ideas', 'System'),
+        ('Growth', '', 'Growth', 'System'),
+        ('General', '', 'General', 'System');
+    -->
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --green-500: #10B981; --green-600: #059669; --green-800: #065F46;
+            --green-50: #ECFDF5; --green-100: #D1FAE5; --green-200: #A7F3D0;
+            --bg: #F0FDF4; --surface: #FFFFFF; --text: #111827; --text-sec: #4B5563;
+            --border: #D1FAE5; --radius: 14px;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  :root {
-    --bg: #ffffff;
-    --bg-sidebar: #f8fafc;
-    --bg-input: #f1f5f9;
-    --bg-hover: #e2e8f0;
-    --accent: #10B981;
-    --accent-dim: #d1fae5;
-    --text: #1e293b;
-    --text-dim: #475569;
-    --text-muted: #94a3b8;
-    --border: #e2e8f0;
-    --danger: #ef4444;
-  }
+        /* Auth */
+        .auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+        .auth-card { background: var(--surface); border-radius: var(--radius); padding: 44px 36px; border: 1px solid var(--border); text-align: center; max-width: 420px; width: 100%; box-shadow: 0 2px 16px rgba(16,185,129,0.08); }
+        .auth-card h2 { color: var(--green-800); margin-bottom: 6px; }
+        .auth-card p { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 24px; }
+        .auth-input { width: 100%; padding: 14px 18px; border: 2px solid var(--border); border-radius: 10px; font-size: 0.95rem; font-family: inherit; margin-bottom: 16px; text-align: center; outline: none; }
+        .auth-input:focus { border-color: var(--green-500); }
+        .auth-error { color: #E11D48; font-size: 0.85rem; margin-bottom: 12px; display: none; }
+        .btn { padding: 14px 28px; border-radius: 10px; font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer; font-family: inherit; background: var(--green-500); color: white; width: 100%; }
+        .btn:hover { background: var(--green-600); }
 
-  html, body {
-    height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow: hidden;
-  }
+        /* App layout */
+        .app { display: none; height: 100vh; }
+        .app-layout { display: flex; height: 100%; }
 
-  /* ---- Password / Name Gate ---- */
-  .gate-overlay {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1000;
-    transition: opacity .3s;
-  }
-  .gate-overlay.hidden { opacity: 0; pointer-events: none; }
-  .gate-box {
-    background: var(--bg-sidebar);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 40px;
-    width: 360px;
-    text-align: center;
-  }
-  .gate-box h1 {
-    font-size: 24px;
-    margin-bottom: 6px;
-    color: var(--accent);
-  }
-  .gate-box p {
-    color: var(--text-dim);
-    margin-bottom: 24px;
-    font-size: 14px;
-  }
-  .gate-box input {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 15px;
-    outline: none;
-    transition: border-color .2s;
-  }
-  .gate-box input:focus { border-color: var(--accent); }
-  .gate-box button {
-    width: 100%;
-    margin-top: 16px;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: var(--accent);
-    color: #fff;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .2s;
-  }
-  .gate-box button:hover { background: #0d9668; }
-  .gate-error {
-    color: var(--danger);
-    font-size: 13px;
-    margin-top: 10px;
-    min-height: 18px;
-  }
+        /* Sidebar */
+        .sidebar { width: 260px; min-width: 260px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
+        .sidebar-header h2 { font-size: 1.1rem; font-weight: 800; color: var(--green-800); }
+        .sidebar-header small { font-size: 0.75rem; color: var(--text-sec); }
+        .section-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .section-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 20px; cursor: pointer; font-size: 0.9rem; color: var(--text-sec);
+            transition: all 0.15s; border-left: 3px solid transparent;
+        }
+        .section-item:hover { background: var(--green-50); color: var(--text); }
+        .section-item.active { background: var(--green-50); color: var(--green-800); border-left-color: var(--green-500); font-weight: 600; }
+        .section-item .del { opacity: 0; background: none; border: none; color: #ccc; cursor: pointer; font-size: 14px; padding: 2px 6px; border-radius: 4px; }
+        .section-item:hover .del { opacity: 1; }
+        .section-item .del:hover { color: #E11D48; background: #FEE2E2; }
+        .add-btn { margin: 12px 20px; padding: 8px; border: 2px dashed var(--border); border-radius: 10px; background: transparent; color: var(--text-sec); font-size: 0.85rem; cursor: pointer; font-family: inherit; }
+        .add-btn:hover { border-color: var(--green-500); color: var(--green-500); }
 
-  /* ---- App Layout ---- */
-  .app {
-    display: none;
-    height: 100vh;
-    flex-direction: row;
-  }
-  .app.active { display: flex; }
+        /* Main editor */
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 28px; border-bottom: 1px solid var(--border); background: var(--surface); }
+        .topbar h1 { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+        .save-status { font-size: 0.8rem; color: var(--text-sec); }
+        .save-status.saving { color: #F59E0B; }
+        .save-status.saved { color: var(--green-500); }
+        .editor-area { flex: 1; overflow: hidden; display: flex; flex-direction: column; background: var(--surface); }
+        #editor {
+            flex: 1; width: 100%; padding: 28px; background: transparent; border: none;
+            color: var(--text); font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.95rem; line-height: 1.8; resize: none; outline: none; overflow-y: auto;
+        }
+        #editor::placeholder { color: #ccc; }
+        .footer { padding: 8px 28px; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-sec); background: var(--surface); }
 
-  /* ---- Sidebar ---- */
-  .sidebar {
-    width: 260px;
-    min-width: 260px;
-    background: var(--bg-sidebar);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    transition: transform .3s;
-  }
-  .sidebar-header {
-    padding: 20px 20px 12px;
-    border-bottom: 1px solid var(--border);
-  }
-  .sidebar-header h2 {
-    font-size: 18px;
-    color: var(--accent);
-    font-weight: 700;
-    letter-spacing: -0.3px;
-  }
-  .sidebar-header span {
-    font-size: 12px;
-    color: var(--text-muted);
-  }
-  .section-list {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px 0;
-  }
-  .section-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--text-dim);
-    transition: all .15s;
-    border-left: 3px solid transparent;
-  }
-  .section-item:hover { background: var(--bg-hover); color: var(--text); }
-  .section-item.active {
-    background: rgba(16, 185, 129, 0.08);
-    color: var(--accent);
-    border-left-color: var(--accent);
-    font-weight: 600;
-  }
-  .section-item .delete-btn {
-    opacity: 0;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 16px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: all .15s;
-  }
-  .section-item:hover .delete-btn { opacity: 1; }
-  .section-item .delete-btn:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
-
-  .add-section {
-    padding: 12px 20px;
-    border-top: 1px solid var(--border);
-  }
-  .add-section button {
-    width: 100%;
-    padding: 8px;
-    border: 1px dashed var(--border);
-    border-radius: 8px;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all .2s;
-  }
-  .add-section button:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  /* ---- Main Content ---- */
-  .main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 28px;
-    border-bottom: 1px solid var(--border);
-    min-height: 60px;
-  }
-  .topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: var(--text);
-    font-size: 22px;
-    cursor: pointer;
-    padding: 4px;
-  }
-  .topbar h1 {
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-  }
-  .topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .save-status {
-    font-size: 12px;
-    color: var(--text-muted);
-    transition: color .2s;
-  }
-  .save-status.saving { color: #f59e0b; }
-  .save-status.saved { color: var(--accent); }
-  .save-status.error { color: var(--danger); }
-
-  .presence-dots {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-  .presence-dot {
-    position: relative;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--accent-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--accent);
-    border: 2px solid var(--accent);
-  }
-  .presence-dot .pulse {
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    border: 2px solid var(--accent);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0% { transform: scale(1); opacity: .6; }
-    100% { transform: scale(1.4); opacity: 0; }
-  }
-
-  .editor-wrap {
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  #editor {
-    flex: 1;
-    width: 100%;
-    padding: 28px;
-    background: transparent;
-    border: none;
-    color: var(--text);
-    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Cascadia Code', monospace;
-    font-size: 15px;
-    line-height: 1.75;
-    resize: none;
-    outline: none;
-    overflow-y: auto;
-  }
-  #editor::placeholder { color: var(--text-muted); }
-
-  .footer {
-    padding: 10px 28px;
-    border-top: 1px solid var(--border);
-    font-size: 12px;
-    color: var(--text-muted);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  /* ---- Scrollbar ---- */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-
-  /* ---- Mobile ---- */
-  .sidebar-backdrop {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 99;
-  }
-  @media (max-width: 768px) {
-    .sidebar {
-      position: fixed;
-      left: 0; top: 0; bottom: 0;
-      z-index: 100;
-      transform: translateX(-100%);
-    }
-    .sidebar.open { transform: translateX(0); }
-    .sidebar-backdrop.open { display: block; }
-    .menu-toggle { display: block; }
-    #editor { padding: 20px 16px; font-size: 14px; }
-    .topbar { padding: 12px 16px; }
-    .footer { padding: 8px 16px; }
-  }
-</style>
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            #editor { padding: 20px 16px; font-size: 0.85rem; }
+            .topbar { padding: 12px 16px; }
+        }
+    </style>
 </head>
 <body>
-
-<!-- Password Gate -->
-<div class="gate-overlay" id="passwordGate">
-  <div class="gate-box">
-    <h1>Rewoven Brain</h1>
-    <p>Enter the password to continue</p>
-    <input type="password" id="passwordInput" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()">
-    <button onclick="checkPassword()">Enter</button>
-    <div class="gate-error" id="passwordError"></div>
-  </div>
-</div>
-
-<!-- Name Gate -->
-<div class="gate-overlay hidden" id="nameGate">
-  <div class="gate-box">
-    <h1>Who are you?</h1>
-    <p>Enter your name so others know who's editing</p>
-    <input type="text" id="nameInput" placeholder="e.g. Arhan" autocomplete="off">
-    <button onclick="setName()">Continue</button>
-  </div>
-</div>
-
-<!-- Sidebar Backdrop (mobile) -->
-<div class="sidebar-backdrop" id="backdrop" onclick="toggleSidebar()"></div>
-
-<!-- App -->
-<div class="app" id="app">
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <h2>Rewoven Brain</h2>
-      <span>Shared workspace</span>
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-card">
+            <h2>Rewoven Brain</h2>
+            <p>Enter the password to continue.</p>
+            <input type="password" class="auth-input" id="passwordInput" placeholder="Password" onkeydown="if(event.key==='Enter')authenticate()">
+            <div class="auth-error" id="authError">Incorrect password.</div>
+            <button class="btn" onclick="authenticate()">Enter</button>
+        </div>
     </div>
-    <div class="section-list" id="sectionList"></div>
-    <div class="add-section">
-      <button onclick="addSection()">+ Add Section</button>
+
+    <div class="app" id="app">
+        <div class="app-layout">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Rewoven Brain</h2>
+                    <small>Shared workspace</small>
+                </div>
+                <div class="section-list" id="sectionList"></div>
+                <button class="add-btn" onclick="addSection()">+ Add Section</button>
+            </aside>
+            <div class="main">
+                <div class="topbar">
+                    <h1 id="sectionTitle">Select a section</h1>
+                    <span class="save-status" id="saveStatus"></span>
+                </div>
+                <div class="editor-area">
+                    <textarea id="editor" placeholder="Start writing..." disabled></textarea>
+                </div>
+                <div class="footer" id="footer">Select a section to begin</div>
+            </div>
+        </div>
     </div>
-  </aside>
 
-  <div class="main">
-    <div class="topbar">
-      <div class="topbar-left">
-        <button class="menu-toggle" onclick="toggleSidebar()">&#9776;</button>
-        <h1 id="currentTitle">Select a section</h1>
-      </div>
-      <div class="topbar-right">
-        <div class="presence-dots" id="presenceDots"></div>
-        <span class="save-status" id="saveStatus"></span>
-      </div>
-    </div>
-    <div class="editor-wrap">
-      <textarea id="editor" placeholder="Start writing..."></textarea>
-    </div>
-    <div class="footer">
-      <span id="editInfo">Select a section to begin</span>
-      <span id="charCount"></span>
-    </div>
-  </div>
-</div>
+    <script>
+        var SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
+        var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
+        var PASSWORD_HASH = '4314d9a52a45a17930f5d1127cfc9f640611376f7514530f6c5c782832dfec57';
 
-<script>
-// ---- Auth (standalone, no dependencies) ----
-var PASSWORD_HASH = '4314d9a52a45a17930f5d1127cfc9f640611376f7514530f6c5c782832dfec57';
-var userName = '';
+        var userName = '';
+        var currentSection = null;
+        var saveTimer = null;
+        var pollTimer = null;
+        var lastSavedContent = '';
 
-async function hashPassword(pw) {
-  var data = new TextEncoder().encode(pw);
-  var buf = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-}
-
-async function checkPassword() {
-  var pw = document.getElementById('passwordInput').value;
-  var hashed = await hashPassword(pw);
-  if (hashed === PASSWORD_HASH) {
-    document.getElementById('passwordGate').style.display = 'none';
-    checkName();
-  } else {
-    document.getElementById('passwordError').textContent = 'Incorrect password.';
-    document.getElementById('passwordInput').value = '';
-    document.getElementById('passwordInput').focus();
-  }
-}
-
-function checkName() {
-  var stored = sessionStorage.getItem('brain_name');
-  if (stored) {
-    userName = stored;
-    startApp();
-  } else {
-    document.getElementById('nameGate').classList.remove('hidden');
-    document.getElementById('nameInput').focus();
-  }
-}
-
-function setName() {
-  var name = document.getElementById('nameInput').value.trim();
-  if (!name) return;
-  userName = name;
-  sessionStorage.setItem('brain_name', name);
-  document.getElementById('nameGate').classList.add('hidden');
-  startApp();
-}
-
-document.getElementById('nameInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') setName();
-});
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-var SUPABASE_URL = 'https://rgrzktwjvtalczaszxfx.supabase.co';
-var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJncnprdHdqdnRhbGN6YXN6eGZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMzcwMzEsImV4cCI6MjA4NTcxMzAzMX0.-zo5zf6q6GiIEFdc8yyegtZr3YFzlno8ndxbKKig3eE';
-
-var supabase_client;
-var currentSection = null;
-var saveTimer = null;
-var realtimeChannel = null;
-var presenceChannel = null;
-var ignoreNextUpdate = false;
-
-// ---- Init ----
-
-function startApp() {
-  supabase_client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  document.getElementById('app').classList.add('active');
-  loadSections();
-  setupPresence();
-}
-
-// On page load
-(function boot() {
-  if (sessionStorage.getItem('brain_auth') === 'true') {
-    document.getElementById('passwordGate').style.display = 'none';
-    checkName();
-  } else {
-    document.getElementById('passwordInput').focus();
-  }
-})();
-
-// ---- Sections ----
-
-async function loadSections() {
-  const { data, error } = await supabase_client
-    .from('brain_pages')
-    .select('title, section')
-    .order('title');
-
-  if (error) { console.error(error); return; }
-
-  const list = document.getElementById('sectionList');
-  list.innerHTML = '';
-  data.forEach(s => {
-    const el = document.createElement('div');
-    el.className = 'section-item' + (currentSection === s.section ? ' active' : '');
-    el.innerHTML = `
-      <span>${escHtml(s.title)}</span>
-      <button class="delete-btn" onclick="event.stopPropagation(); deleteSection('${escAttr(s.section)}')" title="Delete">&times;</button>
-    `;
-    el.addEventListener('click', () => selectSection(s.section, s.title));
-    list.appendChild(el);
-  });
-}
-
-async function selectSection(section, title) {
-  currentSection = section;
-  document.getElementById('currentTitle').textContent = title;
-
-  // Update active state
-  document.querySelectorAll('.section-item').forEach(el => {
-    el.classList.toggle('active', el.querySelector('span').textContent === title);
-  });
-
-  // Load content
-  const { data, error } = await supabase_client
-    .from('brain_pages')
-    .select('*')
-    .eq('section', section)
-    .single();
-
-  if (error) { console.error(error); return; }
-
-  const editor = document.getElementById('editor');
-  editor.value = data.content || '';
-  updateEditInfo(data);
-  updateCharCount();
-
-  // Close sidebar on mobile
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('backdrop').classList.remove('open');
-
-  // Subscribe to realtime changes for this section
-  subscribeToSection(section);
-  broadcastPresence(section);
-}
-
-function updateEditInfo(data) {
-  const info = document.getElementById('editInfo');
-  if (data.updated_by && data.updated_at) {
-    const d = new Date(data.updated_at);
-    const time = d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-    info.textContent = `Last edited by ${data.updated_by} at ${time}`;
-  } else {
-    info.textContent = '';
-  }
-}
-
-function updateCharCount() {
-  const len = document.getElementById('editor').value.length;
-  document.getElementById('charCount').textContent = len > 0 ? `${len} chars` : '';
-}
-
-async function addSection() {
-  const name = prompt('New section name:');
-  if (!name || !name.trim()) return;
-  const title = name.trim();
-
-  const { error } = await supabase_client
-    .from('brain_pages')
-    .insert({ title, section: title, content: '', updated_by: userName });
-
-  if (error) {
-    if (error.code === '23505') alert('A section with that name already exists.');
-    else alert('Error creating section: ' + error.message);
-    return;
-  }
-  await loadSections();
-  selectSection(title, title);
-}
-
-async function deleteSection(section) {
-  if (!confirm(`Delete "${section}"? This cannot be undone.`)) return;
-
-  const { error } = await supabase_client
-    .from('brain_pages')
-    .delete()
-    .eq('section', section);
-
-  if (error) { alert('Error: ' + error.message); return; }
-
-  if (currentSection === section) {
-    currentSection = null;
-    document.getElementById('editor').value = '';
-    document.getElementById('currentTitle').textContent = 'Select a section';
-    document.getElementById('editInfo').textContent = '';
-    document.getElementById('charCount').textContent = '';
-  }
-  await loadSections();
-}
-
-// ---- Editor & Saving ----
-
-document.getElementById('editor').addEventListener('input', () => {
-  updateCharCount();
-  if (!currentSection) return;
-  setSaveStatus('saving', 'Saving...');
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveContent, 500);
-});
-
-async function saveContent() {
-  if (!currentSection) return;
-  const content = document.getElementById('editor').value;
-  ignoreNextUpdate = true;
-
-  const { error } = await supabase_client
-    .from('brain_pages')
-    .update({
-      content,
-      updated_by: userName,
-      updated_at: new Date().toISOString()
-    })
-    .eq('section', currentSection);
-
-  if (error) {
-    setSaveStatus('error', 'Error saving');
-    console.error(error);
-    ignoreNextUpdate = false;
-  } else {
-    setSaveStatus('saved', 'Saved');
-    document.getElementById('editInfo').textContent =
-      `Last edited by ${userName} at ${new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}`;
-    setTimeout(() => ignoreNextUpdate = false, 1000);
-  }
-}
-
-function setSaveStatus(cls, text) {
-  const el = document.getElementById('saveStatus');
-  el.className = 'save-status ' + cls;
-  el.textContent = text;
-  if (cls === 'saved') setTimeout(() => { el.textContent = ''; el.className = 'save-status'; }, 2000);
-}
-
-// ---- Realtime ----
-
-function subscribeToSection(section) {
-  if (realtimeChannel) {
-    supabase_client.removeChannel(realtimeChannel);
-  }
-
-  realtimeChannel = supabase_client
-    .channel('brain-changes')
-    .on('postgres_changes',
-      { event: 'UPDATE', schema: 'public', table: 'brain_pages', filter: `section=eq.${section}` },
-      (payload) => {
-        if (ignoreNextUpdate) return;
-        const data = payload.new;
-        const editor = document.getElementById('editor');
-        // Only update if content is different (to avoid cursor jump)
-        if (editor.value !== data.content) {
-          const start = editor.selectionStart;
-          const end = editor.selectionEnd;
-          editor.value = data.content || '';
-          // Try to preserve cursor position
-          editor.selectionStart = Math.min(start, editor.value.length);
-          editor.selectionEnd = Math.min(end, editor.value.length);
+        function headers() {
+            return { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
         }
-        updateEditInfo(data);
-        updateCharCount();
-      }
-    )
-    .on('postgres_changes',
-      { event: '*', schema: 'public', table: 'brain_pages' },
-      () => { loadSections(); }
-    )
-    .subscribe();
-}
 
-// ---- Presence ----
+        // ---- Auth (same pattern as donations page) ----
 
-function setupPresence() {
-  presenceChannel = supabase_client.channel('brain-presence', {
-    config: { presence: { key: userName } }
-  });
+        async function hashPassword(pw) {
+            var data = new TextEncoder().encode(pw);
+            var buf = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+        }
 
-  presenceChannel
-    .on('presence', { event: 'sync' }, () => {
-      renderPresence();
-    })
-    .subscribe(async (status) => {
-      if (status === 'SUBSCRIBED') {
-        await presenceChannel.track({ user: userName, section: currentSection, online_at: new Date().toISOString() });
-      }
-    });
-}
+        async function authenticate() {
+            var pw = document.getElementById('passwordInput').value;
+            var hashed = await hashPassword(pw);
+            if (hashed === PASSWORD_HASH) {
+                document.getElementById('authScreen').style.display = 'none';
+                askName();
+            } else {
+                document.getElementById('authError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
 
-function broadcastPresence(section) {
-  if (presenceChannel) {
-    presenceChannel.track({ user: userName, section, online_at: new Date().toISOString() });
-  }
-}
+        function askName() {
+            var stored = sessionStorage.getItem('brain_name');
+            if (stored) {
+                userName = stored;
+                startApp();
+            } else {
+                var name = prompt('Enter your name (so others know who edited):');
+                if (!name || !name.trim()) name = 'Anonymous';
+                userName = name.trim();
+                sessionStorage.setItem('brain_name', userName);
+                startApp();
+            }
+        }
 
-function renderPresence() {
-  if (!presenceChannel) return;
-  const state = presenceChannel.presenceState();
-  const container = document.getElementById('presenceDots');
-  container.innerHTML = '';
+        function startApp() {
+            document.getElementById('app').style.display = 'block';
+            loadSections();
+        }
 
-  Object.keys(state).forEach(key => {
-    const presences = state[key];
-    presences.forEach(p => {
-      if (p.user === userName) return; // Don't show self
-      const dot = document.createElement('div');
-      dot.className = 'presence-dot';
-      dot.title = `${p.user}${p.section ? ' in ' + p.section : ''}`;
-      dot.innerHTML = `<span>${escHtml(p.user.charAt(0).toUpperCase())}</span><span class="pulse"></span>`;
-      container.appendChild(dot);
-    });
-  });
-}
+        // ---- Supabase REST calls ----
 
-// ---- Sidebar Toggle ----
+        async function loadSections() {
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages?select=title,section&order=title', { headers: headers() });
+                if (!res.ok) { console.error('Load sections failed:', res.status); return; }
+                var data = await res.json();
+                renderSidebar(data);
+            } catch (e) { console.error('Load sections error:', e); }
+        }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('backdrop').classList.toggle('open');
-}
+        function renderSidebar(sections) {
+            var list = document.getElementById('sectionList');
+            list.innerHTML = '';
+            for (var i = 0; i < sections.length; i++) {
+                var s = sections[i];
+                var div = document.createElement('div');
+                div.className = 'section-item' + (currentSection === s.section ? ' active' : '');
+                div.innerHTML = '<span>' + esc(s.title) + '</span><button class="del" onclick="event.stopPropagation();deleteSection(\'' + escAttr(s.section) + '\')">&times;</button>';
+                div.setAttribute('data-section', s.section);
+                div.onclick = (function(sec) { return function() { selectSection(sec); }; })(s.section);
+                list.appendChild(div);
+            }
+        }
 
-// ---- Helpers ----
+        async function selectSection(section) {
+            // Save current before switching
+            if (currentSection) saveNow();
 
-function escHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
+            currentSection = section;
+            document.getElementById('sectionTitle').textContent = section;
+            document.getElementById('editor').disabled = false;
+            document.getElementById('editor').value = '';
+            document.getElementById('editor').placeholder = 'Loading...';
 
-function escAttr(s) {
-  return s.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-}
-</script>
+            // Highlight active
+            var items = document.querySelectorAll('.section-item');
+            for (var i = 0; i < items.length; i++) {
+                items[i].className = 'section-item' + (items[i].getAttribute('data-section') === section ? ' active' : '');
+            }
+
+            // Load content
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages?section=eq.' + encodeURIComponent(section) + '&select=content,updated_by,updated_at', { headers: headers() });
+                if (res.ok) {
+                    var data = await res.json();
+                    if (data.length > 0) {
+                        document.getElementById('editor').value = data[0].content || '';
+                        lastSavedContent = data[0].content || '';
+                        var time = data[0].updated_at ? new Date(data[0].updated_at).toLocaleString() : '';
+                        document.getElementById('footer').textContent = 'Last edited by ' + (data[0].updated_by || '?') + (time ? ' at ' + time : '');
+                    }
+                }
+            } catch (e) { console.error(e); }
+
+            document.getElementById('editor').placeholder = 'Start writing...';
+            document.getElementById('editor').focus();
+
+            // Start polling for changes from others
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = setInterval(function() { pollChanges(); }, 3000);
+        }
+
+        async function pollChanges() {
+            if (!currentSection) return;
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages?section=eq.' + encodeURIComponent(currentSection) + '&select=content,updated_by,updated_at', { headers: headers() });
+                if (!res.ok) return;
+                var data = await res.json();
+                if (data.length > 0) {
+                    var remote = data[0].content || '';
+                    var editor = document.getElementById('editor');
+                    // Only update if content changed AND it wasn't us who saved it
+                    if (remote !== lastSavedContent && data[0].updated_by !== userName) {
+                        var pos = editor.selectionStart;
+                        editor.value = remote;
+                        lastSavedContent = remote;
+                        editor.selectionStart = editor.selectionEnd = Math.min(pos, remote.length);
+                        var time = new Date(data[0].updated_at).toLocaleString();
+                        document.getElementById('footer').textContent = 'Last edited by ' + data[0].updated_by + ' at ' + time;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // ---- Save (debounced) ----
+
+        document.addEventListener('input', function(e) {
+            if (e.target.id === 'editor' && currentSection) {
+                document.getElementById('saveStatus').textContent = 'Saving...';
+                document.getElementById('saveStatus').className = 'save-status saving';
+                if (saveTimer) clearTimeout(saveTimer);
+                saveTimer = setTimeout(saveNow, 800);
+            }
+        });
+
+        async function saveNow() {
+            if (!currentSection) return;
+            var content = document.getElementById('editor').value;
+            lastSavedContent = content;
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages?section=eq.' + encodeURIComponent(currentSection), {
+                    method: 'PATCH',
+                    headers: headers(),
+                    body: JSON.stringify({ content: content, updated_by: userName, updated_at: new Date().toISOString() })
+                });
+                if (res.ok) {
+                    document.getElementById('saveStatus').textContent = 'Saved';
+                    document.getElementById('saveStatus').className = 'save-status saved';
+                    document.getElementById('footer').textContent = 'Last edited by ' + userName + ' at ' + new Date().toLocaleString();
+                } else {
+                    document.getElementById('saveStatus').textContent = 'Error saving';
+                    document.getElementById('saveStatus').className = 'save-status';
+                }
+            } catch (e) {
+                document.getElementById('saveStatus').textContent = 'Error saving';
+            }
+        }
+
+        // ---- Add / Delete sections ----
+
+        async function addSection() {
+            var name = prompt('Section name:');
+            if (!name || !name.trim()) return;
+            name = name.trim();
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages', {
+                    method: 'POST',
+                    headers: headers(),
+                    body: JSON.stringify({ title: name, section: name, content: '', updated_by: userName })
+                });
+                if (res.ok) {
+                    loadSections();
+                    selectSection(name);
+                } else {
+                    alert('Failed to add section. It may already exist.');
+                }
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        async function deleteSection(section) {
+            if (!confirm('Delete "' + section + '"? This cannot be undone.')) return;
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/brain_pages?section=eq.' + encodeURIComponent(section), {
+                    method: 'DELETE',
+                    headers: headers()
+                });
+                if (res.ok) {
+                    if (currentSection === section) {
+                        currentSection = null;
+                        document.getElementById('editor').value = '';
+                        document.getElementById('editor').disabled = true;
+                        document.getElementById('sectionTitle').textContent = 'Select a section';
+                        document.getElementById('footer').textContent = 'Select a section to begin';
+                    }
+                    loadSections();
+                }
+            } catch (e) { alert('Error: ' + e.message); }
+        }
+
+        // ---- Helpers ----
+
+        function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+        function escAttr(s) { return s.replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+        // ---- Boot ----
+        document.getElementById('passwordInput').focus();
+    </script>
 </body>
 </html>
