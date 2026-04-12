@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambassador Applications | Rewoven Admin</title>
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --green-500: #10B981; --green-600: #059669; --green-800: #065F46;
+            --green-50: #ECFDF5; --green-100: #D1FAE5; --green-200: #A7F3D0;
+            --bg: #F0FDF4; --surface: #FFFFFF; --text: #111827; --text-sec: #4B5563;
+            --border: #D1FAE5; --radius: 14px;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        .auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; }
+        .auth-card { background: var(--surface); border-radius: var(--radius); padding: 44px 36px; border: 1px solid var(--border); text-align: center; max-width: 420px; width: 100%; box-shadow: 0 2px 16px rgba(16,185,129,0.08); }
+        .auth-card h2 { color: var(--green-800); margin-bottom: 6px; font-family: 'Playfair Display', serif; }
+        .auth-card p { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 24px; }
+        .auth-input { width: 100%; padding: 14px 18px; border: 2px solid var(--border); border-radius: 10px; font-size: 0.95rem; font-family: inherit; margin-bottom: 16px; text-align: center; outline: none; }
+        .auth-input:focus { border-color: var(--green-500); }
+        .auth-error { color: #E11D48; font-size: 0.85rem; margin-bottom: 12px; display: none; }
+        .btn { padding: 14px 28px; border-radius: 10px; font-size: 0.95rem; font-weight: 600; border: none; cursor: pointer; font-family: inherit; background: var(--green-500); color: white; width: 100%; }
+        .btn:hover { background: var(--green-600); }
+
+        .dashboard { display: none; }
+        .header { background: rgba(255,255,255,0.95); border-bottom: 1px solid var(--border); padding: 16px 24px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+        .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 1.2rem; font-weight: 800; color: var(--green-800); text-decoration: none; }
+        .logo small { font-weight: 400; font-size: 0.75rem; color: var(--text-sec); margin-left: 6px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .btn-sm { padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; border: none; cursor: pointer; font-family: inherit; transition: all 0.2s; text-decoration: none; display: inline-block; }
+        .btn-green { background: var(--green-500); color: white; }
+        .btn-green:hover { background: var(--green-600); }
+        .btn-outline { background: transparent; color: var(--green-800); border: 2px solid var(--border); }
+        .btn-outline:hover { border-color: var(--green-500); }
+        .count-badge { font-size: 0.8rem; color: var(--text-sec); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 28px 24px; }
+
+        /* Cards view */
+        .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+        .app-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: 0 2px 12px rgba(16,185,129,0.06); }
+        .app-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .app-name { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+        .app-email { font-size: 0.82rem; color: var(--text-sec); margin-top: 2px; }
+        .app-date { font-size: 0.75rem; color: var(--text-sec); background: var(--green-50); padding: 4px 10px; border-radius: 12px; white-space: nowrap; }
+        .app-field { margin-bottom: 14px; }
+        .app-field-label { font-size: 0.75rem; font-weight: 700; color: var(--green-600); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .app-field-value { font-size: 0.85rem; color: var(--text-sec); line-height: 1.5; }
+        .app-hours { display: inline-block; background: var(--green-100); color: var(--green-800); font-size: 0.78rem; font-weight: 600; padding: 4px 12px; border-radius: 12px; }
+
+        .empty-state { text-align: center; padding: 60px 24px; color: var(--text-sec); }
+        .empty-state h3 { color: var(--text); margin-bottom: 8px; font-family: 'Playfair Display', serif; }
+
+        @media (max-width: 640px) {
+            .header-inner { flex-direction: column; gap: 12px; }
+            .apps-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-screen" id="authScreen">
+        <div class="auth-card">
+            <h2>Ambassador Admin</h2>
+            <p>Enter the password to view applications.</p>
+            <input type="password" class="auth-input" id="passwordInput" placeholder="Password" onkeydown="if(event.key==='Enter')authenticate()">
+            <div class="auth-error" id="authError">Incorrect password.</div>
+            <button class="btn" onclick="authenticate()">View Applications</button>
+        </div>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+        <header class="header">
+            <div class="header-inner">
+                <a href="/ambassadors/" class="logo">Rewoven<small>Ambassador Applications</small></a>
+                <div class="header-actions">
+                    <span class="count-badge" id="countBadge"></span>
+                    <button class="btn-sm btn-outline" onclick="loadData()">Refresh</button>
+                    <a href="/ambassadors/" class="btn-sm btn-green">Application Page</a>
+                </div>
+            </div>
+        </header>
+        <div class="container">
+            <div id="appsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        var SUPABASE_URL = 'https://puagdyacwgqkebjdbbrz.supabase.co';
+        var SUPABASE_KEY = 'sb_publishable_LarSIrAtxsvXN4RLLicQyw_TJk8s92b';
+        var PASSWORD_HASH = '4314d9a52a45a17930f5d1127cfc9f640611376f7514530f6c5c782832dfec57';
+
+        async function hashPassword(pw) {
+            var data = new TextEncoder().encode(pw);
+            var buf = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+        }
+
+        async function authenticate() {
+            var pw = document.getElementById('passwordInput').value;
+            var hashed = await hashPassword(pw);
+            if (hashed === PASSWORD_HASH) {
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadData();
+            } else {
+                document.getElementById('authError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        }
+
+        async function loadData() {
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/ambassador_applications?select=*&order=created_at.desc', {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                });
+                if (!res.ok) { document.getElementById('appsContainer').innerHTML = '<div class="empty-state"><h3>Error loading</h3><p>Could not fetch applications.</p></div>'; return; }
+                var data = await res.json();
+                document.getElementById('countBadge').textContent = data.length + ' application' + (data.length !== 1 ? 's' : '');
+                renderApps(data);
+            } catch (e) {
+                document.getElementById('appsContainer').innerHTML = '<div class="empty-state"><h3>Error</h3><p>' + e.message + '</p></div>';
+            }
+        }
+
+        function renderApps(apps) {
+            var container = document.getElementById('appsContainer');
+            if (!apps.length) {
+                container.innerHTML = '<div class="empty-state"><h3>No applications yet</h3><p>Share the ambassador page to start receiving applications.</p></div>';
+                return;
+            }
+            var html = '<div class="apps-grid">';
+            for (var i = 0; i < apps.length; i++) {
+                var a = apps[i];
+                var date = a.created_at ? new Date(a.created_at).toLocaleDateString() : '';
+                html += '<div class="app-card">';
+                html += '<div class="app-card-header"><div><div class="app-name">' + esc(a.full_name) + '</div><div class="app-email">' + esc(a.email) + '</div></div><span class="app-date">' + date + '</span></div>';
+                if (a.school) html += field('School', a.school);
+                if (a.experience) html += field('Prior Experience', a.experience);
+                if (a.why_suited) html += field('Why Suited', a.why_suited);
+                if (a.passion) html += field('Passion for Environment', a.passion);
+                if (a.hours_weekly) html += '<div style="margin-top:8px"><span class="app-hours">' + esc(a.hours_weekly) + ' hrs/week</span></div>';
+                html += '</div>';
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function field(label, value) {
+            return '<div class="app-field"><div class="app-field-label">' + esc(label) + '</div><div class="app-field-value">' + esc(value) + '</div></div>';
+        }
+
+        function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        document.getElementById('passwordInput').focus();
+    </script>
+</body>
+</html>

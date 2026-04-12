@@ -6,7 +6,9 @@
     <title>Become an Ambassador | Rewoven</title>
     <meta name="description" content="Join the Rewoven Ambassador Program and help make sustainability simple for your community.">
     <link rel="icon" href="../assets/logo.png" type="image/png" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -26,23 +28,16 @@
         .nav-link:hover { border-color: var(--green-500); color: var(--green-800); }
 
         /* Hero */
-        .hero { text-align: center; padding: 60px 24px 40px; }
-        .hero-badge { display: inline-block; background: var(--green-100); color: var(--green-700); font-size: 0.8rem; font-weight: 700; padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; }
-        .hero h1 { font-size: 2.2rem; font-weight: 800; color: var(--green-800); margin-bottom: 12px; line-height: 1.2; }
+        .hero { text-align: center; padding: 60px 24px 48px; }
+        .hero-badge { display: inline-block; background: var(--green-100); color: var(--green-700); font-size: 0.8rem; font-weight: 700; padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
+        .hero h1 { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 800; color: var(--green-800); margin-bottom: 12px; line-height: 1.2; }
+        .hero h1 span { color: var(--green-500); }
         .hero p { font-size: 1.05rem; color: var(--text-sec); max-width: 520px; margin: 0 auto; line-height: 1.6; }
-
-        /* Perks */
-        .perks { max-width: 800px; margin: 0 auto 40px; padding: 0 24px; }
-        .perks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .perk { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; text-align: center; box-shadow: 0 2px 12px rgba(16,185,129,0.06); }
-        .perk-icon { font-size: 1.6rem; margin-bottom: 10px; }
-        .perk h3 { font-size: 0.9rem; font-weight: 700; color: var(--green-800); margin-bottom: 4px; }
-        .perk p { font-size: 0.78rem; color: var(--text-sec); line-height: 1.4; }
 
         /* Form */
         .form-section { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
         .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 36px; box-shadow: 0 2px 16px rgba(16,185,129,0.08); }
-        .form-card h2 { font-size: 1.3rem; font-weight: 800; color: var(--green-800); margin-bottom: 6px; }
+        .form-card h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 800; color: var(--green-800); margin-bottom: 6px; }
         .form-card > p { font-size: 0.88rem; color: var(--text-sec); margin-bottom: 28px; }
 
         .form-group { margin-bottom: 24px; }
@@ -69,7 +64,7 @@
         /* Success */
         .success-card { display: none; text-align: center; padding: 48px 36px; }
         .success-icon { font-size: 3rem; margin-bottom: 16px; }
-        .success-card h2 { color: var(--green-800); margin-bottom: 8px; }
+        .success-card h2 { font-family: 'Playfair Display', serif; color: var(--green-800); margin-bottom: 8px; }
         .success-card p { color: var(--text-sec); font-size: 0.95rem; line-height: 1.6; max-width: 400px; margin: 0 auto; }
 
         /* Footer */
@@ -77,8 +72,7 @@
         .footer a { color: var(--green-600); text-decoration: none; }
 
         @media (max-width: 640px) {
-            .hero h1 { font-size: 1.6rem; }
-            .perks-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 1.8rem; }
             .form-card { padding: 28px 20px; }
         }
     </style>
@@ -93,28 +87,8 @@
 
     <div class="hero">
         <span class="hero-badge">Ambassador Program</span>
-        <h1>Help Make Sustainability Simple</h1>
-        <p>Join our team of ambassadors and help spread the word about sustainable fashion in your community. No experience needed — just passion.</p>
-    </div>
-
-    <div class="perks">
-        <div class="perks-grid">
-            <div class="perk">
-                <div class="perk-icon">&#x1F4DC;</div>
-                <h3>Letter of Recommendation</h3>
-                <p>Signed by our founder — perfect for college applications and internships.</p>
-            </div>
-            <div class="perk">
-                <div class="perk-icon">&#x1F3C5;</div>
-                <h3>Official Certificate</h3>
-                <p>Rewoven Ambassador certificate with your name and hours contributed.</p>
-            </div>
-            <div class="perk">
-                <div class="perk-icon">&#x1F4BC;</div>
-                <h3>Resume & LinkedIn</h3>
-                <p>"Sustainability Ambassador at Rewoven" — a title that stands out.</p>
-            </div>
-        </div>
+        <h1>Help Make Sustainability <span>Simple</span></h1>
+        <p>We want to hear from you.</p>
     </div>
 
     <div class="form-section">
@@ -139,11 +113,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Instagram Handle</label>
-                    <input type="text" class="form-input" id="instagram" placeholder="@yourhandle">
-                </div>
-
-                <div class="form-group">
                     <label class="form-label">Prior Experience <span class="form-hint">(Don't worry if you don't have much)</span></label>
                     <textarea class="form-input" id="experience" placeholder="Tell us about any previous sustainability, volunteering, or leadership experience..."></textarea>
                 </div>
@@ -162,9 +131,9 @@
                     <label class="form-label">How many hours weekly can you contribute?</label>
                     <select class="form-input" id="hours" required>
                         <option value="" disabled selected>Select hours per week</option>
-                        <option value="1-2">1–2 hours</option>
-                        <option value="3-5">3–5 hours</option>
-                        <option value="5-10">5–10 hours</option>
+                        <option value="1-2">1-2 hours</option>
+                        <option value="3-5">3-5 hours</option>
+                        <option value="5-10">5-10 hours</option>
                         <option value="10+">10+ hours</option>
                     </select>
                 </div>
@@ -198,7 +167,6 @@
                 full_name: document.getElementById('fullName').value.trim(),
                 email: document.getElementById('email').value.trim(),
                 school: document.getElementById('school').value.trim(),
-                instagram: document.getElementById('instagram').value.trim(),
                 experience: document.getElementById('experience').value.trim(),
                 why_suited: document.getElementById('whySuited').value.trim(),
                 passion: document.getElementById('passion').value.trim(),
