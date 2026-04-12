@@ -21,9 +21,10 @@
 
         /* Nav */
         .nav { background: rgba(255,255,255,0.95); border-bottom: 1px solid var(--border); padding: 16px 24px; backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
-        .nav-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-        .nav-logo { font-size: 1.2rem; font-weight: 800; color: var(--green-800); text-decoration: none; display: flex; align-items: center; gap: 8px; }
-        .nav-logo img { width: 28px; height: 28px; border-radius: 6px; }
+        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 72px; }
+        .nav-logo { text-decoration: none; display: flex; align-items: center; gap: 12px; }
+        .nav-logo img { width: 40px; height: 40px; border-radius: 10px; }
+        .nav-logo span { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 800; color: var(--green-800); }
         .nav-link { font-size: 0.85rem; font-weight: 600; color: var(--green-600); text-decoration: none; padding: 8px 16px; border-radius: 8px; border: 2px solid var(--border); transition: all 0.2s; }
         .nav-link:hover { border-color: var(--green-500); color: var(--green-800); }
 
@@ -80,7 +81,7 @@
 <body>
     <nav class="nav">
         <div class="nav-inner">
-            <a href="/" class="nav-logo"><img src="../assets/logo.png" alt="Rewoven">Rewoven</a>
+            <a href="/" class="nav-logo"><img src="../assets/logo.png" alt="Rewoven"><span>Rewoven</span></a>
             <a href="/" class="nav-link">Back to Home</a>
         </div>
     </nav>
@@ -88,7 +89,8 @@
     <div class="hero">
         <span class="hero-badge">Ambassador Program</span>
         <h1>Help Make Sustainability <span>Simple</span></h1>
-        <p>We want to hear from you.</p>
+        <p>Are you a student leader? Join our team of ambassadors and help spread the word about Rewoven and sustainability in your community.</p>
+        <p style="margin-top: 12px;">We want to hear from you.</p>
     </div>
 
     <div class="form-section">
