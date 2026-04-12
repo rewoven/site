@@ -358,6 +358,29 @@
     }
     .faq-item.open .faq-a { max-height: 200px; padding-top: 12px; }
 
+    /* ── Impact Story ── */
+    .impact-story {
+      padding: 80px 24px;
+      background: var(--bg-cream);
+    }
+    .impact-story-inner {
+      max-width: 900px; margin: 0 auto;
+    }
+    .impact-story-img {
+      width: 100%; border-radius: var(--radius);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+      margin-bottom: 32px;
+    }
+    .impact-story-text {
+      font-size: 18px; line-height: 1.8; color: var(--gray-600);
+      text-align: center; max-width: 750px; margin: 0 auto;
+    }
+    .impact-story-location {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 600; color: var(--green-600);
+      margin-top: 20px;
+    }
+
     /* ── Footer ── */
     footer {
       padding: 40px 24px; text-align: center;
@@ -378,6 +401,7 @@
       .accept-grid { grid-template-columns: 1fr; }
       .form-grid { grid-template-columns: 1fr; }
       .section-title { font-size: 28px; }
+      .impact-story-text { font-size: 16px; }
     }
 
     @media (max-width: 480px) {
@@ -678,6 +702,22 @@
         <div class="faq-q"><span>Is there a deadline?</span><span class="arrow">&#9660;</span></div>
         <div class="faq-a">The drive runs on a rolling basis, but we ship in batches. Register early to be part of the next shipment and receive your reward sooner!</div>
       </div>
+    </div>
+  </section>
+
+  <!-- Impact Story -->
+  <section class="impact-story">
+    <div class="impact-story-inner">
+      <p class="section-label">Our Impact</p>
+      <h2 class="section-title">Where Your Donations Go</h2>
+      <p class="section-sub">Real clothes, real kids, real change.</p>
+      <img src="group.jpg" alt="Rewoven basketball camp in Manila, Philippines" class="impact-story-img" />
+      <p class="impact-story-text">
+        Rewoven hosted a basketball initiative for underprivileged children in Manila, Philippines. At the end of the 3-day camp, we gifted sustainable basketball jerseys made from fabric offcuts to the kids as a parting gift.
+      </p>
+      <p style="text-align:center;">
+        <span class="impact-story-location">Manila, Philippines</span>
+      </p>
     </div>
   </section>
 
