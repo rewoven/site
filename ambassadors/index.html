@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become an Ambassador | Rewoven</title>
+    <meta name="description" content="Join the Rewoven Ambassador Program and help make sustainability simple for your community.">
+    <link rel="icon" href="../assets/logo.png" type="image/png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --green-500: #10B981; --green-600: #059669; --green-700: #047857; --green-800: #065F46;
+            --green-50: #ECFDF5; --green-100: #D1FAE5; --green-200: #A7F3D0;
+            --bg: #F0FDF4; --surface: #FFFFFF; --text: #111827; --text-sec: #4B5563;
+            --border: #D1FAE5; --radius: 14px;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* Nav */
+        .nav { background: rgba(255,255,255,0.95); border-bottom: 1px solid var(--border); padding: 16px 24px; backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
+        .nav-inner { max-width: 800px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo { font-size: 1.2rem; font-weight: 800; color: var(--green-800); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-logo img { width: 28px; height: 28px; border-radius: 6px; }
+        .nav-link { font-size: 0.85rem; font-weight: 600; color: var(--green-600); text-decoration: none; padding: 8px 16px; border-radius: 8px; border: 2px solid var(--border); transition: all 0.2s; }
+        .nav-link:hover { border-color: var(--green-500); color: var(--green-800); }
+
+        /* Hero */
+        .hero { text-align: center; padding: 60px 24px 40px; }
+        .hero-badge { display: inline-block; background: var(--green-100); color: var(--green-700); font-size: 0.8rem; font-weight: 700; padding: 6px 16px; border-radius: 20px; margin-bottom: 20px; }
+        .hero h1 { font-size: 2.2rem; font-weight: 800; color: var(--green-800); margin-bottom: 12px; line-height: 1.2; }
+        .hero p { font-size: 1.05rem; color: var(--text-sec); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+
+        /* Perks */
+        .perks { max-width: 800px; margin: 0 auto 40px; padding: 0 24px; }
+        .perks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .perk { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; text-align: center; box-shadow: 0 2px 12px rgba(16,185,129,0.06); }
+        .perk-icon { font-size: 1.6rem; margin-bottom: 10px; }
+        .perk h3 { font-size: 0.9rem; font-weight: 700; color: var(--green-800); margin-bottom: 4px; }
+        .perk p { font-size: 0.78rem; color: var(--text-sec); line-height: 1.4; }
+
+        /* Form */
+        .form-section { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
+        .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 36px; box-shadow: 0 2px 16px rgba(16,185,129,0.08); }
+        .form-card h2 { font-size: 1.3rem; font-weight: 800; color: var(--green-800); margin-bottom: 6px; }
+        .form-card > p { font-size: 0.88rem; color: var(--text-sec); margin-bottom: 28px; }
+
+        .form-group { margin-bottom: 24px; }
+        .form-label { display: block; font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+        .form-hint { font-weight: 400; color: var(--text-sec); font-size: 0.8rem; }
+        .form-input {
+            width: 100%; padding: 14px 18px; border: 2px solid var(--border); border-radius: 10px;
+            font-size: 0.95rem; font-family: inherit; outline: none; background: var(--surface);
+            color: var(--text); transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: var(--green-500); }
+        .form-input::placeholder { color: #A1A1AA; }
+        textarea.form-input { min-height: 120px; resize: vertical; line-height: 1.6; }
+        select.form-input { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234B5563' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+
+        .submit-btn {
+            width: 100%; padding: 16px 28px; border-radius: 10px; font-size: 1rem; font-weight: 700;
+            border: none; cursor: pointer; font-family: inherit; background: var(--green-500);
+            color: white; transition: all 0.2s; margin-top: 8px;
+        }
+        .submit-btn:hover { background: var(--green-600); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* Success */
+        .success-card { display: none; text-align: center; padding: 48px 36px; }
+        .success-icon { font-size: 3rem; margin-bottom: 16px; }
+        .success-card h2 { color: var(--green-800); margin-bottom: 8px; }
+        .success-card p { color: var(--text-sec); font-size: 0.95rem; line-height: 1.6; max-width: 400px; margin: 0 auto; }
+
+        /* Footer */
+        .footer { text-align: center; padding: 24px; font-size: 0.78rem; color: var(--text-sec); border-top: 1px solid var(--border); }
+        .footer a { color: var(--green-600); text-decoration: none; }
+
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.6rem; }
+            .perks-grid { grid-template-columns: 1fr; }
+            .form-card { padding: 28px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="/" class="nav-logo"><img src="../assets/logo.png" alt="Rewoven">Rewoven</a>
+            <a href="/" class="nav-link">Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <span class="hero-badge">Ambassador Program</span>
+        <h1>Help Make Sustainability Simple</h1>
+        <p>Join our team of ambassadors and help spread the word about sustainable fashion in your community. No experience needed — just passion.</p>
+    </div>
+
+    <div class="perks">
+        <div class="perks-grid">
+            <div class="perk">
+                <div class="perk-icon">&#x1F4DC;</div>
+                <h3>Letter of Recommendation</h3>
+                <p>Signed by our founder — perfect for college applications and internships.</p>
+            </div>
+            <div class="perk">
+                <div class="perk-icon">&#x1F3C5;</div>
+                <h3>Official Certificate</h3>
+                <p>Rewoven Ambassador certificate with your name and hours contributed.</p>
+            </div>
+            <div class="perk">
+                <div class="perk-icon">&#x1F4BC;</div>
+                <h3>Resume & LinkedIn</h3>
+                <p>"Sustainability Ambassador at Rewoven" — a title that stands out.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <div class="form-card" id="formCard">
+            <h2>Apply to Join</h2>
+            <p>Fill out the form below and we'll get back to you within a few days.</p>
+
+            <form id="ambassadorForm" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" id="fullName" placeholder="Your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" id="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">School / University</label>
+                    <input type="text" class="form-input" id="school" placeholder="Where do you study?">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Instagram Handle</label>
+                    <input type="text" class="form-input" id="instagram" placeholder="@yourhandle">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Prior Experience <span class="form-hint">(Don't worry if you don't have much)</span></label>
+                    <textarea class="form-input" id="experience" placeholder="Tell us about any previous sustainability, volunteering, or leadership experience..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Why would you be suited for this role?</label>
+                    <textarea class="form-input" id="whySuited" placeholder="What makes you a great fit for Rewoven?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">What makes you passionate about the environment?</label>
+                    <textarea class="form-input" id="passion" placeholder="Tell us what drives your interest in sustainability..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">How many hours weekly can you contribute?</label>
+                    <select class="form-input" id="hours" required>
+                        <option value="" disabled selected>Select hours per week</option>
+                        <option value="1-2">1–2 hours</option>
+                        <option value="3-5">3–5 hours</option>
+                        <option value="5-10">5–10 hours</option>
+                        <option value="10+">10+ hours</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">Submit Application</button>
+            </form>
+        </div>
+
+        <div class="form-card success-card" id="successCard">
+            <div class="success-icon">&#x1F389;</div>
+            <h2>Application Submitted!</h2>
+            <p>Thanks for applying to be a Rewoven Ambassador. We'll review your application and get back to you at the email you provided.</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <a href="/">Rewoven</a> &middot; Making Sustainability Simple
+    </footer>
+
+    <script>
+        var SUPABASE_URL = 'https://puagdyacwgqkebjdbbrz.supabase.co';
+        var SUPABASE_KEY = 'sb_publishable_LarSIrAtxsvXN4RLLicQyw_TJk8s92b';
+
+        async function submitForm(e) {
+            e.preventDefault();
+            var btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            var data = {
+                full_name: document.getElementById('fullName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                school: document.getElementById('school').value.trim(),
+                instagram: document.getElementById('instagram').value.trim(),
+                experience: document.getElementById('experience').value.trim(),
+                why_suited: document.getElementById('whySuited').value.trim(),
+                passion: document.getElementById('passion').value.trim(),
+                hours_weekly: document.getElementById('hours').value,
+            };
+
+            try {
+                var res = await fetch(SUPABASE_URL + '/rest/v1/ambassador_applications', {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': 'Bearer ' + SUPABASE_KEY,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                if (res.ok || res.status === 201) {
+                    document.getElementById('formCard').querySelector('form').style.display = 'none';
+                    document.getElementById('formCard').querySelector('h2').style.display = 'none';
+                    document.getElementById('formCard').querySelector('p').style.display = 'none';
+                    document.getElementById('successCard').style.display = 'block';
+                } else {
+                    alert('Something went wrong. Please try again.');
+                    btn.disabled = false;
+                    btn.textContent = 'Submit Application';
+                }
+            } catch (err) {
+                alert('Network error. Please check your connection and try again.');
+                btn.disabled = false;
+                btn.textContent = 'Submit Application';
+            }
+        }
+    </script>
+</body>
+</html>
