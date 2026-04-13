@@ -81,16 +81,9 @@
     /* ── Hero ── */
     .hero {
       padding: 140px 24px 80px; text-align: center;
-      background: linear-gradient(135deg, var(--green-50) 0%, var(--warm) 50%, var(--heart-light) 100%);
+      background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('kids2.jpeg') center/cover no-repeat;
       position: relative; overflow: hidden;
     }
-    .hero::before {
-      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-      background: radial-gradient(circle at 30% 70%, rgba(16,185,129,0.08) 0%, transparent 50%),
-                  radial-gradient(circle at 70% 30%, rgba(225,29,72,0.06) 0%, transparent 50%);
-      animation: heroFloat 20s ease-in-out infinite;
-    }
-    @keyframes heroFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-2%, 2%); } }
 
     .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
     .hero-badge {
@@ -101,12 +94,12 @@
     }
     .hero h1 {
       font-family: 'Playfair Display', serif; font-size: 56px; font-weight: 800;
-      line-height: 1.1; margin-bottom: 20px;
+      line-height: 1.1; margin-bottom: 20px; color: white;
     }
-    .hero h1 .green { color: var(--green-600); }
-    .hero h1 .heart { color: var(--heart); }
+    .hero h1 .green { color: var(--green-400); }
+    .hero h1 .heart { color: #FF6B6B; }
     .hero p {
-      font-size: 20px; color: var(--gray-600); max-width: 600px;
+      font-size: 20px; color: rgba(255,255,255,0.9); max-width: 600px;
       margin: 0 auto 36px; line-height: 1.6;
     }
     .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
@@ -121,11 +114,16 @@
       box-shadow: 0 4px 20px rgba(225,29,72,0.3);
     }
     .btn-heart:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(225,29,72,0.4); }
-    .btn-outline {
-      background: transparent; color: var(--dark);
-      border: 2px solid var(--gray-200);
+    .btn-green {
+      background: var(--green-600); color: white;
+      box-shadow: 0 4px 20px rgba(5,150,105,0.3);
     }
-    .btn-outline:hover { border-color: var(--green-500); color: var(--green-600); transform: translateY(-2px); }
+    .btn-green:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(5,150,105,0.4); }
+    .btn-outline {
+      background: transparent; color: white;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+    .btn-outline:hover { border-color: white; color: white; transform: translateY(-2px); }
 
     /* ── How It Works ── */
     .how-it-works { padding: 80px 24px; background: var(--white); }
@@ -436,11 +434,10 @@
   <!-- Hero -->
   <section class="hero">
     <div class="hero-content">
-      <div class="hero-badge">&#10084;&#65039; Donation Drive Now Open</div>
       <h1>Give Clothes a <span class="green">Second Life</span>, Give Kids a <span class="heart">Better One</span></h1>
       <p>Donate your pre-loved clothes to underprivileged children in the Philippines. In return, receive a handbag or bookmark sustainably crafted from fabric offcuts as a gift from the Rewoven team.</p>
       <div class="hero-buttons">
-        <a href="#signup" class="btn btn-heart">Donate Now</a>
+        <a href="#signup" class="btn btn-green">Donate Now</a>
         <a href="#how" class="btn btn-outline">How It Works</a>
       </div>
     </div>
