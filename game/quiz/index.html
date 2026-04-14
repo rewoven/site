@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sustainability Quiz | Rewoven Games</title>
+  <link rel="icon" href="../../assets/logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --green-50: #ECFDF5; --green-100: #D1FAE5; --green-200: #A7F3D0;
+      --green-400: #34D399; --green-500: #10B981; --green-600: #059669;
+      --green-700: #047857; --green-800: #065F46; --green-900: #064E3B;
+      --dark: #111827; --gray-600: #4B5563; --gray-400: #9CA3AF;
+      --gray-200: #E5E7EB; --white: #FFFFFF; --bg-cream: #F0FDF4;
+      --radius: 16px;
+      /* Kahoot colors */
+      --kahoot-bg: #46178F;
+      --kahoot-red: #E21B3C;
+      --kahoot-blue: #1368CE;
+      --kahoot-yellow: #D89E00;
+      --kahoot-green: #26890C;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--dark); background: var(--white);
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 72px;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(229,231,235,0.5);
+    }
+    nav .container {
+      max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--dark); }
+    .nav-logo img { width: 40px; height: 40px; border-radius: 10px; }
+    .nav-logo span { font-weight: 800; font-size: 22px; font-family: 'Playfair Display', serif; color: var(--green-800); }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--gray-600); font-weight: 500; font-size: 15px; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--green-600); }
+    .nav-divider { width: 1px; height: 20px; background: var(--gray-200); }
+    .btn-primary { background: var(--green-600); color: white !important; padding: 10px 20px; border-radius: 50px; font-weight: 600; font-size: 14px; }
+    .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+    .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--dark); margin: 5px 0; border-radius: 2px; transition: 0.3s; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--white); flex-direction: column; padding: 24px; gap: 20px; border-bottom: 1px solid var(--gray-200); }
+      .nav-links.open { display: flex; }
+      .nav-hamburger { display: block; }
+    }
+
+    /* ── Screens ── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ── Start Screen ── */
+    #startScreen {
+      background: linear-gradient(135deg, var(--kahoot-bg) 0%, #2d0a5e 50%, #1a063a 100%);
+      align-items: center; justify-content: center; padding: 72px 24px 40px;
+    }
+    .start-card {
+      background: rgba(255,255,255,0.08); backdrop-filter: blur(40px);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 24px;
+      padding: 48px 40px; max-width: 520px; width: 100%; text-align: center;
+    }
+    .start-card h1 {
+      font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 800;
+      color: white; margin-bottom: 8px; line-height: 1.1;
+    }
+    .start-card h1 span { color: var(--green-400); }
+    .start-card p { color: rgba(255,255,255,0.7); font-size: 16px; margin-bottom: 32px; }
+    .start-card label { display: block; text-align: left; color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .start-card input, .start-card select {
+      width: 100%; padding: 14px 18px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06); color: white; font-size: 16px; font-family: inherit;
+      margin-bottom: 20px; outline: none; transition: border-color 0.2s;
+    }
+    .start-card input::placeholder { color: rgba(255,255,255,0.3); }
+    .start-card input:focus, .start-card select:focus { border-color: var(--green-400); }
+    .start-card select option { background: #2d0a5e; color: white; }
+    .start-btn {
+      width: 100%; padding: 16px; border: none; border-radius: 12px;
+      background: var(--green-500); color: white; font-size: 18px; font-weight: 800;
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .start-btn:hover { background: var(--green-400); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(16,185,129,0.4); }
+    .start-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .question-count-selector {
+      display: flex; gap: 8px; margin-bottom: 20px; justify-content: center;
+    }
+    .qcount-btn {
+      padding: 10px 20px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06); color: white; font-weight: 700; font-size: 15px;
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .qcount-btn.active { background: var(--green-500); border-color: var(--green-500); }
+    .qcount-btn:hover:not(.active) { border-color: rgba(255,255,255,0.4); }
+
+    /* ── Game Screen ── */
+    #gameScreen {
+      background: var(--kahoot-bg); padding-top: 72px;
+      min-height: 100vh;
+    }
+    .game-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 24px; max-width: 1000px; margin: 0 auto; width: 100%;
+    }
+    .game-header .question-num { color: rgba(255,255,255,0.7); font-weight: 700; font-size: 14px; }
+    .game-header .score { color: white; font-weight: 800; font-size: 18px; }
+    .game-header .streak { color: var(--kahoot-yellow); font-weight: 700; font-size: 14px; }
+
+    /* Timer bar */
+    .timer-bar-container {
+      max-width: 1000px; margin: 0 auto; padding: 0 24px; width: 100%;
+    }
+    .timer-bar {
+      height: 8px; border-radius: 4px; background: rgba(255,255,255,0.15);
+      overflow: hidden; margin-bottom: 24px;
+    }
+    .timer-fill {
+      height: 100%; border-radius: 4px;
+      background: linear-gradient(90deg, var(--green-400), var(--kahoot-yellow));
+      transition: width 0.1s linear;
+      width: 100%;
+    }
+    .timer-fill.warning { background: linear-gradient(90deg, var(--kahoot-yellow), var(--kahoot-red)); }
+    .timer-fill.danger { background: var(--kahoot-red); }
+
+    /* Question area */
+    .question-area {
+      max-width: 1000px; margin: 0 auto; padding: 0 24px 24px; width: 100%;
+      flex: 1; display: flex; flex-direction: column;
+    }
+    .question-box {
+      background: rgba(255,255,255,0.08); border-radius: 20px;
+      padding: 40px 32px; text-align: center; margin-bottom: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .question-box .difficulty-badge {
+      display: inline-block; padding: 4px 14px; border-radius: 50px;
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .difficulty-badge.easy { background: rgba(38,137,12,0.3); color: #6EE7B7; }
+    .difficulty-badge.medium { background: rgba(216,158,0,0.3); color: #FCD34D; }
+    .difficulty-badge.hard { background: rgba(226,27,60,0.3); color: #FCA5A5; }
+
+    .question-text {
+      font-size: 24px; font-weight: 800; color: white; line-height: 1.3;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .timer-circle {
+      position: absolute; top: 20px; right: 20px;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,0.1); display: flex; align-items: center;
+      justify-content: center; font-size: 24px; font-weight: 900; color: white;
+    }
+
+    /* Answer grid */
+    .answers-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      flex: 1;
+    }
+    .answer-btn {
+      border: none; border-radius: 16px; padding: 20px 24px;
+      font-size: 17px; font-weight: 700; color: white;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 16px;
+      text-align: left; font-family: inherit; min-height: 80px;
+      position: relative; overflow: hidden;
+    }
+    .answer-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+    .answer-btn:active { transform: scale(0.98); }
+    .answer-btn:disabled { cursor: not-allowed; opacity: 0.6; transform: none; filter: none; }
+    .answer-btn.a0 { background: var(--kahoot-red); }
+    .answer-btn.a1 { background: var(--kahoot-blue); }
+    .answer-btn.a2 { background: var(--kahoot-yellow); }
+    .answer-btn.a3 { background: var(--kahoot-green); }
+
+    .answer-shape {
+      width: 32px; height: 32px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .answer-shape svg { width: 28px; height: 28px; fill: rgba(255,255,255,0.6); }
+
+    /* Selected states */
+    .answer-btn.correct { filter: brightness(1.2); box-shadow: 0 0 0 4px rgba(255,255,255,0.6); }
+    .answer-btn.wrong { opacity: 0.35; filter: grayscale(0.5); }
+    .answer-btn.correct::after {
+      content: '\2713'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+      font-size: 28px; font-weight: 900;
+    }
+    .answer-btn.wrong-selected::after {
+      content: '\2717'; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+      font-size: 28px; font-weight: 900;
+    }
+
+    /* Result overlay */
+    .result-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .result-overlay.active { display: flex; }
+    .result-card {
+      background: #1a0a3e; border-radius: 24px; padding: 40px;
+      max-width: 500px; width: 100%; text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      animation: popIn 0.3s ease-out;
+    }
+    @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .result-icon { font-size: 64px; margin-bottom: 12px; }
+    .result-title { font-size: 28px; font-weight: 800; color: white; margin-bottom: 8px; }
+    .result-points { font-size: 20px; font-weight: 700; color: var(--green-400); margin-bottom: 16px; }
+    .result-explain {
+      color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1.6;
+      margin-bottom: 24px; padding: 16px; background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+    }
+    .result-streak { color: var(--kahoot-yellow); font-weight: 700; font-size: 14px; margin-bottom: 16px; }
+    .next-btn {
+      padding: 14px 40px; border: none; border-radius: 12px;
+      background: white; color: var(--kahoot-bg); font-size: 16px; font-weight: 800;
+      cursor: pointer; font-family: inherit; transition: all 0.2s;
+    }
+    .next-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,255,255,0.2); }
+
+    /* ── End Screen ── */
+    #endScreen {
+      background: linear-gradient(135deg, var(--kahoot-bg) 0%, #2d0a5e 100%);
+      align-items: center; justify-content: center; padding: 72px 24px 40px;
+    }
+    .end-card {
+      background: rgba(255,255,255,0.08); border-radius: 24px;
+      padding: 48px 40px; max-width: 520px; width: 100%; text-align: center;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .end-card .trophy { font-size: 72px; margin-bottom: 8px; }
+    .end-card h2 { font-family: 'Playfair Display', serif; font-size: 36px; color: white; margin-bottom: 4px; }
+    .end-card .final-score { font-size: 48px; font-weight: 900; color: var(--green-400); margin-bottom: 4px; }
+    .end-card .final-label { color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; }
+
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;
+    }
+    .stat-box {
+      background: rgba(255,255,255,0.06); border-radius: 12px; padding: 16px 8px;
+    }
+    .stat-box .stat-val { font-size: 24px; font-weight: 800; color: white; }
+    .stat-box .stat-lbl { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+    .rank-badge {
+      display: inline-block; padding: 8px 24px; border-radius: 50px;
+      font-size: 16px; font-weight: 800; margin-bottom: 24px;
+    }
+    .rank-badge.gold { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; }
+    .rank-badge.silver { background: linear-gradient(135deg, #9CA3AF, #6B7280); color: white; }
+    .rank-badge.bronze { background: linear-gradient(135deg, #D97706, #92400E); color: white; }
+    .rank-badge.learner { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+
+    .end-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .end-btn {
+      padding: 14px 28px; border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+      transition: all 0.2s;
+    }
+    .end-btn.primary { background: var(--green-500); color: white; }
+    .end-btn.primary:hover { background: var(--green-400); transform: translateY(-2px); }
+    .end-btn.secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+    .end-btn.secondary:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+
+    /* ── Points animation ── */
+    .points-popup {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-size: 64px; font-weight: 900; color: var(--green-400);
+      pointer-events: none; z-index: 600;
+      animation: pointsFly 0.8s ease-out forwards;
+      text-shadow: 0 4px 20px rgba(16,185,129,0.5);
+    }
+    @keyframes pointsFly {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      30% { opacity: 1; transform: translate(-50%, -60%) scale(1.2); }
+      100% { opacity: 0; transform: translate(-50%, -120%) scale(0.8); }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+      .question-text { font-size: 20px; }
+      .start-card { padding: 32px 24px; }
+      .start-card h1 { font-size: 32px; }
+      .end-card { padding: 32px 24px; }
+      .end-card h2 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="container">
+      <a href="/" class="nav-logo">
+        <img src="../../assets/logo.png" alt="Rewoven" />
+        <span>Rewoven</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/#problem">The Problem</a></li>
+        <li><a href="/#features">Features</a></li>
+        <li><a href="/#impact">Impact</a></li>
+        <li><a href="/#how-it-works">How It Works</a></li>
+        <li class="nav-divider"></li>
+        <li><a href="/game/" style="color:var(--green-600);font-weight:600;">Games</a></li>
+        <li><a href="/brands/">Brands</a></li>
+        <li><a href="/donate/">Donate</a></li>
+        <li><a href="/ambassadors/" style="font-weight:700;">Join Us</a></li>
+        <li><a href="https://apps.apple.com/us/app/rewoven/id6759314001" class="btn-primary" style="display:inline-block;">Download App</a></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ═══ START SCREEN ═══ -->
+  <div class="screen active" id="startScreen">
+    <div class="start-card">
+      <h1>Sustainability <span>Quiz</span></h1>
+      <p>Test your knowledge on fast fashion, recycling, and sustainable living. Score points for speed and accuracy!</p>
+
+      <label>Your Name</label>
+      <input type="text" id="playerName" placeholder="Enter your name..." maxlength="20" />
+
+      <label>Category</label>
+      <select id="categorySelect">
+        <option value="all">All Categories (Mix)</option>
+        <option value="Fast Fashion">Fast Fashion</option>
+        <option value="Circular Economy">Circular Economy</option>
+        <option value="Textile Lifecycle">Textile Lifecycle</option>
+        <option value="Sustainable Brands">Sustainable Brands</option>
+        <option value="Recycling">Recycling</option>
+        <option value="Sustainable Lifestyle">Sustainable Lifestyle</option>
+      </select>
+
+      <label>Number of Questions</label>
+      <div class="question-count-selector">
+        <button class="qcount-btn" data-count="10">10</button>
+        <button class="qcount-btn active" data-count="15">15</button>
+        <button class="qcount-btn" data-count="20">20</button>
+        <button class="qcount-btn" data-count="30">30</button>
+      </div>
+
+      <button class="start-btn" id="startBtn" disabled>Start Quiz</button>
+    </div>
+  </div>
+
+  <!-- ═══ GAME SCREEN ═══ -->
+  <div class="screen" id="gameScreen">
+    <div class="game-header">
+      <span class="question-num" id="questionNum">1 / 15</span>
+      <span class="streak" id="streakDisplay"></span>
+      <span class="score" id="scoreDisplay">0 pts</span>
+    </div>
+    <div class="timer-bar-container">
+      <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+    </div>
+    <div class="question-area">
+      <div class="question-box">
+        <div class="difficulty-badge easy" id="diffBadge">Easy</div>
+        <div class="question-text" id="questionText">Loading...</div>
+      </div>
+      <div class="answers-grid" id="answersGrid"></div>
+    </div>
+  </div>
+
+  <!-- ═══ RESULT OVERLAY ═══ -->
+  <div class="result-overlay" id="resultOverlay">
+    <div class="result-card">
+      <div class="result-icon" id="resultIcon"></div>
+      <div class="result-title" id="resultTitle"></div>
+      <div class="result-points" id="resultPoints"></div>
+      <div class="result-streak" id="resultStreak"></div>
+      <div class="result-explain" id="resultExplain"></div>
+      <button class="next-btn" id="nextBtn">Next Question</button>
+    </div>
+  </div>
+
+  <!-- ═══ END SCREEN ═══ -->
+  <div class="screen" id="endScreen">
+    <div class="end-card">
+      <div class="trophy" id="endTrophy"></div>
+      <h2 id="endTitle">Quiz Complete!</h2>
+      <div class="final-score" id="finalScore">0</div>
+      <div class="final-label">Total Points</div>
+      <div id="rankBadge" class="rank-badge gold"></div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val" id="statCorrect">0</div><div class="stat-lbl">Correct</div></div>
+        <div class="stat-box"><div class="stat-val" id="statAccuracy">0%</div><div class="stat-lbl">Accuracy</div></div>
+        <div class="stat-box"><div class="stat-val" id="statStreak">0</div><div class="stat-lbl">Best Streak</div></div>
+      </div>
+      <div class="end-btns">
+        <button class="end-btn primary" id="playAgainBtn">Play Again</button>
+        <a href="/game/" class="end-btn secondary">All Games</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// QUIZ DATA — 144 questions from Rewoven App
+// ═══════════════════════════════════════════════════
+const ALL_QUESTIONS = [
+  // ── FAST FASHION ──
+  {q:"What does \"fast fashion\" mean?",o:["Clothing made slowly and carefully","Cheap clothes made quickly to follow trends","Handmade luxury clothing","Clothing designed to last 10+ years"],c:1,e:"Fast fashion = fast production, low quality, disposable trends.",d:"easy",cat:"Fast Fashion"},
+  {q:"Which material is most commonly used in fast fashion?",o:["Polyester","Silk","Linen","Wool"],c:0,e:"Polyester is cheap and easy to mass-produce, which is why fast fashion brands rely on it.",d:"easy",cat:"Fast Fashion"},
+  {q:"True or False: Fast fashion is designed to be long-lasting.",o:["True","False"],c:1,e:"It's intentionally low-quality so people buy more often.",d:"easy",cat:"Fast Fashion"},
+  {q:"What is \"overconsumption\"?",o:["Wearing the same clothes too often","Buying more clothes than you need","Donating too many clothes","Only buying second-hand"],c:1,e:"Overconsumption = unnecessary purchasing \u2192 more waste.",d:"easy",cat:"Fast Fashion"},
+  {q:"Which option is more sustainable?",o:["Buying 3 cheap shirts","Buying 1 high-quality shirt","Buying clothes every week","Throwing clothes away after one use"],c:1,e:"Durable clothing reduces replacement frequency and waste.",d:"easy",cat:"Fast Fashion"},
+  {q:"What is a \"microtrend\"?",o:["A long-lasting fashion movement","A trend that lasts only a few days or weeks","A trend created by luxury brands","A trend based on fabric thickness"],c:1,e:"Microtrends burn out fast \u2192 more waste.",d:"easy",cat:"Fast Fashion"},
+  {q:"Which of these is a sign of fast fashion?",o:["High transparency reports","Weekly new collections","Long-lasting durable fabrics","Repair services"],c:1,e:"Constant new drops encourage constant buying.",d:"easy",cat:"Fast Fashion"},
+  {q:"What is the \"real cost\" of a cheap shirt?",o:["Only the money you pay","Money + environmental + social impact","Only shipping costs","None"],c:1,e:"The price tag hides pollution and worker exploitation.",d:"easy",cat:"Fast Fashion"},
+  {q:"What is the main driver of fast fashion pollution?",o:["High prices","Slow production","High-volume manufacturing","Limited clothing drops"],c:2,e:"Fast fashion produces too much, too fast.",d:"medium",cat:"Fast Fashion"},
+  {q:"What makes polyester harmful?",o:["It is fully biodegradable","It sheds microplastics","It is made from plants","It lasts for only one wash"],c:1,e:"Polyester = plastic \u2192 microplastics in water.",d:"medium",cat:"Fast Fashion"},
+  {q:"True or False: Cotton always has a lower environmental impact than polyester.",o:["True","False"],c:1,e:"Cotton can be better, but not always. It depends on method used.",d:"medium",cat:"Fast Fashion"},
+  {q:"What is \"greenwashing\"?",o:["A new eco-friendly washing technique","Misleading sustainability marketing","Washing clothes using recycled water","A method for dye removal"],c:1,e:"Brands pretend to be sustainable without proof.",d:"medium",cat:"Fast Fashion"},
+  {q:"Which fabric has the lowest water footprint?",o:["Cotton","Linen","Wool","Nylon"],c:1,e:"Linen (flax) uses far less water.",d:"medium",cat:"Fast Fashion"},
+  {q:"Why do fast fashion prices stay low?",o:["Brands use expensive materials","Very efficient, ethical labour","Cheap labour + cheap materials","Limited production"],c:2,e:"Low cost = low wages + low-quality fibre.",d:"medium",cat:"Fast Fashion"},
+  {q:"Which action reduces fashion waste the most?",o:["Buying more clothes","Buying fewer, higher-quality clothes","Following microtrends","Wearing clothes once"],c:1,e:"Longevity = fewer garments produced.",d:"medium",cat:"Fast Fashion"},
+  {q:"What is the biggest issue with rapid fashion cycles?",o:["They increase creativity","They reduce demand","They encourage disposable buying","They make clothes more durable"],c:2,e:"Fast cycles \u2192 constant buying \u2192 waste.",d:"medium",cat:"Fast Fashion"},
+  {q:"Rank fabrics from worst \u2192 best environmental impact.",o:["Linen \u2192 Wool \u2192 Polyester","Polyester \u2192 Cotton \u2192 Linen","Cotton \u2192 Polyester \u2192 Linen","Wool \u2192 Polyester \u2192 Cotton"],c:1,e:"Polyester (plastic, energy-heavy) \u2192 Cotton (water-heavy) \u2192 Linen (lowest footprint).",d:"hard",cat:"Fast Fashion"},
+  {q:"Why don't clothing prices reflect environmental impact?",o:["Because pollution is measured incorrectly","Externalities aren't included in price","Because brands want to overcharge","Because fashion has no impact"],c:1,e:"Pollution isn't priced \u2192 artificially cheap clothes.",d:"hard",cat:"Fast Fashion"},
+  {q:"What is \"planned obsolescence\" in fashion?",o:["Designing clothes that last decades","Designing clothes that break or become unfashionable quickly","Designing for repairs","Designing clothing for upcycling"],c:1,e:"Brands make products intentionally short-lived.",d:"hard",cat:"Fast Fashion"},
+  {q:"Why is organic cotton not always more sustainable?",o:["It uses more chemicals","It uses land and water differently","It cannot be dyed","It lasts fewer washes"],c:1,e:"Organic doesn't mean low water-use or efficient farming.",d:"hard",cat:"Fast Fashion"},
+  {q:"What policy would reduce fashion waste most effectively?",o:["More trend cycles","Banning second-hand clothing","Taxing high-waste production","Increasing billboard ads"],c:2,e:"Pricing externalities reduces overproduction.",d:"hard",cat:"Fast Fashion"},
+  {q:"What is \"cost per wear\"?",o:["Price divided by number of wears","Total price multiplied by ownership time","Price divided by brand name","Cost of repairing clothes"],c:0,e:"Lower cost-per-wear = more sustainable value.",d:"hard",cat:"Fast Fashion"},
+  {q:"Why is relying on recycled polyester limited?",o:["It cannot be recycled again","It is too expensive","It releases no microplastics","It is naturally biodegradable"],c:0,e:"Most recycled polyester becomes non-recyclable clothing \u2192 dead-end.",d:"hard",cat:"Fast Fashion"},
+  {q:"Which factor increases sustainability the most?",o:["More trend cycles","Higher purchasing frequency","Longer product lifespans","More polyester production"],c:2,e:"Longevity reduces overall consumption + waste.",d:"hard",cat:"Fast Fashion"},
+
+  // ── CIRCULAR ECONOMY ──
+  {q:"What is a circular economy?",o:["An economy based on throwing items away","An economy where materials are reused, repaired, and recycled","An economy that only uses new materials","A system focused on fast production"],c:1,e:"A circular economy keeps materials in use for as long as possible.",d:"easy",cat:"Circular Economy"},
+  {q:"Which diagram represents a linear economy?",o:["Make \u2192 Use \u2192 Return","Take \u2192 Make \u2192 Waste","Repair \u2192 Reuse \u2192 Recycle","Collect \u2192 Process \u2192 Reuse"],c:1,e:"A linear economy follows a one-way flow that ends in waste.",d:"easy",cat:"Circular Economy"},
+  {q:"True or False: Repairing an item is part of the circular economy.",o:["True","False"],c:0,e:"Repair extends a product's life and reduces waste.",d:"easy",cat:"Circular Economy"},
+  {q:"What does \"reuse\" mean?",o:["Throwing something away","Using a product again instead of buying new","Burning waste for energy","Replacing a broken item instantly"],c:1,e:"Reuse keeps items circulating longer before disposal.",d:"easy",cat:"Circular Economy"},
+  {q:"What is upcycling?",o:["Turning old materials into higher-value products","Burning materials","Recycling plastic into plastic","Throwing clothes away"],c:0,e:"Upcycling transforms waste into something of higher value.",d:"easy",cat:"Circular Economy"},
+  {q:"What does \"closing the loop\" mean?",o:["Ending recycling","Creating waste faster","Keeping materials in use instead of throwing them away","Stopping production permanently"],c:2,e:"Closing the loop means resources continuously circulate.",d:"easy",cat:"Circular Economy"},
+  {q:"Which example fits a circular model?",o:["Buying new clothes weekly","Repairing a broken bag","Throwing out old items","Ignoring waste"],c:1,e:"Repairing prevents unnecessary new consumption.",d:"easy",cat:"Circular Economy"},
+  {q:"Why is extending a product's life good for the environment?",o:["It increases waste","It reduces production and resource use","It requires more material","It raises prices"],c:1,e:"The longer an item lasts, the fewer new materials are needed.",d:"easy",cat:"Circular Economy"},
+  {q:"Why is the linear economy unsustainable?",o:["It reuses materials","It depends on infinite resources","It reduces waste naturally","It avoids pollution"],c:1,e:"Linear systems rely on constant extraction from limited resources.",d:"medium",cat:"Circular Economy"},
+  {q:"What is \"resource efficiency\"?",o:["Using as many materials as possible","Using materials in the smartest, most sustainable way","Throwing products away at the end of life","Over-consuming resources"],c:1,e:"Efficient resource use reduces waste and environmental impact.",d:"medium",cat:"Circular Economy"},
+  {q:"True or False: Recycling is the only part of circularity.",o:["True","False"],c:1,e:"Circularity also includes reuse, repair, remanufacturing, and upcycling.",d:"medium",cat:"Circular Economy"},
+  {q:"Which company action reflects circular design?",o:["Designing clothes meant to be thrown away","Using materials that can be repaired and recycled","Selling products with no repair options","Changing trends weekly"],c:1,e:"Circular design focuses on durability and long-term usability.",d:"medium",cat:"Circular Economy"},
+  {q:"Which product is most likely to fit into a circular model?",o:["A phone with glued-in batteries","A jacket with repairable zippers and modular parts","A shirt designed for one-time use","A plastic bag"],c:1,e:"Modular and repairable items stay in use longer.",d:"medium",cat:"Circular Economy"},
+  {q:"How does upcycling reduce carbon emissions?",o:["By increasing production","By reducing the need for new materials","By burning old products","By shortening product lifespan"],c:1,e:"Using existing materials avoids the emissions from making new ones.",d:"medium",cat:"Circular Economy"},
+  {q:"What is \"remanufacturing\"?",o:["Throwing away a product","Making a new item using old parts","Ignoring damaged materials","Always recycling first"],c:1,e:"Remanufacturing gives parts a second life.",d:"medium",cat:"Circular Economy"},
+  {q:"Which strategy creates the least waste?",o:["Reuse","Recycling","Repair","Burning waste"],c:2,e:"Repair keeps products functional the longest.",d:"medium",cat:"Circular Economy"},
+  {q:"How does circularity help fight climate change?",o:["It increases consumption","It reduces extraction and production emissions","It causes more pollution","It promotes fast fashion"],c:1,e:"Using fewer virgin materials lowers energy use and emissions.",d:"hard",cat:"Circular Economy"},
+  {q:"Which industry benefits most from circular innovation?",o:["Nuclear energy","Textile and fashion","Luxury jewellery","Airline catering"],c:1,e:"Textiles have massive waste and resource demands, so impact is huge.",d:"hard",cat:"Circular Economy"},
+  {q:"Which is the most effective circular strategy?",o:["Recycling","Reuse","Repair","Refuse"],c:3,e:"Refusing unnecessary items eliminates waste at the source.",d:"hard",cat:"Circular Economy"},
+  {q:"What makes a product \"circular by design\"?",o:["It is trendy","It's made to be repaired, reused, or recycled","It looks eco-friendly","It is cheap"],c:1,e:"Circular-by-design products are built for multiple lifecycles.",d:"hard",cat:"Circular Economy"},
+  {q:"True or False: Recycling is the highest-impact circular solution.",o:["True","False"],c:1,e:"Recycling is useful, but less impactful than reducing, reusing, or repairing.",d:"hard",cat:"Circular Economy"},
+  {q:"Identify a major flaw in current circular systems.",o:["Too much reuse","Lack of repair skills and infrastructure","Too many recycling options","Overproduction of circular products"],c:1,e:"Most people can't repair items, so products still get discarded.",d:"hard",cat:"Circular Economy"},
+  {q:"What is the difference between \"cradle-to-grave\" and \"cradle-to-cradle\"?",o:["Same concept","Cradle-to-grave ends in waste; cradle-to-cradle recycles into new products","Cradle-to-grave recycles; cradle-to-cradle ends in waste","Both ignore recycling"],c:1,e:"Cradle-to-cradle is circular; cradle-to-grave is linear.",d:"hard",cat:"Circular Economy"},
+  {q:"A brand claims its product is circular but offers no repair options. What's the issue?",o:["It's too sustainable","It's greenwashing","It's too expensive","It's over-designed"],c:1,e:"Circular claims must match real product features like durability and repairability.",d:"hard",cat:"Circular Economy"},
+
+  // ── TEXTILE LIFECYCLE ──
+  {q:"Which is the correct order of a textile lifecycle?",o:["Use \u2192 Throw away \u2192 Production","Raw fibre \u2192 Fabric \u2192 Clothing \u2192 Use \u2192 Disposal","Disposal \u2192 Fabric \u2192 Raw fibre","Clothing \u2192 Fabric \u2192 Fibre"],c:1,e:"A textile starts as raw fibre, becomes fabric, then clothing, is used, and eventually disposed of.",d:"easy",cat:"Textile Lifecycle"},
+  {q:"What stage of a textile's life uses the most water?",o:["Spinning","Dyeing","Transport","Packaging"],c:1,e:"Dyeing and finishing processes use huge amounts of water.",d:"easy",cat:"Textile Lifecycle"},
+  {q:"True or False: Dyeing is a major source of water pollution.",o:["True","False"],c:0,e:"Toxic dyes often enter rivers and ecosystems untreated.",d:"easy",cat:"Textile Lifecycle"},
+  {q:"What happens to most discarded clothes globally?",o:["They are recycled","They are stored forever","They end up in landfill or are burned","They turn into compost"],c:2,e:"Most textile waste is landfilled or incinerated.",d:"easy",cat:"Textile Lifecycle"},
+  {q:"What is pre-consumer textile waste?",o:["Clothes thrown away after wearing","Factory scraps and offcuts","Donated clothing","Old clothes sold second-hand"],c:1,e:"Pre-consumer waste is created before the product reaches customers.",d:"easy",cat:"Textile Lifecycle"},
+  {q:"What is post-consumer textile waste?",o:["Scraps from textile factories","Unused fibres","Clothes discarded after use","Fabric rolls in storage"],c:2,e:"Post-consumer waste = clothing thrown away after wearing.",d:"easy",cat:"Textile Lifecycle"},
+  {q:"What part of the textile journey often involves pesticides?",o:["Spinning","Growing cotton","Sewing","Recycling"],c:1,e:"Conventional cotton growing requires pesticides and chemicals.",d:"easy",cat:"Textile Lifecycle"},
+  {q:"True or False: Polyester sheds microplastics when washed.",o:["True","False"],c:0,e:"Synthetic fibres like polyester break into microplastics during washing.",d:"easy",cat:"Textile Lifecycle"},
+  {q:"Which stage of the textile lifecycle creates the most carbon emissions?",o:["Sewing","Raw material production","Packaging","Retail"],c:1,e:"Fibre production and processing typically have the highest carbon footprint.",d:"medium",cat:"Textile Lifecycle"},
+  {q:"Why are polyester clothes hard to recycle?",o:["They melt too quickly","They are often blended with other fibres","They are too soft","They are too expensive"],c:1,e:"Blended fabrics make fibre separation extremely difficult.",d:"medium",cat:"Textile Lifecycle"},
+  {q:"True or False: Blended fabrics are easier to reuse.",o:["True","False"],c:1,e:"Blends are harder to recycle and reuse due to mixed fibre content.",d:"medium",cat:"Textile Lifecycle"},
+  {q:"What is a key environmental issue in the dyeing stage?",o:["Fabric shrinkage","Wastewater pollution","Labour shortages","Slow production"],c:1,e:"Dyeing creates toxic wastewater if not treated properly.",d:"medium",cat:"Textile Lifecycle"},
+  {q:"What is a textile's \"end-of-life\" stage?",o:["The point at which it enters production","When it is sold","When it is discarded by the consumer","When cotton is harvested"],c:2,e:"End-of-life refers to disposal after use.",d:"medium",cat:"Textile Lifecycle"},
+  {q:"Why do clothes shed microplastics?",o:["They contain natural fibres","Synthetic fibres break apart during friction","They are washed too often","They are recycled incorrectly"],c:1,e:"Polyester and nylon release microplastics when stressed.",d:"medium",cat:"Textile Lifecycle"},
+  {q:"Which stage is most labour-intensive?",o:["Raw material extraction","Sewing and garment construction","Disposal","Recycling"],c:1,e:"Cutting, sewing, and assembly rely heavily on manual labour.",d:"medium",cat:"Textile Lifecycle"},
+  {q:"Which stage contributes most to chemical pollution?",o:["Spinning","Dyeing & finishing","Retail","Transport"],c:1,e:"Dyeing uses chemicals that can leak into ecosystems.",d:"medium",cat:"Textile Lifecycle"},
+  {q:"Why is textile recycling often inefficient?",o:["Fabrics are too clean","Fibres are hard to separate, especially blends","No demand for recycled materials","It requires too much land"],c:1,e:"Mixed fibres make automated sorting extremely difficult.",d:"hard",cat:"Textile Lifecycle"},
+  {q:"Which fibre generally has the lowest environmental impact across its lifecycle?",o:["Conventional cotton","Polyester","Linen (flax)","Nylon"],c:2,e:"Linen uses less water and chemicals compared to other fibres.",d:"hard",cat:"Textile Lifecycle"},
+  {q:"True or False: Mechanical recycling shortens fibre length.",o:["True","False"],c:0,e:"Shredding breaks fibres, reducing quality.",d:"hard",cat:"Textile Lifecycle"},
+  {q:"What is a major barrier to large-scale textile recycling?",o:["Too many recycling plants","Lack of sorting technology","Overproduction of linen","Low clothing demand"],c:1,e:"Sorting blends and colours is complex and expensive.",d:"hard",cat:"Textile Lifecycle"},
+  {q:"Which stage has the largest hidden environmental footprint?",o:["Retail","Transport","Consumer use (washing, drying)","Sewing"],c:2,e:"Frequent washing, drying, and ironing use huge amounts of energy.",d:"hard",cat:"Textile Lifecycle"},
+  {q:"What makes chemical recycling different from mechanical recycling?",o:["It dyes fibres","It dissolves fibres and rebuilds them as new","It cuts fibres into yarn","It burns waste"],c:1,e:"Chemical recycling breaks fibres down molecularly.",d:"hard",cat:"Textile Lifecycle"},
+  {q:"Why do darker dyed fabrics generally have a higher environmental impact?",o:["They are more expensive","They require more dye and chemicals","They dry slower","They sell less"],c:1,e:"Deep colours need more dye, increasing water and chemical use.",d:"hard",cat:"Textile Lifecycle"},
+  {q:"What is the main issue with \"fast fashion lifecycle speed\"?",o:["Clothes last too long","Clothes become waste too quickly","Recycling rates are too high","Clothes never get worn"],c:1,e:"Fast fashion speeds up the path from production to disposal.",d:"hard",cat:"Textile Lifecycle"},
+
+  // ── SUSTAINABLE BRANDS ──
+  {q:"What makes a brand \"sustainable\"?",o:["Selling trendy clothes","Using materials and practices that reduce environmental harm","Releasing new collections every week","Only selling expensive items"],c:1,e:"Sustainability = reduced environmental impact + ethical practices.",d:"easy",cat:"Sustainable Brands"},
+  {q:"True or False: An eco-label always means a brand is sustainable.",o:["True","False"],c:1,e:"Some labels can be misleading or unverified.",d:"easy",cat:"Sustainable Brands"},
+  {q:"Which of the following is a legitimate sustainability certification?",o:["UltraGreen+","GOTS","FashionStar Label","EcoXPress"],c:1,e:"GOTS is a globally trusted organic textile certification.",d:"easy",cat:"Sustainable Brands"},
+  {q:"What is \"greenwashing\"?",o:["Washing clothes with eco-friendly soap","Making products green","Misleading consumers with fake sustainability claims","Dyeing clothes green"],c:2,e:"Greenwashing = false or exaggerated eco-claims.",d:"easy",cat:"Sustainable Brands"},
+  {q:"What does \"ethical sourcing\" mean?",o:["All materials come from expensive suppliers","Workers are paid fairly and materials are responsibly produced","Products are sourced from influencers","Items are sourced as fast as possible"],c:1,e:"Ethical sourcing protects workers and the environment.",d:"easy",cat:"Sustainable Brands"},
+  {q:"Which brand behaviour is most likely sustainable?",o:["No information about their supply chain","Extremely low prices","Publishing detailed sustainability reports","Releasing 50 collections per year"],c:2,e:"Transparency is key to sustainability.",d:"easy",cat:"Sustainable Brands"},
+  {q:"Why do some sustainable brands cost more?",o:["They want higher profits","They use higher-quality materials and pay fair wages","They avoid competition","They produce small sizes only"],c:1,e:"Ethical labour + sustainable materials raise production costs.",d:"easy",cat:"Sustainable Brands"},
+  {q:"A brand advertises \"eco-friendly\" clothing but provides no proof. What is this?",o:["Good marketing","Product innovation","Greenwashing","A new business model"],c:2,e:"Unverified claims = classic greenwashing.",d:"easy",cat:"Sustainable Brands"},
+  {q:"What does \"supply chain transparency\" mean?",o:["Hiding production details","Showing where materials come from and how products are made","Revealing secret marketing plans","Shortening shipping times"],c:1,e:"Transparency helps consumers verify sustainability.",d:"medium",cat:"Sustainable Brands"},
+  {q:"Why might a brand track its carbon footprint?",o:["To raise prices","To understand and reduce its environmental impact","To impress customers only","To calculate shipping delays"],c:1,e:"Measuring emissions helps identify reduction opportunities.",d:"medium",cat:"Sustainable Brands"},
+  {q:"True or False: A brand can still be sustainable if it uses plastic sometimes.",o:["True","False"],c:0,e:"Sustainability depends on total impact, not single materials.",d:"medium",cat:"Sustainable Brands"},
+  {q:"Which is a sign that a sustainability claim may be false?",o:["Detailed data","Independent verification","Vague phrases like \"100% eco-friendly\"","Transparency reports"],c:2,e:"Vague, unverified buzzwords are red flags.",d:"medium",cat:"Sustainable Brands"},
+  {q:"What is \"circular fashion retail\"?",o:["Selling only circular-shaped clothing","Reselling, repairing, and renting clothing","Selling clothes in a circle arrangement","Only selling sustainable colours"],c:1,e:"Circular retail extends clothing lifespan and reduces waste.",d:"medium",cat:"Sustainable Brands"},
+  {q:"What is the purpose of sustainability reporting?",o:["To list celebrity collaborations","To brag about profits","To show impact metrics and accountability","To hide supply chain issues"],c:2,e:"Sustainability reports show progress and areas for improvement.",d:"medium",cat:"Sustainable Brands"},
+  {q:"Which metric matters most when judging a brand's sustainability?",o:["Number of Instagram followers","How often they release new trends","Carbon footprint, water use, labour conditions","Colour of the logo"],c:2,e:"Real sustainability = measurable environmental + social impact.",d:"medium",cat:"Sustainable Brands"},
+  {q:"Why is traceability important?",o:["It helps track a product from source to consumer","It reduces brand popularity","It increases advertising opportunities","It makes trends last longer"],c:0,e:"Traceability ensures materials and labour meet ethical standards.",d:"medium",cat:"Sustainable Brands"},
+  {q:"A brand claims its clothing is \"100% sustainable,\" but offers no data. What does this indicate?",o:["Complete honesty","Likely greenwashing","A new marketing style","High product durability"],c:1,e:"Absolute claims with no evidence are misleading.",d:"hard",cat:"Sustainable Brands"},
+  {q:"What is the difference between ESG and sustainability?",o:["ESG focuses on financial markets; sustainability focuses on environmental & social impact","They are the same","ESG only deals with energy","Sustainability only deals with profits"],c:0,e:"ESG evaluates companies for investors; sustainability focuses on real-world impact.",d:"hard",cat:"Sustainable Brands"},
+  {q:"What makes a sustainability strategy \"scalable\"?",o:["It works only in small shops","It can expand across supply chains and locations","It is extremely expensive","It only applies to luxury brands"],c:1,e:"Scalability = ability to expand impact widely.",d:"hard",cat:"Sustainable Brands"},
+  {q:"A brand claims its products use recycled polyester. What's important to check?",o:["Whether the colours are trendy","Whether the recycled material is traceable and actually reduces impact","Whether influencers promote it","Whether the brand has good packaging"],c:1,e:"Recycled claims must be verified and meaningful.",d:"hard",cat:"Sustainable Brands"},
+  {q:"True or False: Offsetting emissions alone makes a brand sustainable.",o:["True","False"],c:1,e:"Offsetting does not replace real reductions in emissions or waste.",d:"hard",cat:"Sustainable Brands"},
+  {q:"A brand says \"sustainably sourced materials,\" but investigations show worker abuse. What is this?",o:["High efficiency","Greenwashing","Successful sustainability","Carbon neutrality"],c:1,e:"Sustainability includes labour rights, not just materials.",d:"hard",cat:"Sustainable Brands"},
+  {q:"Which approach gives the most accurate sustainability evaluation?",o:["Marketing slogans","Third-party certifications + detailed impact data","Influencer partnerships","Fast trend cycles"],c:1,e:"Independent verification prevents misleading claims.",d:"hard",cat:"Sustainable Brands"},
+  {q:"A company uses recycled materials but still overproduces clothing. What's the issue?",o:["Recycled materials are harmful","Overproduction still causes massive waste","Recycled fibres never work","The clothes are too durable"],c:1,e:"Sustainability requires reducing production volume, not just changing materials.",d:"hard",cat:"Sustainable Brands"},
+
+  // ── RECYCLING ──
+  {q:"What is recycling?",o:["Throwing items away","Turning waste materials into new materials","Burning waste for energy","Washing items with water"],c:1,e:"Recycling transforms used materials so they can be reused again.",d:"easy",cat:"Recycling"},
+  {q:"True or False: All fabrics can be recycled easily.",o:["True","False"],c:1,e:"Many fabrics, especially blends, are difficult or impossible to recycle.",d:"easy",cat:"Recycling"},
+  {q:"Why are blended fabrics hard to recycle?",o:["They are too colourful","The fibres are mixed and hard to separate","They smell too much","They are too soft"],c:1,e:"Separating fibres like cotton/polyester is technically challenging.",d:"easy",cat:"Recycling"},
+  {q:"What is \"downcycling\"?",o:["Turning materials into higher-value products","Turning materials into lower-value products","Burning textiles","Reusing clothes"],c:1,e:"Downcycling reduces material quality (e.g., clothes \u2192 insulation).",d:"easy",cat:"Recycling"},
+  {q:"What is contamination in recycling?",o:["When waste is clean","When recycling bins are mixed with non-recyclables","When recycling is too efficient","When items are washed"],c:1,e:"Contamination makes recycling less effective or impossible.",d:"easy",cat:"Recycling"},
+  {q:"True or False: Colour affects how easy it is to recycle textiles.",o:["True","False"],c:0,e:"Dark or mixed colours require more chemicals to process.",d:"easy",cat:"Recycling"},
+  {q:"What is closed-loop recycling?",o:["Reusing materials until they degrade into waste","Recycling a material back into the same type of product","Burning materials for heat","Shredding materials into dust"],c:1,e:"Closed-loop systems create new versions of the original product.",d:"easy",cat:"Recycling"},
+  {q:"Which of these is most commonly recycled in textiles?",o:["Pure polyester","Polyester\u2013cotton blends","Wool\u2013nylon blends","Leather"],c:0,e:"Pure polyester is easier to process than blends.",d:"easy",cat:"Recycling"},
+  {q:"Which textile is easiest to mechanically recycle?",o:["100% cotton","Cotton-polyester blend","Spandex","Leather"],c:0,e:"Pure fibres recycle more smoothly than mixed ones.",d:"medium",cat:"Recycling"},
+  {q:"Why does polyester need heat during recycling?",o:["To dye it","To melt and reshape it","To wash it","To make it softer"],c:1,e:"Polyester is a plastic that must be melted to be reprocessed.",d:"medium",cat:"Recycling"},
+  {q:"True or False: Cotton can be mechanically recycled.",o:["True","False"],c:0,e:"Cotton can be shredded into shorter fibres for reuse.",d:"medium",cat:"Recycling"},
+  {q:"Which items should be donated rather than recycled?",o:["Torn clothing","New or lightly used clothing","Wet clothing","Contaminated fabric"],c:1,e:"High-quality items should be reused, not broken down.",d:"medium",cat:"Recycling"},
+  {q:"Why do many recycling markets collapse?",o:["Too few recycling centres","No demand for recycled materials","Recycled products are too durable","Consumers recycle too much"],c:1,e:"Recycling only works when buyers need the recycled output.",d:"medium",cat:"Recycling"},
+  {q:"What is a major difference between mechanical and chemical recycling?",o:["Chemical recycling breaks fibres down into their basic molecules","Mechanical recycling dyes fabrics","Chemical recycling is always eco-friendly","Mechanical recycling strengthens fibres"],c:0,e:"Chemical recycling molecularly rebuilds fibres.",d:"medium",cat:"Recycling"},
+  {q:"Which is more energy-efficient?",o:["Producing new polyester","Recycling polyester","Burning polyester","Mining polyester"],c:1,e:"Recycling plastic-based fibres requires less energy than producing new ones.",d:"medium",cat:"Recycling"},
+  {q:"What is the biggest issue in textile recycling facilities?",o:["Too many workers","Sorting materials correctly","Too few clothes","Too much technology"],c:1,e:"Sorting fabrics by fibre, colour, and quality is extremely difficult.",d:"medium",cat:"Recycling"},
+  {q:"Why is textile recycling not widely scaled?",o:["Consumers don't buy enough clothes","Sorting technology is expensive and not advanced enough","Recycling takes too little time","Recycling is too profitable"],c:1,e:"Sorting blends and colours is costly and complex.",d:"hard",cat:"Recycling"},
+  {q:"Which recycling method results in the highest-quality output?",o:["Mechanical recycling","Chemical recycling","Downcycling","Burning textiles"],c:1,e:"Chemical recycling can rebuild fibres to near-virgin quality.",d:"hard",cat:"Recycling"},
+  {q:"True or False: Chemical recycling is always environmentally friendly.",o:["True","False"],c:1,e:"It can require heavy chemicals and high energy use.",d:"hard",cat:"Recycling"},
+  {q:"Which type of textile is the biggest barrier to large-scale recycling?",o:["100% cotton","Wool","Cotton\u2013polyester blends","Linen"],c:2,e:"Blends are extremely hard to separate into pure fibres.",d:"hard",cat:"Recycling"},
+  {q:"Why does recycling alone not solve fashion waste?",o:["Recycling is too fast","It doesn't reduce overproduction","Recycled clothes are too strong","People dislike recycled materials"],c:1,e:"Recycling doesn't fix the root issue: producing too much.",d:"hard",cat:"Recycling"},
+  {q:"What determines how effective textile recycling is?",o:["Fabric colour only","Fibre purity, contamination, and sorting accuracy","Brand popularity","Garment size"],c:1,e:"Pure fibres recycle best; contamination lowers recyclability.",d:"hard",cat:"Recycling"},
+  {q:"Which factor most limits fibre recovery rates?",o:["Number of trends","Damage to fibres during mechanical recycling","Popularity of thrifting","Fabric colour"],c:1,e:"Mechanical recycling shortens fibres, reducing quality.",d:"hard",cat:"Recycling"},
+  {q:"What is the biggest weakness of downcycling long-term?",o:["It makes clothes too expensive","Materials eventually become unusable and still end up as waste","It creates too much profit","It makes fibres too strong"],c:1,e:"Downcycling delays waste but does not create a closed loop.",d:"hard",cat:"Recycling"},
+
+  // ── SUSTAINABLE LIFESTYLE ──
+  {q:"What does \"living sustainably\" mean?",o:["Buying as many new products as possible","Making choices that reduce environmental impact","Only purchasing luxury items","Living without electricity"],c:1,e:"Sustainability is about reducing harm to the planet.",d:"easy",cat:"Sustainable Lifestyle"},
+  {q:"True or False: Washing clothes less often can reduce environmental impact.",o:["True","False"],c:0,e:"Laundry uses water, energy, and sheds microplastics.",d:"easy",cat:"Sustainable Lifestyle"},
+  {q:"What is a simple way to reduce microplastic pollution?",o:["Washing clothes at high temperatures","Washing synthetic clothes less often","Buying only dark clothes","Throwing clothes away quicker"],c:1,e:"Less washing = fewer microplastics released.",d:"easy",cat:"Sustainable Lifestyle"},
+  {q:"What is mindful consumption?",o:["Buying clothes without thinking","Buying only what you truly need","Buying anything on sale","Shopping every weekend"],c:1,e:"It's about intentional, reduced consumption.",d:"easy",cat:"Sustainable Lifestyle"},
+  {q:"Which of these habits is sustainable?",o:["Air-drying clothes","Using the dryer for every load","Buying new clothes weekly","Throwing away repairable items"],c:0,e:"Air-drying cuts energy use significantly.",d:"easy",cat:"Sustainable Lifestyle"},
+  {q:"Why is repairing clothes better than replacing them?",o:["It is always cheaper","It reduces waste and avoids new production","It makes clothes look brand new","It increases fashion trends"],c:1,e:"Repairing extends a garment's life and avoids new emissions.",d:"easy",cat:"Sustainable Lifestyle"},
+  {q:"True or False: Individual actions make no difference in sustainability.",o:["True","False"],c:1,e:"Small actions add up, especially at scale.",d:"easy",cat:"Sustainable Lifestyle"},
+  {q:"What is a carbon footprint?",o:["A shoe print","Total greenhouse gases a person or activity produces","A type of recycled fabric","A clothing style"],c:1,e:"It measures climate impact from daily choices.",d:"easy",cat:"Sustainable Lifestyle"},
+  {q:"What is one way to lower your clothing-related carbon footprint?",o:["Buy clothes frequently","Wash clothes in cold water","Throw clothes out after one use","Wash everything at 90\u00b0C"],c:1,e:"Cold washing reduces energy use dramatically.",d:"medium",cat:"Sustainable Lifestyle"},
+  {q:"Which pattern of shopping is most sustainable?",o:["Buying fewer, high-quality clothes","Buying fast fashion weekly","Buying based on trends only","Buying only discounted items"],c:0,e:"Durability reduces overconsumption and waste.",d:"medium",cat:"Sustainable Lifestyle"},
+  {q:"True or False: Air drying clothes is more sustainable than using a dryer.",o:["True","False"],c:0,e:"Dryers use lots of electricity; air drying uses none.",d:"medium",cat:"Sustainable Lifestyle"},
+  {q:"What is one way to reduce waste at home?",o:["Using disposable items","Choosing reusable products","Buying unnecessary items","Using plastic bags frequently"],c:1,e:"Reusable items cut waste significantly.",d:"medium",cat:"Sustainable Lifestyle"},
+  {q:"What daily habit reduces water use?",o:["Washing clothes after every wear","Taking shorter showers","Leaving the tap running","Washing synthetic clothes daily"],c:1,e:"Shorter showers save water instantly.",d:"medium",cat:"Sustainable Lifestyle"},
+  {q:"What is the problem with \"eco-friendly\" trends?",o:["They last forever","They often encourage buying more","They save too much energy","They reduce brand profits"],c:1,e:"Overconsumption is still harmful even if items are \"eco\".",d:"medium",cat:"Sustainable Lifestyle"},
+  {q:"Which choice is better for the environment?",o:["Throwing away old clothes","Donating or reselling clothes","Buying duplicates","Buying only synthetic fabrics"],c:1,e:"Reuse extends the life of garments.",d:"medium",cat:"Sustainable Lifestyle"},
+  {q:"Why do sustainable habits matter long-term?",o:["They save time","They compound \u2014 small habits create large impact","They eliminate all emissions instantly","They make clothes last forever"],c:1,e:"Consistent habits add up to major environmental savings.",d:"medium",cat:"Sustainable Lifestyle"},
+  {q:"Which lifestyle change has the highest environmental impact?",o:["Buying new clothes monthly","Reducing overall consumption","Washing synthetic clothes more often","Air-drying only"],c:1,e:"Reducing consumption cuts emissions, waste, and resource use.",d:"hard",cat:"Sustainable Lifestyle"},
+  {q:"Why is \"buying eco-friendly items\" not always sustainable?",o:["Eco-items don't work","It still encourages consumption","They are illegal","They last too long"],c:1,e:"The most sustainable item is the one you don't buy.",d:"hard",cat:"Sustainable Lifestyle"},
+  {q:"True or False: Microplastic pollution only comes from oceans.",o:["True","False"],c:1,e:"Most microplastics come from washing clothes and daily activities.",d:"hard",cat:"Sustainable Lifestyle"},
+  {q:"What is a realistic long-term sustainable goal?",o:["Never buying clothes again","Slowly shifting to durable, repairable items","Throwing away everything synthetic","Buying only luxury brands"],c:1,e:"Sustainable transitions happen gradually and practically.",d:"hard",cat:"Sustainable Lifestyle"},
+  {q:"Which action reduces waste the MOST?",o:["Recycling everything","Avoiding unnecessary purchases","Washing clothes in hot water","Buying duplicates"],c:1,e:"Avoiding waste at the source is the highest-impact solution.",d:"hard",cat:"Sustainable Lifestyle"},
+  {q:"What is a \"waste footprint\"?",o:["Trash left on the ground","Total waste an individual or household produces","Footprint size","The amount a person recycles"],c:1,e:"It tracks how much waste you generate overall.",d:"hard",cat:"Sustainable Lifestyle"},
+  {q:"Which is a common mistake in attempting sustainable living?",o:["Repairing items","Buying excess \"eco-friendly\" products","Reducing consumption","Using fewer resources"],c:1,e:"Buying too many \"eco\" items still leads to unnecessary waste.",d:"hard",cat:"Sustainable Lifestyle"},
+  {q:"Why do lifestyle changes need to be maintained consistently?",o:["One-time actions don't create lasting environmental impact","Sustainability is only about trends","Governments require it","It is expensive otherwise"],c:0,e:"Long-term behaviour creates long-term environmental benefits.",d:"hard",cat:"Sustainable Lifestyle"},
+];
+
+// ═══════════════════════════════════════════════════
+// GAME ENGINE
+// ═══════════════════════════════════════════════════
+const SHAPES = [
+  '<svg viewBox="0 0 24 24"><polygon points="12,2 22,20 2,20"/></svg>',          // triangle
+  '<svg viewBox="0 0 24 24"><polygon points="12,2 22,12 12,22 2,12"/></svg>',     // diamond
+  '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>',              // circle
+  '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3"/></svg>' // square
+];
+
+const TIME_LIMIT = 15; // seconds per question
+const MAX_POINTS = 1000;
+
+let playerName = '';
+let selectedCategory = 'all';
+let questionCount = 15;
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let streak = 0;
+let bestStreak = 0;
+let correctCount = 0;
+let timerInterval = null;
+let timeLeft = TIME_LIMIT;
+let answered = false;
+
+// DOM
+const $startScreen = document.getElementById('startScreen');
+const $gameScreen = document.getElementById('gameScreen');
+const $endScreen = document.getElementById('endScreen');
+const $nameInput = document.getElementById('playerName');
+const $catSelect = document.getElementById('categorySelect');
+const $startBtn = document.getElementById('startBtn');
+const $questionNum = document.getElementById('questionNum');
+const $scoreDisplay = document.getElementById('scoreDisplay');
+const $streakDisplay = document.getElementById('streakDisplay');
+const $timerFill = document.getElementById('timerFill');
+const $diffBadge = document.getElementById('diffBadge');
+const $questionText = document.getElementById('questionText');
+const $answersGrid = document.getElementById('answersGrid');
+const $resultOverlay = document.getElementById('resultOverlay');
+const $resultIcon = document.getElementById('resultIcon');
+const $resultTitle = document.getElementById('resultTitle');
+const $resultPoints = document.getElementById('resultPoints');
+const $resultStreak = document.getElementById('resultStreak');
+const $resultExplain = document.getElementById('resultExplain');
+const $nextBtn = document.getElementById('nextBtn');
+
+// ─── Init ───
+$nameInput.addEventListener('input', () => {
+  $startBtn.disabled = $nameInput.value.trim().length === 0;
+});
+
+document.querySelectorAll('.qcount-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.qcount-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    questionCount = parseInt(btn.dataset.count);
+  });
+});
+
+$startBtn.addEventListener('click', startGame);
+$nextBtn.addEventListener('click', nextQuestion);
+document.getElementById('playAgainBtn').addEventListener('click', () => {
+  showScreen('startScreen');
+});
+
+// Mobile nav
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── Start Game ───
+function startGame() {
+  playerName = $nameInput.value.trim();
+  selectedCategory = $catSelect.value;
+
+  // Pick questions
+  let pool = selectedCategory === 'all'
+    ? [...ALL_QUESTIONS]
+    : ALL_QUESTIONS.filter(q => q.cat === selectedCategory);
+
+  // Shuffle
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+
+  questions = pool.slice(0, Math.min(questionCount, pool.length));
+  currentIndex = 0;
+  score = 0;
+  streak = 0;
+  bestStreak = 0;
+  correctCount = 0;
+
+  showScreen('gameScreen');
+  loadQuestion();
+}
+
+// ─── Load Question ───
+function loadQuestion() {
+  answered = false;
+  const q = questions[currentIndex];
+
+  $questionNum.textContent = `${currentIndex + 1} / ${questions.length}`;
+  $scoreDisplay.textContent = `${score.toLocaleString()} pts`;
+  $streakDisplay.textContent = streak > 1 ? `${streak} streak` : '';
+
+  $diffBadge.className = `difficulty-badge ${q.d}`;
+  $diffBadge.textContent = q.d.charAt(0).toUpperCase() + q.d.slice(1);
+  $questionText.textContent = q.q;
+
+  // Build answer buttons
+  $answersGrid.innerHTML = '';
+  q.o.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = `answer-btn a${i}`;
+    btn.innerHTML = `<span class="answer-shape">${SHAPES[i]}</span><span>${opt}</span>`;
+    btn.addEventListener('click', () => selectAnswer(i));
+    $answersGrid.appendChild(btn);
+  });
+
+  // Start timer
+  timeLeft = TIME_LIMIT;
+  $timerFill.style.width = '100%';
+  $timerFill.className = 'timer-fill';
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft -= 0.1;
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      clearInterval(timerInterval);
+      selectAnswer(-1); // time's up
+    }
+    const pct = (timeLeft / TIME_LIMIT) * 100;
+    $timerFill.style.width = pct + '%';
+    if (pct < 20) $timerFill.className = 'timer-fill danger';
+    else if (pct < 40) $timerFill.className = 'timer-fill warning';
+  }, 100);
+}
+
+// ─── Select Answer ───
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  const q = questions[currentIndex];
+  const isCorrect = idx === q.c;
+  const buttons = $answersGrid.querySelectorAll('.answer-btn');
+
+  // Highlight correct and wrong
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.c) {
+      btn.classList.add('correct');
+    } else if (i === idx) {
+      btn.classList.add('wrong-selected');
+    } else {
+      btn.classList.add('wrong');
+    }
+  });
+
+  let earned = 0;
+  if (isCorrect) {
+    // Points based on time remaining (Kahoot-style)
+    const timeFraction = timeLeft / TIME_LIMIT;
+    const diffMultiplier = q.d === 'hard' ? 1.5 : q.d === 'medium' ? 1.2 : 1.0;
+    earned = Math.round(MAX_POINTS * timeFraction * diffMultiplier);
+
+    // Streak bonus
+    streak++;
+    if (streak >= 5) earned = Math.round(earned * 1.5);
+    else if (streak >= 3) earned = Math.round(earned * 1.2);
+
+    if (streak > bestStreak) bestStreak = streak;
+    correctCount++;
+    score += earned;
+  } else {
+    streak = 0;
+  }
+
+  // Show result
+  setTimeout(() => {
+    showResult(isCorrect, earned, q.e, idx === -1);
+  }, 600);
+}
+
+function showResult(correct, points, explanation, timedOut) {
+  $resultIcon.textContent = timedOut ? '\u23F0' : correct ? '\u2705' : '\u274C';
+  $resultTitle.textContent = timedOut ? "Time's Up!" : correct ? 'Correct!' : 'Wrong!';
+  $resultPoints.textContent = correct ? `+${points.toLocaleString()} points` : 'No points';
+  $resultPoints.style.color = correct ? 'var(--green-400)' : 'var(--kahoot-red)';
+  $resultStreak.textContent = streak > 1 ? `${streak} in a row!` : '';
+  $resultExplain.textContent = explanation;
+  $nextBtn.textContent = currentIndex < questions.length - 1 ? 'Next Question' : 'See Results';
+  $resultOverlay.classList.add('active');
+
+  // Points animation
+  if (correct && points > 0) {
+    const popup = document.createElement('div');
+    popup.className = 'points-popup';
+    popup.textContent = `+${points}`;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 900);
+  }
+
+  $scoreDisplay.textContent = `${score.toLocaleString()} pts`;
+}
+
+function nextQuestion() {
+  $resultOverlay.classList.remove('active');
+  currentIndex++;
+  if (currentIndex < questions.length) {
+    loadQuestion();
+  } else {
+    showEndScreen();
+  }
+}
+
+// ─── End Screen ───
+function showEndScreen() {
+  showScreen('endScreen');
+  const accuracy = questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
+
+  document.getElementById('finalScore').textContent = score.toLocaleString();
+  document.getElementById('statCorrect').textContent = `${correctCount}/${questions.length}`;
+  document.getElementById('statAccuracy').textContent = `${accuracy}%`;
+  document.getElementById('statStreak').textContent = bestStreak;
+
+  const $badge = document.getElementById('rankBadge');
+  const $trophy = document.getElementById('endTrophy');
+  const $title = document.getElementById('endTitle');
+
+  if (accuracy >= 90) {
+    $trophy.textContent = '\uD83C\uDFC6';
+    $badge.className = 'rank-badge gold';
+    $badge.textContent = 'Sustainability Expert';
+    $title.textContent = `Amazing, ${playerName}!`;
+  } else if (accuracy >= 70) {
+    $trophy.textContent = '\uD83E\uDD48';
+    $badge.className = 'rank-badge silver';
+    $badge.textContent = 'Eco Advocate';
+    $title.textContent = `Great job, ${playerName}!`;
+  } else if (accuracy >= 50) {
+    $trophy.textContent = '\uD83E\uDD49';
+    $badge.className = 'rank-badge bronze';
+    $badge.textContent = 'Green Learner';
+    $title.textContent = `Nice effort, ${playerName}!`;
+  } else {
+    $trophy.textContent = '\uD83C\uDF31';
+    $badge.className = 'rank-badge learner';
+    $badge.textContent = 'Seedling';
+    $title.textContent = `Keep learning, ${playerName}!`;
+  }
+}
+</script>
+</body>
+</html>
