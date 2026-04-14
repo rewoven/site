@@ -291,34 +291,27 @@
 
     /* Quiz preview */
     .preview-quiz {
-      background: linear-gradient(135deg, #46178F 0%, #2d0a5e 100%);
-      display: flex; align-items: center; justify-content: center; gap: 12px;
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      display: flex; align-items: center; justify-content: center; gap: 16px;
       position: relative; overflow: hidden;
     }
-    .preview-quiz .quiz-shapes { display: flex; gap: 10px; }
-    .preview-quiz .quiz-shape {
-      width: 48px; height: 48px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; font-weight: 900; color: white;
-      animation: quizPulse 2s ease-in-out infinite;
+    .preview-quiz .quiz-icons { display: flex; gap: 14px; align-items: flex-end; }
+    .preview-quiz .quiz-icon {
+      font-size: 36px;
+      animation: quizFloat 3s ease-in-out infinite;
     }
-    .preview-quiz .quiz-shape:nth-child(1) { background: #E21B3C; animation-delay: 0s; }
-    .preview-quiz .quiz-shape:nth-child(2) { background: #1368CE; animation-delay: 0.3s; }
-    .preview-quiz .quiz-shape:nth-child(3) { background: #D89E00; animation-delay: 0.6s; }
-    .preview-quiz .quiz-shape:nth-child(4) { background: #26890C; animation-delay: 0.9s; }
-    @keyframes quizPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.15); }
+    .preview-quiz .quiz-icon:nth-child(1) { animation-delay: 0s; }
+    .preview-quiz .quiz-icon:nth-child(2) { animation-delay: 0.4s; }
+    .preview-quiz .quiz-icon:nth-child(3) { animation-delay: 0.8s; }
+    .preview-quiz .quiz-icon:nth-child(4) { animation-delay: 1.2s; }
+    @keyframes quizFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
     }
-    .preview-quiz .quiz-timer {
+    .preview-quiz .quiz-badge {
       position: absolute; top: 16px; right: 16px;
-      background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px;
-      font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.8);
-    }
-    .preview-quiz .quiz-title {
-      position: absolute; bottom: 16px;
-      font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.5);
-      letter-spacing: 2px; text-transform: uppercase;
+      background: #10B981; color: white; padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
     }
 
     /* Card body */
@@ -423,23 +416,22 @@
       <!-- Sustainability Quiz -->
       <div class="game-card">
         <div class="card-preview preview-quiz">
-          <div class="quiz-shapes">
-            <div class="quiz-shape">&#9650;</div>
-            <div class="quiz-shape">&#9670;</div>
-            <div class="quiz-shape">&#9679;</div>
-            <div class="quiz-shape">&#9632;</div>
+          <div class="quiz-icons">
+            <span class="quiz-icon">&#127793;</span>
+            <span class="quiz-icon">&#9889;</span>
+            <span class="quiz-icon">&#127942;</span>
+            <span class="quiz-icon">&#127758;</span>
           </div>
-          <span class="quiz-timer">15s</span>
-          <span class="quiz-title">144 Questions</span>
+          <span class="quiz-badge">Multiplayer</span>
         </div>
         <div class="card-body">
           <div class="card-header">
             <span class="card-title">Sustainability Quiz</span>
             <span class="badge badge-medium">All Levels</span>
           </div>
-          <p class="card-desc">Kahoot-style quiz with 144 questions across 6 categories. Score points for speed and accuracy, build streaks, and test your sustainability knowledge.</p>
-          <p class="card-genre">Quiz &middot; Trivia</p>
-          <a href="/game/quiz/" class="play-btn">
+          <p class="card-desc">Live multiplayer quiz with 144 questions across 6 categories. Host a game, invite friends, and compete in real-time on sustainability knowledge.</p>
+          <p class="card-genre">Quiz &middot; Multiplayer</p>
+          <a href="https://quiz.rewovenapp.com" class="play-btn">
             <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             Play Now
           </a>
