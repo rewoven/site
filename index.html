@@ -172,6 +172,19 @@
       max-width: 520px;
     }
     .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px; }
+    .btn-premium {
+      flex-basis: 100%; justify-content: center;
+      background: linear-gradient(135deg, var(--green-600), #047857);
+      color: #fff; font-weight: 800;
+      box-shadow: 0 4px 16px rgba(16,185,129,0.25);
+      border: none; padding: 16px 24px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-premium:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(16,185,129,0.35);
+      color: #fff;
+    }
     .hero-stats {
       display: flex; gap: 48px; padding-top: 32px;
       border-top: 1px solid var(--gray-200);
@@ -714,6 +727,10 @@
           <a href="/brands/" class="btn btn-secondary">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Search Brands
+          </a>
+          <a href="https://premium.rewovenapp.com" class="btn btn-premium">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Get Premium &mdash; $4.99/mo
           </a>
         </div>
         <div class="hero-stats">
