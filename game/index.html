@@ -567,16 +567,19 @@
     })();
   </script>
 
-  <!-- Premium-only UI revealer -->
+  <!-- Premium-only UI revealer (soft-launch: REWOVEN_FREE_MODE reveals all) -->
+  <script>window.REWOVEN_FREE_MODE = true;</script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     (() => {
+      const reveal = () => document.querySelectorAll('[data-premium-only]')
+        .forEach(el => el.style.display = '');
+      if (window.REWOVEN_FREE_MODE) { reveal(); return; }
+
       const SUPABASE_URL = 'https://puagdyacwgqkebjdbbrz.supabase.co';
       const SUPABASE_ANON_KEY = 'sb_publishable_LarSIrAtxsvXN4RLLicQyw_TJk8s92b';
       if (!window.supabase) return;
       const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      const reveal = () => document.querySelectorAll('[data-premium-only]')
-        .forEach(el => el.style.display = '');
       sb.auth.getUser().then(async ({ data: { user } }) => {
         if (!user) return;
         const { data: profile } = await sb.from('profiles')
