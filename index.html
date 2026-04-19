@@ -680,6 +680,7 @@
         <li><a href="#how-it-works">How It Works</a></li>
         <li class="nav-divider"></li>
         <li><a href="/game/">Games</a></li>
+        <li class="nav-quiz" data-premium-only style="display:none;"><a href="https://quiz.rewovenapp.com">Quiz</a></li>
         <li><a href="/brands/">Brands</a></li>
         <li><a href="/donate/">Donate</a></li>
         <li><a href="/ambassadors/" style="font-weight:700;">Join Us</a></li>
@@ -1180,6 +1181,28 @@
       nav.style.boxShadow = window.scrollY > 10
         ? '0 4px 20px rgba(0,0,0,0.06)' : 'none';
     });
+  </script>
+
+  <!-- Premium-only UI revealer: shows [data-premium-only] elements when
+       the signed-in Supabase user has profiles.is_premium = true. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (() => {
+      const SUPABASE_URL = 'https://puagdyacwgqkebjdbbrz.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_LarSIrAtxsvXN4RLLicQyw_TJk8s92b';
+      if (!window.supabase) return;
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const reveal = () => document.querySelectorAll('[data-premium-only]')
+        .forEach(el => el.style.display = '');
+
+      sb.auth.getUser().then(async ({ data: { user } }) => {
+        if (!user) return;
+        const { data: profile } = await sb.from('profiles')
+          .select('is_premium').eq('id', user.id).maybeSingle();
+        if (profile?.is_premium) reveal();
+      }).catch(() => {});
+    })();
   </script>
 
 </body>

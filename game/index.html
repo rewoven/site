@@ -413,8 +413,8 @@
   <section class="games-section">
     <div class="games-grid">
 
-      <!-- Sustainability Quiz -->
-      <div class="game-card">
+      <!-- Sustainability Quiz (premium only) -->
+      <div class="game-card" data-premium-only style="display:none;">
         <div class="card-preview preview-quiz">
           <div class="quiz-icons">
             <span class="quiz-icon">&#127793;</span>
@@ -564,6 +564,25 @@
       toggle.addEventListener('click', function() {
         setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
       });
+    })();
+  </script>
+
+  <!-- Premium-only UI revealer -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (() => {
+      const SUPABASE_URL = 'https://puagdyacwgqkebjdbbrz.supabase.co';
+      const SUPABASE_ANON_KEY = 'sb_publishable_LarSIrAtxsvXN4RLLicQyw_TJk8s92b';
+      if (!window.supabase) return;
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const reveal = () => document.querySelectorAll('[data-premium-only]')
+        .forEach(el => el.style.display = '');
+      sb.auth.getUser().then(async ({ data: { user } }) => {
+        if (!user) return;
+        const { data: profile } = await sb.from('profiles')
+          .select('is_premium').eq('id', user.id).maybeSingle();
+        if (profile?.is_premium) reveal();
+      }).catch(() => {});
     })();
   </script>
 </body>
