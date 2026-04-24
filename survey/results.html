@@ -468,21 +468,24 @@
             });
         }
 
+        // Lifted out of renderCharts so exportCSV can use the same list.
+        const CHART_SPECS = [
+            { field: 'age_range', title: 'Age Distribution', type: 'doughnut' },
+            { field: 'location', title: 'Location (UAE)', type: 'doughnut' },
+            { field: 'clothing_frequency', title: 'Shopping Frequency', type: 'bar' },
+            { field: 'monthly_spend', title: 'Monthly Clothing Spend', type: 'bar' },
+            { field: 'fashion_climate_link', title: 'Fast Fashion & Climate Link', type: 'doughnut' },
+            { field: 'sustainable_fashion_knowledge', title: 'Sustainability Knowledge', type: 'bar' },
+            { field: 'sustainability_barriers', title: 'Barriers to Sustainability', type: 'bar' },
+            { field: 'desired_features', title: 'Most Desired App Features', type: 'bar' },
+            { field: 'discard_method', title: 'Clothing Disposal Methods', type: 'bar' },
+            { field: 'education_interest', title: 'Interest in Educational Content', type: 'doughnut' },
+            { field: 'unworn_items', title: 'Unworn Wardrobe Items', type: 'doughnut' },
+            { field: 'app_donate_exchange', title: 'Would Use App to Donate/Exchange', type: 'doughnut' },
+        ];
+
         function renderCharts() {
-            const charts = [
-                { field: 'age_range', title: 'Age Distribution', type: 'doughnut' },
-                { field: 'location', title: 'Location (UAE)', type: 'doughnut' },
-                { field: 'clothing_frequency', title: 'Shopping Frequency', type: 'bar' },
-                { field: 'monthly_spend', title: 'Monthly Clothing Spend', type: 'bar' },
-                { field: 'fashion_climate_link', title: 'Fast Fashion & Climate Link', type: 'doughnut' },
-                { field: 'sustainable_fashion_knowledge', title: 'Sustainability Knowledge', type: 'bar' },
-                { field: 'sustainability_barriers', title: 'Barriers to Sustainability', type: 'bar' },
-                { field: 'desired_features', title: 'Most Desired App Features', type: 'bar' },
-                { field: 'discard_method', title: 'Clothing Disposal Methods', type: 'bar' },
-                { field: 'education_interest', title: 'Interest in Educational Content', type: 'doughnut' },
-                { field: 'unworn_items', title: 'Unworn Wardrobe Items', type: 'doughnut' },
-                { field: 'app_donate_exchange', title: 'Would Use App to Donate/Exchange', type: 'doughnut' },
-            ];
+            const charts = CHART_SPECS;
 
             let html = '';
             charts.forEach((c, i) => {
@@ -542,17 +545,53 @@
             document.getElementById('tableContainer').innerHTML = html;
         }
 
+        // CSV-safe quoting
+        function csvCell(v) {
+            return `"${String(v ?? '').replace(/"/g, '""')}"`;
+        }
+
         function exportCSV() {
             if (allResponses.length === 0) return;
+            const totalResponses = allResponses.length;
+            let csv = '';
+
+            // ── Section 1: header / metadata ──
+            csv += '# Rewoven Survey Export\n';
+            csv += `# Generated: ${new Date().toISOString()}\n`;
+            csv += `# Total responses: ${totalResponses}\n`;
+            csv += '\n';
+
+            // ── Section 2: chart breakdowns (the same data the charts above show) ──
+            csv += '=== CHART BREAKDOWNS ===\n';
+            csv += '\n';
+
+            CHART_SPECS.forEach(spec => {
+                const counts = countField(spec.field);
+                const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+                if (entries.length === 0) return;
+
+                // For multi-select fields the % can exceed 100 because each
+                // response can be in multiple buckets. Use the responses
+                // total as the denominator either way — clearer for analysis.
+                csv += `--- ${spec.title} (${spec.field}) ---\n`;
+                csv += 'Option,Count,% of responses\n';
+                entries.forEach(([label, count]) => {
+                    const pct = ((count / totalResponses) * 100).toFixed(1) + '%';
+                    csv += [csvCell(label), count, csvCell(pct)].join(',') + '\n';
+                });
+                csv += '\n';
+            });
+
+            // ── Section 3: raw responses (the original CSV behavior) ──
+            csv += '=== RAW RESPONSES ===\n';
+            csv += '\n';
             const fields = Object.keys(allResponses[0]).filter(k => k !== '_source');
-            let csv = fields.join(',') + '\n';
+            csv += fields.map(csvCell).join(',') + '\n';
             for (const r of allResponses) {
-                csv += fields.map(f => {
-                    let v = String(r[f] || '').replace(/"/g, '""');
-                    return `"${v}"`;
-                }).join(',') + '\n';
+                csv += fields.map(f => csvCell(r[f])).join(',') + '\n';
             }
-            const blob = new Blob([csv], { type: 'text/csv' });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = `rewoven-survey-${new Date().toISOString().slice(0,10)}.csv`;
