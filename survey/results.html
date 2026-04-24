@@ -676,15 +676,27 @@
                 doc.text(spec.title, margin, y);
                 y += 18;
 
-                // Chart image
+                // Chart image — always preserve aspect ratio.
                 if (chart) {
                     try {
                         const imgData = chart.toBase64Image('image/png', 1.0);
-                        // Maintain aspect ratio: render at 360pt wide, height auto from canvas.
                         const canvas = chart.canvas;
-                        const aspect = canvas.height / canvas.width;
-                        const imgW = 360;
-                        const imgH = Math.min(chartImgH, imgW * aspect);
+                        const sourceAspect = canvas.height / canvas.width; // height per width
+
+                        // Cap by both the page width and a sensible image
+                        // height. Whichever constraint hits first wins, so a
+                        // tall (square doughnut) chart won't get stretched
+                        // wide and a wide (bar) chart won't run off-page.
+                        const maxW = 360;
+                        const maxH = 240;
+
+                        let imgW = maxW;
+                        let imgH = imgW * sourceAspect;
+                        if (imgH > maxH) {
+                            imgH = maxH;
+                            imgW = imgH / sourceAspect;
+                        }
+
                         const x = (pageW - imgW) / 2;
                         doc.addImage(imgData, 'PNG', x, y, imgW, imgH);
                         y += imgH + 12;
