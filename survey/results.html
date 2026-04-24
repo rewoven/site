@@ -8,8 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://unpkg.com/docx@8.5.0/build/index.umd.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -291,7 +290,7 @@
                 <div class="header-actions">
                     <div class="source-toggle" id="sourceInfo"></div>
                     <button class="btn-sm btn-outline" onclick="exportCSV()">Export CSV</button>
-                    <button class="btn-sm btn-outline" onclick="exportPDF()">Export PDF (with charts)</button>
+                    <button class="btn-sm btn-outline" onclick="exportWord()">Export Word Doc (with charts)</button>
                     <button class="btn-sm btn-outline" onclick="loadData()">Refresh</button>
                 </div>
             </div>
@@ -609,46 +608,85 @@
             a.click();
         }
 
-        // ── PDF export ──────────────────────────────────────────────
-        // Generates a multi-page PDF with each chart rendered as an
-        // image, followed by its data table. CSV stays available for
-        // spreadsheet workflows.
-        async function exportPDF() {
+        // ── Word doc export ─────────────────────────────────────────
+        // Generates a .docx file with a header, then one section per
+        // chart: heading, chart rendered as an image, data table.
+        // Uses docx.js (window.docx) loaded from CDN.
+        async function exportWord() {
             if (allResponses.length === 0) return;
-            if (!window.jspdf || !window.jspdf.jsPDF) {
-                alert('PDF library failed to load. Check your network and try again.');
+            if (!window.docx) {
+                alert('Word library failed to load. Check your network and try again.');
                 return;
             }
-            const { jsPDF } = window.jspdf;
+            const {
+                Document, Packer, Paragraph, TextRun, HeadingLevel, ImageRun,
+                Table, TableRow, TableCell, WidthType, AlignmentType,
+                BorderStyle, ShadingType
+            } = window.docx;
             const totalResponses = allResponses.length;
 
-            const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-            const pageW = doc.internal.pageSize.getWidth();
-            const pageH = doc.internal.pageSize.getHeight();
-            const margin = 40;
-            let y = margin;
+            // Helper: convert a base64 PNG data URI to Uint8Array (what docx wants)
+            function dataUriToBytes(dataUri) {
+                const base64 = dataUri.split(',')[1] || '';
+                const bin = atob(base64);
+                const bytes = new Uint8Array(bin.length);
+                for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                return bytes;
+            }
 
-            // ── Cover / header ──
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(22);
-            doc.setTextColor(30, 30, 30);
-            doc.text('Rewoven Survey Results', margin, y);
-            y += 26;
+            // Helper: build a styled table for the breakdown
+            function buildTable(entries) {
+                const headerCells = ['Option', 'Count', '% of responses'].map(
+                    (text) => new TableCell({
+                        children: [new Paragraph({
+                            children: [new TextRun({ text, bold: true, color: 'FFFFFF' })],
+                        })],
+                        shading: { type: ShadingType.SOLID, color: '2E7D32', fill: '2E7D32' },
+                    })
+                );
 
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(11);
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Generated: ${new Date().toLocaleString()}`, margin, y);
-            y += 16;
-            doc.text(`Total responses: ${totalResponses}`, margin, y);
-            y += 24;
+                const bodyRows = entries.map(([label, count], idx) => {
+                    const fill = idx % 2 === 0 ? 'F8FAF8' : 'FFFFFF';
+                    const cellOf = (text) => new TableCell({
+                        children: [new Paragraph(String(text))],
+                        shading: { type: ShadingType.SOLID, color: fill, fill: fill },
+                    });
+                    return new TableRow({
+                        children: [
+                            cellOf(label),
+                            cellOf(count),
+                            cellOf(((count / totalResponses) * 100).toFixed(1) + '%'),
+                        ],
+                    });
+                });
 
-            doc.setDrawColor(220, 220, 220);
-            doc.setLineWidth(0.5);
-            doc.line(margin, y, pageW - margin, y);
-            y += 24;
+                return new Table({
+                    width: { size: 100, type: WidthType.PERCENTAGE },
+                    rows: [new TableRow({ children: headerCells, tableHeader: true }), ...bodyRows],
+                });
+            }
 
-            // ── One section per chart ──
+            // Build sections (header block + per-chart blocks)
+            const children = [
+                new Paragraph({
+                    text: 'Rewoven Survey Results',
+                    heading: HeadingLevel.TITLE,
+                }),
+                new Paragraph({
+                    children: [new TextRun({
+                        text: `Generated: ${new Date().toLocaleString()}`,
+                        color: '666666',
+                    })],
+                }),
+                new Paragraph({
+                    children: [new TextRun({
+                        text: `Total responses: ${totalResponses}`,
+                        color: '666666',
+                    })],
+                    spacing: { after: 240 },
+                }),
+            ];
+
             for (let i = 0; i < CHART_SPECS.length; i++) {
                 const spec = CHART_SPECS[i];
                 const counts = countField(spec.field);
@@ -657,39 +695,25 @@
 
                 const chart = chartInstances[`chart${i}`];
 
-                // Reserve enough vertical space for the title + chart image
-                // before deciding whether to push to a new page.
-                const chartImgH = 230;
-                const titleH = 22;
-                const tableEstH = Math.min(220, 22 + entries.length * 18);
-                const blockH = titleH + chartImgH + tableEstH + 36;
+                // Section heading
+                children.push(new Paragraph({
+                    text: spec.title,
+                    heading: HeadingLevel.HEADING_2,
+                    spacing: { before: 320, after: 120 },
+                }));
 
-                if (y + blockH > pageH - margin) {
-                    doc.addPage();
-                    y = margin;
-                }
-
-                // Section title
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(14);
-                doc.setTextColor(30, 30, 30);
-                doc.text(spec.title, margin, y);
-                y += 18;
-
-                // Chart image — always preserve aspect ratio.
+                // Chart image
                 if (chart) {
                     try {
                         const imgData = chart.toBase64Image('image/png', 1.0);
                         const canvas = chart.canvas;
-                        const sourceAspect = canvas.height / canvas.width; // height per width
+                        const sourceAspect = canvas.height / canvas.width;
 
-                        // Cap by both the page width and a sensible image
-                        // height. Whichever constraint hits first wins, so a
-                        // tall (square doughnut) chart won't get stretched
-                        // wide and a wide (bar) chart won't run off-page.
-                        const maxW = 360;
-                        const maxH = 240;
-
+                        // Same sizing rule as before — preserve aspect ratio,
+                        // cap to whichever dimension hits first. (Word units
+                        // here are EMU-ish via docx.js: pixels at 96 DPI.)
+                        const maxW = 480;  // px in the doc
+                        const maxH = 320;
                         let imgW = maxW;
                         let imgH = imgW * sourceAspect;
                         if (imgH > maxH) {
@@ -697,51 +721,49 @@
                             imgW = imgH / sourceAspect;
                         }
 
-                        const x = (pageW - imgW) / 2;
-                        doc.addImage(imgData, 'PNG', x, y, imgW, imgH);
-                        y += imgH + 12;
+                        children.push(new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [new ImageRun({
+                                data: dataUriToBytes(imgData),
+                                transformation: {
+                                    width: Math.round(imgW),
+                                    height: Math.round(imgH),
+                                },
+                            })],
+                            spacing: { after: 120 },
+                        }));
                     } catch (err) {
                         console.warn('Could not export chart', spec.field, err);
                     }
-                } else {
-                    doc.setFontSize(10);
-                    doc.setTextColor(150, 150, 150);
-                    doc.text('(chart not yet rendered)', margin, y);
-                    y += 14;
                 }
 
-                // Data table beneath the chart
-                doc.autoTable({
-                    startY: y,
-                    head: [['Option', 'Count', '% of responses']],
-                    body: entries.map(([label, count]) => [
-                        label,
-                        count,
-                        ((count / totalResponses) * 100).toFixed(1) + '%'
-                    ]),
-                    margin: { left: margin, right: margin },
-                    styles: { font: 'helvetica', fontSize: 10, cellPadding: 5 },
-                    headStyles: { fillColor: [46, 125, 50], textColor: 255, fontStyle: 'bold' },
-                    alternateRowStyles: { fillColor: [248, 250, 248] },
-                    tableWidth: 'auto',
-                });
-                y = doc.lastAutoTable.finalY + 28;
+                // Data table
+                children.push(buildTable(entries));
+                children.push(new Paragraph({ text: '', spacing: { after: 200 } }));
             }
 
-            // ── Final page: footer note ──
-            if (y > pageH - 80) {
-                doc.addPage();
-                y = margin;
-            }
-            doc.setFont('helvetica', 'italic');
-            doc.setFontSize(9);
-            doc.setTextColor(150, 150, 150);
-            doc.text(
-                'Generated from rewovenapp.com/survey/results — full row-level data is available via the CSV export.',
-                margin, pageH - 30
-            );
+            // Footer
+            children.push(new Paragraph({
+                children: [new TextRun({
+                    text: 'Generated from rewovenapp.com/survey/results — full row-level data is available via the CSV export.',
+                    italics: true,
+                    color: '999999',
+                    size: 18,
+                })],
+                spacing: { before: 320 },
+            }));
 
-            doc.save(`rewoven-survey-${new Date().toISOString().slice(0,10)}.pdf`);
+            const doc = new Document({
+                creator: 'Rewoven',
+                title: 'Survey Results',
+                sections: [{ children }],
+            });
+
+            const blob = await Packer.toBlob(doc);
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `rewoven-survey-${new Date().toISOString().slice(0,10)}.docx`;
+            a.click();
         }
 
         // Auto-focus password input
