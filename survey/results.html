@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -289,6 +291,7 @@
                 <div class="header-actions">
                     <div class="source-toggle" id="sourceInfo"></div>
                     <button class="btn-sm btn-outline" onclick="exportCSV()">Export CSV</button>
+                    <button class="btn-sm btn-outline" onclick="exportPDF()">Export PDF (with charts)</button>
                     <button class="btn-sm btn-outline" onclick="loadData()">Refresh</button>
                 </div>
             </div>
@@ -435,10 +438,18 @@
             '#66BB6A', '#81C784', '#A5D6A7', '#C8E6C9', '#E8F5E9'
         ];
 
+        // Keep references to live Chart instances so we can grab them as
+        // PNGs for the PDF export.
+        const chartInstances = {};
+
         function makeChart(canvasId, type, labels, data, title) {
             const ctx = document.getElementById(canvasId).getContext('2d');
             const colors = labels.map((_, i) => greens[i % greens.length]);
-            new Chart(ctx, {
+            // Destroy any existing chart on this canvas (refresh case)
+            if (chartInstances[canvasId]) {
+                try { chartInstances[canvasId].destroy(); } catch {}
+            }
+            chartInstances[canvasId] = new Chart(ctx, {
                 type: type,
                 data: {
                     labels: labels,
@@ -596,6 +607,129 @@
             a.href = URL.createObjectURL(blob);
             a.download = `rewoven-survey-${new Date().toISOString().slice(0,10)}.csv`;
             a.click();
+        }
+
+        // ── PDF export ──────────────────────────────────────────────
+        // Generates a multi-page PDF with each chart rendered as an
+        // image, followed by its data table. CSV stays available for
+        // spreadsheet workflows.
+        async function exportPDF() {
+            if (allResponses.length === 0) return;
+            if (!window.jspdf || !window.jspdf.jsPDF) {
+                alert('PDF library failed to load. Check your network and try again.');
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const totalResponses = allResponses.length;
+
+            const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+            const pageW = doc.internal.pageSize.getWidth();
+            const pageH = doc.internal.pageSize.getHeight();
+            const margin = 40;
+            let y = margin;
+
+            // ── Cover / header ──
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(22);
+            doc.setTextColor(30, 30, 30);
+            doc.text('Rewoven Survey Results', margin, y);
+            y += 26;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(11);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, margin, y);
+            y += 16;
+            doc.text(`Total responses: ${totalResponses}`, margin, y);
+            y += 24;
+
+            doc.setDrawColor(220, 220, 220);
+            doc.setLineWidth(0.5);
+            doc.line(margin, y, pageW - margin, y);
+            y += 24;
+
+            // ── One section per chart ──
+            for (let i = 0; i < CHART_SPECS.length; i++) {
+                const spec = CHART_SPECS[i];
+                const counts = countField(spec.field);
+                const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+                if (entries.length === 0) continue;
+
+                const chart = chartInstances[`chart${i}`];
+
+                // Reserve enough vertical space for the title + chart image
+                // before deciding whether to push to a new page.
+                const chartImgH = 230;
+                const titleH = 22;
+                const tableEstH = Math.min(220, 22 + entries.length * 18);
+                const blockH = titleH + chartImgH + tableEstH + 36;
+
+                if (y + blockH > pageH - margin) {
+                    doc.addPage();
+                    y = margin;
+                }
+
+                // Section title
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(14);
+                doc.setTextColor(30, 30, 30);
+                doc.text(spec.title, margin, y);
+                y += 18;
+
+                // Chart image
+                if (chart) {
+                    try {
+                        const imgData = chart.toBase64Image('image/png', 1.0);
+                        // Maintain aspect ratio: render at 360pt wide, height auto from canvas.
+                        const canvas = chart.canvas;
+                        const aspect = canvas.height / canvas.width;
+                        const imgW = 360;
+                        const imgH = Math.min(chartImgH, imgW * aspect);
+                        const x = (pageW - imgW) / 2;
+                        doc.addImage(imgData, 'PNG', x, y, imgW, imgH);
+                        y += imgH + 12;
+                    } catch (err) {
+                        console.warn('Could not export chart', spec.field, err);
+                    }
+                } else {
+                    doc.setFontSize(10);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text('(chart not yet rendered)', margin, y);
+                    y += 14;
+                }
+
+                // Data table beneath the chart
+                doc.autoTable({
+                    startY: y,
+                    head: [['Option', 'Count', '% of responses']],
+                    body: entries.map(([label, count]) => [
+                        label,
+                        count,
+                        ((count / totalResponses) * 100).toFixed(1) + '%'
+                    ]),
+                    margin: { left: margin, right: margin },
+                    styles: { font: 'helvetica', fontSize: 10, cellPadding: 5 },
+                    headStyles: { fillColor: [46, 125, 50], textColor: 255, fontStyle: 'bold' },
+                    alternateRowStyles: { fillColor: [248, 250, 248] },
+                    tableWidth: 'auto',
+                });
+                y = doc.lastAutoTable.finalY + 28;
+            }
+
+            // ── Final page: footer note ──
+            if (y > pageH - 80) {
+                doc.addPage();
+                y = margin;
+            }
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(9);
+            doc.setTextColor(150, 150, 150);
+            doc.text(
+                'Generated from rewovenapp.com/survey/results — full row-level data is available via the CSV export.',
+                margin, pageH - 30
+            );
+
+            doc.save(`rewoven-survey-${new Date().toISOString().slice(0,10)}.pdf`);
         }
 
         // Auto-focus password input
