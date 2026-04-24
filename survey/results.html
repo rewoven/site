@@ -634,34 +634,51 @@
                 return bytes;
             }
 
-            // Helper: build a styled table for the breakdown
+            // Helper: build a styled table for the breakdown.
+            // Cell widths are set explicitly in DXA (1/20th of a point) so
+            // Word doesn't collapse columns to 1 char wide. Page width minus
+            // default 1-inch margins on an A4 page gives about 9000 DXA of
+            // usable space, which we split 5500 / 1200 / 2300.
             function buildTable(entries) {
-                const headerCells = ['Option', 'Count', '% of responses'].map(
-                    (text) => new TableCell({
-                        children: [new Paragraph({
-                            children: [new TextRun({ text, bold: true, color: 'FFFFFF' })],
+                const colWidths = [5500, 1200, 2300]; // Option / Count / %
+                const makeCell = (text, opts = {}) => new TableCell({
+                    children: [new Paragraph({
+                        children: [new TextRun({
+                            text: String(text),
+                            bold: opts.bold || false,
+                            color: opts.color || '000000',
                         })],
-                        shading: { type: ShadingType.SOLID, color: '2E7D32', fill: '2E7D32' },
+                    })],
+                    shading: opts.fill
+                        ? { type: ShadingType.SOLID, color: opts.fill, fill: opts.fill }
+                        : undefined,
+                    width: { size: opts.width, type: WidthType.DXA },
+                });
+
+                const headerCells = ['Option', 'Count', '% of responses'].map(
+                    (text, i) => makeCell(text, {
+                        bold: true,
+                        color: 'FFFFFF',
+                        fill: '2E7D32',
+                        width: colWidths[i],
                     })
                 );
 
                 const bodyRows = entries.map(([label, count], idx) => {
                     const fill = idx % 2 === 0 ? 'F8FAF8' : 'FFFFFF';
-                    const cellOf = (text) => new TableCell({
-                        children: [new Paragraph(String(text))],
-                        shading: { type: ShadingType.SOLID, color: fill, fill: fill },
-                    });
+                    const pct = ((count / totalResponses) * 100).toFixed(1) + '%';
                     return new TableRow({
                         children: [
-                            cellOf(label),
-                            cellOf(count),
-                            cellOf(((count / totalResponses) * 100).toFixed(1) + '%'),
+                            makeCell(label, { fill, width: colWidths[0] }),
+                            makeCell(count, { fill, width: colWidths[1] }),
+                            makeCell(pct, { fill, width: colWidths[2] }),
                         ],
                     });
                 });
 
                 return new Table({
-                    width: { size: 100, type: WidthType.PERCENTAGE },
+                    width: { size: 9000, type: WidthType.DXA },
+                    columnWidths: colWidths,
                     rows: [new TableRow({ children: headerCells, tableHeader: true }), ...bodyRows],
                 });
             }
