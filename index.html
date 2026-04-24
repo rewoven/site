@@ -1208,5 +1208,143 @@
     })();
   </script>
 
+  <!-- ── Fashion Revolution UAE Week button + modal ─────────────── -->
+  <style>
+    .fr-fab {
+      position: fixed; bottom: 20px; left: 20px; z-index: 200;
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 12px 18px;
+      background: #2E4A2B; color: #FFF;
+      border-radius: 50px; border: none;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(46,74,43,0.30), 0 2px 6px rgba(0,0,0,0.10);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .fr-fab:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(46,74,43,0.40); }
+    .fr-fab-icon {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #F5C518; color: #2E4A2B;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+    }
+    .fr-modal-backdrop {
+      display: none;
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.55);
+      align-items: center; justify-content: center; padding: 24px;
+      animation: fr-fade 0.2s ease;
+    }
+    .fr-modal-backdrop.open { display: flex; }
+    @keyframes fr-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    .fr-card {
+      max-width: 480px; width: 100%;
+      background: #FFF;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      animation: fr-pop 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    @keyframes fr-pop { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .fr-card-banner {
+      position: relative;
+      background:
+        linear-gradient(rgba(40,60,37,0.55), rgba(40,60,37,0.55)),
+        url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&auto=format&fit=crop&q=70') center/cover;
+      padding: 28px 28px 20px; color: #FFF;
+    }
+    .fr-badges { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .fr-badges img { width: 44px; height: 44px; border-radius: 10px; background: #FFF; padding: 4px; }
+    .fr-badges .fr-badge-pill {
+      padding: 4px 10px; background: #FFF; color: #2E4A2B;
+      border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.3px;
+      font-family: 'Inter', sans-serif;
+    }
+    .fr-card-banner h2 {
+      font-family: 'Inter', sans-serif; font-size: 26px; font-weight: 800;
+      line-height: 1.2; color: #FFF; margin-bottom: 10px;
+    }
+    .fr-card-banner p {
+      font-size: 14px; font-style: italic; color: rgba(255,255,255,0.9);
+      line-height: 1.45; margin: 0;
+    }
+    .fr-card-body { padding: 22px 28px 24px; }
+    .fr-card-body > p {
+      font-size: 14px; color: var(--gray-600); line-height: 1.55; margin-bottom: 14px;
+    }
+    .fr-details {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+      background: var(--gray-200);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px; overflow: hidden;
+      margin-top: 14px;
+    }
+    .fr-detail {
+      background: #FFF; padding: 12px 14px;
+      font-size: 13px; color: var(--dark); font-weight: 600;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .fr-detail-time { grid-column: 1 / span 2; justify-content: center; }
+
+    .fr-close {
+      position: absolute; top: 12px; right: 12px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.92); color: #2E4A2B;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
+      transition: background 0.15s ease;
+    }
+    .fr-close:hover { background: #FFF; }
+
+    @media (max-width: 480px) {
+      .fr-fab { font-size: 12px; padding: 10px 14px; bottom: 14px; left: 14px; }
+      .fr-card-banner h2 { font-size: 22px; }
+    }
+  </style>
+
+  <button class="fr-fab" id="frFab" aria-label="Open Fashion Revolution Week event info">
+    <span class="fr-fab-icon">FR</span>
+    Join Us at Fashion Revolution Week
+  </button>
+
+  <div class="fr-modal-backdrop" id="frModal" role="dialog" aria-modal="true" aria-labelledby="frTitle">
+    <div class="fr-card" onclick="event.stopPropagation()">
+      <div class="fr-card-banner">
+        <button class="fr-close" id="frClose" aria-label="Close">&times;</button>
+        <div class="fr-badges">
+          <img src="assets/logo.png" alt="Rewoven" />
+          <span class="fr-badge-pill">Fashion Revolution UAE</span>
+        </div>
+        <h2 id="frTitle">ReWoven to showcase at Fashion Revolution UAE Week 2026.</h2>
+        <p>Catch us live at the event as we bring circular fashion to life.</p>
+      </div>
+      <div class="fr-card-body">
+        <p>Join us as we present our vision of circular fashion and sustainable design.</p>
+        <div class="fr-details">
+          <div class="fr-detail">📍 Blumi Café</div>
+          <div class="fr-detail">📅 25th April 2026</div>
+          <div class="fr-detail fr-detail-time">⏰ 10:00 AM – 6:00 PM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const fab = document.getElementById('frFab');
+      const modal = document.getElementById('frModal');
+      const close = document.getElementById('frClose');
+      const open = () => modal.classList.add('open');
+      const hide = () => modal.classList.remove('open');
+      fab.addEventListener('click', open);
+      close.addEventListener('click', hide);
+      modal.addEventListener('click', hide);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hide(); });
+    })();
+  </script>
+
 </body>
 </html>
