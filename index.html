@@ -1210,27 +1210,67 @@
 
   <!-- ── Fashion Revolution UAE Week button + modal ─────────────── -->
   <style>
+    .fr-fab-wrap {
+      position: fixed; bottom: 22px; right: 22px; z-index: 200;
+    }
+    /* Pulsing ring that subtly draws the eye. Pure CSS, no JS timer. */
+    .fr-fab-wrap::before,
+    .fr-fab-wrap::after {
+      content: ''; position: absolute; inset: 0;
+      border-radius: 50px;
+      background: #E8796A;
+      opacity: 0; pointer-events: none;
+      animation: fr-pulse 2.2s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+    }
+    .fr-fab-wrap::after { animation-delay: 1.1s; }
+    @keyframes fr-pulse {
+      0%   { transform: scale(1);    opacity: 0.55; }
+      70%  { transform: scale(1.22); opacity: 0;    }
+      100% { transform: scale(1.22); opacity: 0;    }
+    }
     .fr-fab {
-      position: fixed; bottom: 20px; right: 20px; z-index: 200;
+      position: relative; z-index: 1;
       display: inline-flex; align-items: center; gap: 10px;
-      padding: 12px 20px;
-      background: #E8796A; color: #FFF;
+      padding: 14px 22px;
+      background: linear-gradient(135deg, #EE8476 0%, #D86251 100%);
+      color: #FFF;
       border-radius: 50px; border: none;
-      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(232,121,106,0.35), 0 2px 6px rgba(0,0,0,0.10);
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 800;
+      cursor: pointer; letter-spacing: 0.2px;
+      box-shadow:
+        0 10px 28px rgba(216,98,81,0.45),
+        0 2px 6px rgba(0,0,0,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.20);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
+      animation: fr-bob 3.6s ease-in-out infinite;
+    }
+    @keyframes fr-bob {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
     }
     .fr-fab:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(232,121,106,0.45);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow:
+        0 14px 36px rgba(216,98,81,0.55),
+        0 4px 10px rgba(0,0,0,0.14),
+        inset 0 1px 0 rgba(255,255,255,0.25);
+      animation-play-state: paused;
     }
-    .fr-fab:hover .fr-fab-arrow { transform: translateX(3px); }
+    .fr-fab:hover .fr-fab-arrow { transform: translateX(4px); }
     .fr-fab-arrow {
       display: inline-block;
       transition: transform 0.2s ease;
-      font-size: 16px;
-      line-height: 1;
+      font-size: 17px; line-height: 1; font-weight: 900;
+    }
+    .fr-fab-badge {
+      position: absolute; top: -8px; right: -6px;
+      padding: 3px 8px;
+      background: #FCD34D; color: #78350F;
+      border-radius: 50px;
+      font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 900;
+      letter-spacing: 0.3px; text-transform: uppercase;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      z-index: 2;
     }
     .fr-modal-backdrop {
       display: none;
@@ -1304,15 +1344,20 @@
     .fr-close:hover { background: #FFF; }
 
     @media (max-width: 480px) {
-      .fr-fab { font-size: 12px; padding: 10px 14px; bottom: 14px; right: 14px; }
+      .fr-fab-wrap { bottom: 14px; right: 14px; }
+      .fr-fab { font-size: 12px; padding: 11px 16px; }
+      .fr-fab-badge { font-size: 9px; padding: 2px 7px; top: -6px; right: -4px; }
       .fr-card-banner h2 { font-size: 22px; }
     }
   </style>
 
-  <button class="fr-fab" id="frFab" aria-label="Open Fashion Revolution Week event info">
-    Join Us at Fashion Revolution Week
-    <span class="fr-fab-arrow" aria-hidden="true">&rarr;</span>
-  </button>
+  <div class="fr-fab-wrap">
+    <button class="fr-fab" id="frFab" aria-label="Open Fashion Revolution Week event info">
+      Join Us at Fashion Revolution Week
+      <span class="fr-fab-arrow" aria-hidden="true">&rarr;</span>
+      <span class="fr-fab-badge">Apr 25</span>
+    </button>
+  </div>
 
   <div class="fr-modal-backdrop" id="frModal" role="dialog" aria-modal="true" aria-labelledby="frTitle">
     <div class="fr-card" onclick="event.stopPropagation()">
