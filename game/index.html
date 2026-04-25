@@ -318,16 +318,19 @@
     .card-body { padding: 28px; }
     .card-header {
       display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 12px;
+      justify-content: space-between; gap: 12px;
+      margin-bottom: 12px;
     }
     .card-title {
       font-family: 'Playfair Display', serif;
       font-size: 24px; font-weight: 800; color: var(--dark);
+      flex: 1; min-width: 0;          /* allow title to shrink before badge wraps */
     }
     .badge {
       padding: 5px 14px; border-radius: 50px;
       font-size: 12px; font-weight: 700;
       text-transform: uppercase; letter-spacing: 1px;
+      white-space: nowrap; flex-shrink: 0;  /* always one line, never squeeze */
     }
     .badge-easy {
       background: var(--green-100); color: var(--green-700);
