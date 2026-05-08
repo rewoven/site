@@ -72,9 +72,25 @@
         .footer { text-align: center; padding: 24px; font-size: 0.78rem; color: var(--text-sec); border-top: 1px solid var(--border); }
         .footer a { color: var(--green-600); text-decoration: none; }
 
+        /* Why Section */
+        .why-section { max-width: 720px; margin: 0 auto; padding: 0 24px 48px; }
+        .why-heading { text-align: center; margin-bottom: 28px; }
+        .why-heading h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 800; color: var(--green-800); margin-bottom: 8px; }
+        .why-heading p { font-size: 0.95rem; color: var(--text-sec); }
+        .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .why-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 28px 20px; text-align: center; transition: all 0.2s;
+        }
+        .why-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(16,185,129,0.1); border-color: var(--green-500); }
+        .why-card .why-icon { font-size: 2rem; margin-bottom: 12px; }
+        .why-card h3 { font-size: 0.95rem; font-weight: 700; color: var(--green-800); margin-bottom: 6px; }
+        .why-card p { font-size: 0.82rem; color: var(--text-sec); line-height: 1.5; }
+
         @media (max-width: 640px) {
             .hero h1 { font-size: 1.8rem; }
             .form-card { padding: 28px 20px; }
+            .why-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -93,6 +109,30 @@
         <p style="margin-top: 12px;">We want to hear from you.</p>
     </div>
 
+    <div class="why-section">
+        <div class="why-heading">
+            <h2>Why Become an Ambassador?</h2>
+            <p>More than volunteering -- real experience that sets you apart</p>
+        </div>
+        <div class="why-grid">
+            <div class="why-card">
+                <div class="why-icon">&#128188;</div>
+                <h3>Build Your CV</h3>
+                <p>Add a real ambassador role to your CV and LinkedIn that stands out to universities and employers.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">&#127942;</div>
+                <h3>Leadership & Marketing Experience</h3>
+                <p>Gain hands-on experience running campaigns, organizing events, and leading sustainability initiatives.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon">&#129309;</div>
+                <h3>Network with Like-Minded Students</h3>
+                <p>Connect with a community of driven students who care about making a real difference.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="form-section">
         <div class="form-card" id="formCard">
             <h2>Apply to Join</h2>
@@ -107,6 +147,11 @@
                 <div class="form-group">
                     <label class="form-label">Email Address</label>
                     <input type="email" class="form-input" id="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" id="phone" placeholder="+971 ..." required>
                 </div>
 
                 <div class="form-group">
@@ -168,6 +213,7 @@
             var data = {
                 full_name: document.getElementById('fullName').value.trim(),
                 email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
                 school: document.getElementById('school').value.trim(),
                 experience: document.getElementById('experience').value.trim(),
                 why_suited: document.getElementById('whySuited').value.trim(),
