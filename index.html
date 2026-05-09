@@ -192,30 +192,48 @@
     }
     .phone-screen {
       width: 100%; height: 100%; border-radius: 30px; overflow: hidden;
-      background: linear-gradient(180deg, var(--green-50) 0%, var(--white) 30%);
-      display: flex; flex-direction: column; align-items: center;
-      padding: 40px 20px 20px;
+      background: #F8FAF9;
+      display: flex; flex-direction: column;
+      padding: 24px 16px 16px;
     }
-    .phone-screen img { width: 100px; margin-bottom: 16px; }
-    .phone-screen h3 {
-      font-family: 'Playfair Display', serif; font-size: 20px;
-      color: var(--dark); margin-bottom: 8px;
+    .ps-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .ps-header-left {}
+    .ps-greeting { font-size: 11px; color: var(--gray-400); }
+    .ps-username { font-size: 18px; font-weight: 800; color: var(--dark); font-family: 'Playfair Display', serif; }
+    .ps-header-right { display: flex; align-items: center; gap: 6px; }
+    .ps-streak { display: flex; align-items: center; gap: 2px; background: var(--white); border-radius: 20px; padding: 4px 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .ps-streak .fire { font-size: 14px; }
+    .ps-streak span { font-size: 13px; font-weight: 700; color: var(--dark); }
+    .ps-stats {
+      background: linear-gradient(135deg, #10B981, #047857); border-radius: 16px;
+      padding: 16px; display: flex; justify-content: center; gap: 0;
+      margin-bottom: 12px;
     }
-    .phone-screen p { font-size: 12px; color: var(--gray-600); text-align: center; margin-bottom: 24px; }
-    .phone-feature-list {
-      width: 100%; display: flex; flex-direction: column; gap: 10px;
+    .ps-stat { flex: 1; text-align: center; }
+    .ps-stat-val { font-size: 24px; font-weight: 900; color: white; }
+    .ps-stat-label { font-size: 8px; font-weight: 700; color: rgba(255,255,255,0.7); letter-spacing: 1px; text-transform: uppercase; }
+    .ps-stat-div { width: 1px; background: rgba(255,255,255,0.3); margin: 4px 0; }
+    .ps-logo { display: flex; justify-content: center; margin-bottom: 12px; }
+    .ps-logo img { width: 80px; height: 80px; border-radius: 16px; }
+    .ps-section-title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 10px; }
+    .ps-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .ps-cat {
+      background: var(--white); border-radius: 12px; padding: 14px 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04); position: relative;
     }
-    .phone-feature-item {
-      display: flex; align-items: center; gap: 12px;
-      background: var(--white); border-radius: 12px; padding: 12px 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .phone-feature-icon {
-      width: 36px; height: 36px; border-radius: 10px;
+    .ps-cat-icon {
+      width: 36px; height: 36px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 18px; flex-shrink: 0;
+      font-size: 16px; margin-bottom: 8px;
     }
-    .phone-feature-item span { font-size: 13px; font-weight: 600; color: var(--dark); }
+    .ps-cat-name { font-size: 11px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+    .ps-cat-progress { height: 4px; background: #E5E7EB; border-radius: 2px; overflow: hidden; margin-bottom: 3px; }
+    .ps-cat-progress-fill { height: 100%; border-radius: 2px; }
+    .ps-cat-count { font-size: 9px; color: var(--gray-400); }
+    .ps-cat-lock {
+      position: absolute; top: 10px; right: 10px; font-size: 14px; color: #D1D5DB;
+    }
+    .ps-cat.locked { opacity: 0.55; }
     .floating-badge {
       position: absolute; background: var(--white); border-radius: 16px;
       padding: 14px 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1);
@@ -556,10 +574,13 @@
       box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.05);
     }
     [data-theme="dark"] .phone-screen {
-      background: linear-gradient(180deg, #1E293B 0%, #0F172A 30%);
+      background: #1A2332;
     }
-    [data-theme="dark"] .phone-feature-item {
+    [data-theme="dark"] .ps-cat {
       background: #1E293B; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    [data-theme="dark"] .ps-streak {
+      background: #1E293B;
     }
     [data-theme="dark"] .floating-badge {
       background: #1E293B; box-shadow: 0 8px 30px rgba(0,0,0,0.3);
@@ -731,25 +752,60 @@
       <div class="hero-visual">
         <div class="phone-mockup">
           <div class="phone-screen">
-            <img src="assets/logo.png" alt="Rewoven App" />
-            <h3>Welcome to Rewoven</h3>
-            <p>Learn sustainability through play</p>
-            <div class="phone-feature-list">
-              <div class="phone-feature-item">
-                <div class="phone-feature-icon" style="background: #ECFDF5;">🧠</div>
-                <span>Sustainability Quizzes</span>
+            <div class="ps-header">
+              <div class="ps-header-left">
+                <div class="ps-greeting">Welcome back!</div>
+                <div class="ps-username">Ready to learn?</div>
               </div>
-              <div class="phone-feature-item">
-                <div class="phone-feature-icon" style="background: #FEF3C7;">👕</div>
-                <span>Scan Your Clothes</span>
+              <div class="ps-header-right">
+                <div class="ps-streak">
+                  <span class="fire" style="color:#EF4444;">&#x1F525;</span>
+                  <span>2</span>
+                </div>
               </div>
-              <div class="phone-feature-item">
-                <div class="phone-feature-icon" style="background: #EDE9FE;">📊</div>
-                <span>Impact Tracker</span>
+            </div>
+            <div class="ps-stats">
+              <div class="ps-stat">
+                <div class="ps-stat-val">20</div>
+                <div class="ps-stat-label">Total Points</div>
               </div>
-              <div class="phone-feature-item">
-                <div class="phone-feature-icon" style="background: #FCE7F3;">♻️</div>
-                <span>Upcycle Marketplace</span>
+              <div class="ps-stat-div"></div>
+              <div class="ps-stat">
+                <div class="ps-stat-val">5</div>
+                <div class="ps-stat-label">Completed</div>
+              </div>
+            </div>
+            <div class="ps-logo">
+              <img src="assets/logo.png" alt="Rewoven" />
+            </div>
+            <div class="ps-section-title">Choose a Category</div>
+            <div class="ps-categories">
+              <div class="ps-cat">
+                <div class="ps-cat-icon" style="background:#DCFCE7;">&#9851;&#65039;</div>
+                <div class="ps-cat-name">Circular Economy</div>
+                <div class="ps-cat-progress"><div class="ps-cat-progress-fill" style="width:21%;background:#10B981;"></div></div>
+                <div class="ps-cat-count">5/24</div>
+              </div>
+              <div class="ps-cat locked">
+                <div class="ps-cat-lock">&#128274;</div>
+                <div class="ps-cat-icon" style="background:#FCE7F3;">&#128087;</div>
+                <div class="ps-cat-name">Fashion</div>
+                <div class="ps-cat-progress"><div class="ps-cat-progress-fill" style="width:0%;"></div></div>
+                <div class="ps-cat-count">0/0</div>
+              </div>
+              <div class="ps-cat locked">
+                <div class="ps-cat-lock">&#128274;</div>
+                <div class="ps-cat-icon" style="background:#EDE9FE;">&#128167;</div>
+                <div class="ps-cat-name">Water</div>
+                <div class="ps-cat-progress"><div class="ps-cat-progress-fill" style="width:0%;"></div></div>
+                <div class="ps-cat-count">0/0</div>
+              </div>
+              <div class="ps-cat locked">
+                <div class="ps-cat-lock">&#128274;</div>
+                <div class="ps-cat-icon" style="background:#ECFDF5;">&#127807;</div>
+                <div class="ps-cat-name">Energy</div>
+                <div class="ps-cat-progress"><div class="ps-cat-progress-fill" style="width:0%;"></div></div>
+                <div class="ps-cat-count">0/0</div>
               </div>
             </div>
           </div>
