@@ -634,6 +634,49 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.3);
     }
 
+    /* Fullscreen preview overlay */
+    .preview-expand-btn {
+      position: absolute; bottom: 20px; right: 20px; z-index: 5;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(0,0,0,0.55); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .preview-expand-btn:hover { background: rgba(0,0,0,0.75); transform: scale(1.1); }
+    .preview-expand-btn svg { width: 18px; height: 18px; fill: #fff; }
+
+    .preview-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .preview-overlay.open { opacity: 1; pointer-events: auto; }
+    .preview-overlay-phone {
+      width: 390px; max-width: 95vw; height: 844px; max-height: 90vh;
+      border-radius: 40px; overflow: hidden; background: #000;
+      box-shadow: 0 0 80px rgba(16,185,129,0.15), 0 0 0 3px rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .preview-overlay-phone iframe {
+      width: 100%; height: 100%; border: none; border-radius: 40px;
+    }
+    .preview-overlay-close {
+      position: absolute; top: 16px; right: 16px; z-index: 10;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(0,0,0,0.6); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .preview-overlay-close:hover { background: rgba(0,0,0,0.85); transform: scale(1.1); }
+    .preview-overlay-close svg { width: 20px; height: 20px; fill: #fff; }
+    .preview-overlay-hint {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.5); font-size: 13px; font-weight: 500;
+      pointer-events: none; letter-spacing: 0.3px;
+    }
+
     /* Smooth transitions for theme switch */
     nav, .hero, .problem, .problem-card, .features, .feature-visual,
     .feature-demo, .how-it-works, .audience, .audience-card,
@@ -750,10 +793,13 @@
         </div>
       </div>
       <div class="hero-visual">
-        <div class="phone-mockup">
+        <div class="phone-mockup" style="position:relative;">
           <div class="phone-screen" style="padding:0;overflow:hidden;position:relative;">
             <iframe src="/preview/(tabs)?demo=true" style="width:390px;height:844px;border:none;zoom:0.706;" title="Rewoven App Demo"></iframe>
           </div>
+          <button class="preview-expand-btn" onclick="openPreview()" aria-label="View fullscreen preview">
+            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </button>
         </div>
         <div class="floating-badge top-right">
           <div class="badge-icon" style="background: #FEF3C7;">🏆</div>
@@ -1209,6 +1255,33 @@
     })();
   </script>
 
+  <!-- Fullscreen preview overlay -->
+  <div class="preview-overlay" id="previewOverlay" onclick="closePreview(event)">
+    <div class="preview-overlay-phone">
+      <button class="preview-overlay-close" onclick="closePreview()" aria-label="Close preview">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <iframe id="previewFullscreenIframe" title="Rewoven App Fullscreen Preview"></iframe>
+    </div>
+    <span class="preview-overlay-hint">Press Esc or click outside to close</span>
+  </div>
+  <script>
+    function openPreview() {
+      const overlay = document.getElementById('previewOverlay');
+      const iframe = document.getElementById('previewFullscreenIframe');
+      if (!iframe.src) iframe.src = '/preview/(tabs)?demo=true';
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closePreview(e) {
+      if (e && e.target !== e.currentTarget && !e.currentTarget.classList.contains('preview-overlay-close')) return;
+      document.getElementById('previewOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closePreview();
+    });
+  </script>
 
 </body>
 </html>
