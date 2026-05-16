@@ -677,6 +677,31 @@
       pointer-events: none; letter-spacing: 0.3px;
     }
 
+    /* Impact Story */
+    .impact-story {
+      padding: 100px 24px;
+      background: linear-gradient(180deg, var(--bg-cream) 0%, #fff 100%);
+    }
+    .impact-story .container { max-width: 900px; margin: 0 auto; text-align: center; }
+    .impact-story-img {
+      width: 100%; border-radius: 20px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+      margin: 40px 0 32px;
+    }
+    .impact-story-text {
+      font-size: 19px; line-height: 1.8; color: var(--gray-600);
+      max-width: 750px; margin: 0 auto;
+    }
+    .impact-story-location {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 600; color: var(--green-600);
+      margin-top: 20px;
+    }
+    @media (max-width: 640px) {
+      .impact-story { padding: 60px 20px; }
+      .impact-story-text { font-size: 16px; }
+    }
+
     /* Smooth transitions for theme switch */
     nav, .hero, .problem, .problem-card, .features, .feature-visual,
     .feature-demo, .how-it-works, .audience, .audience-card,
@@ -1108,6 +1133,21 @@
           <p>Co-brand and co-create content. Rewoven partners with environmental NGOs and textile companies like Embee for real-world credibility.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Impact Story -->
+  <section class="impact-story">
+    <div class="container">
+      <p class="section-label fade-in">Our Impact</p>
+      <h2 class="section-title fade-in">Making a Real Difference</h2>
+      <img src="assets/manila-basketball.jpg" alt="Rewoven basketball camp in Manila, Philippines" class="impact-story-img fade-in" />
+      <p class="impact-story-text fade-in">
+        Rewoven hosted a basketball initiative for underprivileged children in Manila, Philippines. At the end of the 3-day camp, we gifted sustainable basketball jerseys made from fabric offcuts to the kids as a parting gift.
+      </p>
+      <p class="fade-in" style="text-align:center;">
+        <span class="impact-story-location">Manila, Philippines</span>
+      </p>
     </div>
   </section>
 
