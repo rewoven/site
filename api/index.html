@@ -258,6 +258,8 @@
       <h3>Other</h3>
       <a href="#categories">Categories</a>
       <a href="#stats">Stats</a>
+      <a href="#methodology">Methodology</a>
+      <a href="#disclaimer">Disclaimer</a>
     </aside>
 
     <main class="main">
@@ -266,7 +268,7 @@
 
       <div class="stats-banner">
         <div class="stat-card">
-          <div class="num" id="statBrands">637</div>
+          <div class="num" id="statBrands">635</div>
           <div class="label">Brands Rated</div>
         </div>
         <div class="stat-card">
@@ -336,7 +338,8 @@ curl "https://api.rewovenapp.com/api/brands?category=Fast+Fashion&max_score=20&l
       <span class="key">"category"</span>: <span class="string">"Fast Fashion"</span>,
       <span class="key">"certifications"</span>: [],
       <span class="key">"summary"</span>: <span class="string">"Ultra-fast fashion model..."</span>,
-      <span class="key">"website"</span>: <span class="string">"https://www.shein.com"</span>
+      <span class="key">"website"</span>: <span class="string">"https://www.shein.com"</span>,
+      <span class="key">"rationale"</span>: <span class="string">"Rewoven rates SHEIN 8/100 (grade F-)..."</span>
     }
   ],
   <span class="key">"total"</span>: <span class="num">65</span>,
@@ -479,6 +482,13 @@ curl "https://api.rewovenapp.com/api/brands?category=Fast+Fashion&max_score=20&l
         <tr><td><code>F</code></td><td>10-19</td><td>Almost no sustainability</td></tr>
         <tr><td><code>F-</code></td><td>0-9</td><td>No sustainability effort</td></tr>
       </table>
+
+      <h2 id="methodology">Methodology</h2>
+      <p>Each brand's <code>overall_score</code> is the equal-weighted average of four dimensions, each scored 0&ndash;100: <strong>environmental</strong> (materials, emissions, water, waste), <strong>labor practices</strong> (wages, worker safety, supply-chain standards), <strong>transparency</strong> (public reporting and traceability), and <strong>animal welfare</strong> (fur, leather, wool, and down policies).</p>
+      <p>Scores are assigned from publicly available information &mdash; brand sustainability reports, third-party certifications, and reputable news coverage. Every brand response includes a <code>rationale</code> field: a plain-language explanation of how its score was derived, so the reasoning is transparent rather than a black box.</p>
+
+      <h2 id="disclaimer">Disclaimer</h2>
+      <p>Ratings are Rewoven's editorial assessments and expressions of opinion, not statements of fact, provided for general informational purposes only. They are based on information available at the time of review and may not reflect a brand's most recent changes. Rewoven is not affiliated with the brands listed. Brand names and trademarks belong to their respective owners. A brand that believes its rating is inaccurate or out of date can request a review at <a href="mailto:arhan@rewovenapp.com">arhan@rewovenapp.com</a>.</p>
     </main>
   </div>
 

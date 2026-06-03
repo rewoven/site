@@ -535,6 +535,26 @@
     .modal-summary {
       font-size: 15px; color: var(--gray-600); line-height: 1.7; margin-bottom: 20px;
     }
+    .modal-report {
+      background: var(--green-50); border: 1px solid var(--green-200);
+      border-radius: 12px; padding: 18px 20px; margin-bottom: 20px;
+    }
+    .modal-report-title {
+      font-size: 13px; font-weight: 800; letter-spacing: 0.4px;
+      text-transform: uppercase; color: var(--green-700); margin-bottom: 12px;
+    }
+    .modal-report p {
+      font-size: 14px; color: var(--gray-600); line-height: 1.65; margin: 0 0 10px;
+    }
+    .modal-report ul { margin: 0 0 12px; padding-left: 0; list-style: none; }
+    .modal-report li {
+      font-size: 13.5px; color: var(--gray-600); line-height: 1.55;
+      padding: 6px 0 6px 14px; border-left: 2px solid var(--green-200); margin-bottom: 6px;
+    }
+    .modal-report .disclaimer {
+      font-size: 12px; color: var(--gray-400); line-height: 1.55;
+      margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--green-200);
+    }
     .modal-website {
       display: inline-flex; align-items: center; gap: 6px;
       font-size: 14px; font-weight: 600; color: var(--green-500);
@@ -787,6 +807,9 @@
   <!-- Footer -->
   <footer>
     <div class="container">
+      <p style="max-width:820px;margin:0 auto 32px;font-size:12.5px;line-height:1.6;color:var(--gray-400);text-align:center;">
+        Ratings are Rewoven's editorial assessments and expressions of opinion, not statements of fact, based on publicly available information and may not reflect a brand's most recent changes. Each brand includes a "Why this score" breakdown. Rewoven is not affiliated with the brands listed; trademarks belong to their respective owners. Brands can request a review at <a href="mailto:arhan@rewovenapp.com" style="color:var(--green-500);">arhan@rewovenapp.com</a>.
+      </p>
       <div class="footer-top">
         <div class="footer-brand">
           <img src="../assets/logo.png" alt="Rewoven" />
@@ -892,6 +915,30 @@
     }
 
     function circumference(r) { return 2 * Math.PI * r; }
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Render the API's `rationale` string into a structured "Why this score" report.
+    function renderReport(text) {
+      const blocks = text.split('\n\n');
+      let html = '<div class="modal-report"><div class="modal-report-title">Why this score</div>';
+      blocks.forEach(block => {
+        const lines = block.split('\n');
+        const bullets = lines.filter(l => l.trim().startsWith('•'));
+        const prose = lines.filter(l => !l.trim().startsWith('•')).join(' ').trim();
+        const isDisclaimer = block.trim().startsWith('This rating is');
+        if (prose) {
+          html += `<p${isDisclaimer ? ' class="disclaimer"' : ''}>${escapeHtml(prose)}</p>`;
+        }
+        if (bullets.length) {
+          html += '<ul>' + bullets.map(b =>
+            `<li>${escapeHtml(b.replace(/^•\s*/, '').trim())}</li>`).join('') + '</ul>';
+        }
+      });
+      return html + '</div>';
+    }
 
     async function apiFetch(path) {
       const res = await fetch(API_BASE + path);
@@ -1216,7 +1263,7 @@
               </div>`).join('')}
           </div>
           ${certs ? `<div class="modal-certs">${certs}</div>` : ''}
-          <div class="modal-summary">${brand.summary || ''}</div>
+          ${brand.rationale ? renderReport(brand.rationale) : `<div class="modal-summary">${brand.summary || ''}</div>`}
           ${brand.website ? `<a class="modal-website" href="${brand.website}" target="_blank" rel="noopener">Visit Website &rarr;</a>` : ''}
           <div id="modalAlternatives" style="margin-top:20px;"></div>
         `;
