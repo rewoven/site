@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Methodology | Rewoven</title>
+  <meta name="description" content="How Rewoven calculates sustainability scores and environmental footprint estimates, and the data sources behind them." />
+  <link rel="icon" href="../assets/logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --green-600: #059669; --green-700: #047857; --green-800: #065F46;
+      --dark: #111827; --gray-600: #4B5563; --gray-400: #9CA3AF;
+      --gray-200: #E5E7EB; --bg: #F0FDF4; --surface: #FFFFFF;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--dark); background: var(--bg); line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 64px 24px 96px; }
+    .kicker { font-size: 13px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--green-600); }
+    h1 { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 800; margin: 8px 0 12px; color: var(--dark); }
+    .lede { font-size: 18px; color: var(--gray-600); margin-bottom: 40px; }
+    h2 { font-size: 22px; font-weight: 800; margin: 40px 0 12px; padding-top: 28px; border-top: 1px solid var(--gray-200); color: var(--dark); }
+    h2:first-of-type { border-top: none; padding-top: 0; }
+    p { color: var(--gray-600); margin-bottom: 14px; }
+    ul { margin: 0 0 14px; padding-left: 20px; color: var(--gray-600); }
+    li { margin-bottom: 8px; }
+    a { color: var(--green-600); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    code { background: #E8F5E9; color: var(--green-800); padding: 2px 7px; border-radius: 6px; font-size: 14px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .callout { background: #FFF8E1; border: 1px solid #FDE68A; border-radius: 12px; padding: 16px 20px; margin: 20px 0; font-size: 15px; color: #78350F; }
+    .sources { background: var(--surface); border: 1px solid var(--gray-200); border-radius: 14px; padding: 8px 24px; margin: 16px 0; }
+    .sources li { margin: 14px 0; list-style: none; }
+    .sources { padding-left: 24px; }
+    .src-name { font-weight: 700; color: var(--dark); }
+    footer { max-width: 760px; margin: 0 auto; padding: 24px; color: var(--gray-400); font-size: 13px; border-top: 1px solid var(--gray-200); }
+    footer a { color: var(--green-600); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">Methodology</p>
+    <h1>How Rewoven calculates sustainability</h1>
+    <p class="lede">We believe a sustainability rating is only useful if you can see how it was made. Here's exactly what each number means, how it's derived, and the data behind it — including where something is a measured fact, a sourced assessment, or an estimate.</p>
+
+    <div class="callout">
+      <strong>The short version:</strong> we never invent data. Facts we read from a product page (like fabric composition and price) are shown as-is. Brand ratings are our sourced, editorial assessments. Environmental footprints are <em>estimates</em> calculated from published per-fibre research averages — clearly marked with a “~”. When a page doesn't list its fabric, we say so instead of guessing.
+    </div>
+
+    <h2>1. Brand sustainability ratings</h2>
+    <p>Each brand's overall score (0–100) and A–F grade is the equal-weighted average of four dimensions: <strong>environmental impact</strong>, <strong>labor practices</strong>, <strong>transparency</strong>, and <strong>animal welfare</strong>. Scores are assigned from publicly available information — brand sustainability reports, third-party certifications, and reputable reporting.</p>
+    <p>These ratings are <strong>Rewoven's editorial assessments and expressions of opinion, not statements of fact.</strong> They reflect information available at the time of review and may not capture a brand's most recent changes. A brand that believes its rating is inaccurate can request a review at <a href="mailto:arhan@rewovenapp.com">arhan@rewovenapp.com</a>.</p>
+
+    <h2>2. Material footprint estimates</h2>
+    <p>When a product page lists its fabric composition (e.g. <code>60% cotton, 40% polyester</code>), we estimate a footprint by combining:</p>
+    <ul>
+      <li>the <strong>composition</strong> read directly from the page,</li>
+      <li>published <strong>cradle-to-gate averages</strong> for each fibre (kg CO₂e and litres of water per kg of fibre), and</li>
+      <li>an <strong>average garment weight</strong> for the product category.</li>
+    </ul>
+    <div class="callout">
+      <strong>These are estimates, not measurements.</strong> Real impact varies enormously by region, farm, mill, energy source, and dyeing/finishing. Treat the figures as relative, order-of-magnitude guidance — useful for comparing materials, not as a precise measurement of a specific garment. That's why they're shown with a “~”.
+    </div>
+    <p>If a page doesn't publish its composition, we don't estimate a footprint at all — the extension shows “composition not listed” rather than a made-up number. Cost-per-wear is only shown when a real price is available.</p>
+
+    <h2>3. Data sources</h2>
+    <p>The per-fibre coefficients are rounded industry averages compiled from, and kept consistent with, these public sources. Where sources disagree, we use a representative mid-range value.</p>
+    <ul class="sources">
+      <li><span class="src-name">Ellen MacArthur Foundation</span> — <a href="https://ellenmacarthurfoundation.org/a-new-textiles-economy" target="_blank" rel="noopener">A New Textiles Economy: Redesigning fashion's future</a> (2017)</li>
+      <li><span class="src-name">Water Footprint Network</span> — Mekonnen &amp; Hoekstra, water footprint of crops (cotton ≈ 10,000 L/kg global average). <a href="https://www.waterfootprint.org" target="_blank" rel="noopener">waterfootprint.org</a></li>
+      <li><span class="src-name">Textile Exchange</span> — Preferred Fiber &amp; Materials Market Report. <a href="https://textileexchange.org" target="_blank" rel="noopener">textileexchange.org</a></li>
+      <li><span class="src-name">Higg Materials Sustainability Index (Higg MSI)</span> — cradle-to-gate material impacts. <a href="https://cascale.org" target="_blank" rel="noopener">cascale.org</a></li>
+      <li><span class="src-name">Quantis</span> — Measuring Fashion: environmental impact of the global apparel and footwear industries (2018). <a href="https://quantis.com" target="_blank" rel="noopener">quantis.com</a></li>
+    </ul>
+
+    <h2>4. What we deliberately don't do</h2>
+    <ul>
+      <li>We don't invent statistics. No fabric data on the page → no footprint shown.</li>
+      <li>We don't show a footprint for unidentified fibres.</li>
+      <li>We don't show cost-per-wear without a real price.</li>
+      <li>We only describe figures as “estimates from research” when actual estimates are shown.</li>
+      <li>We don't run on non-fashion products — the lens only activates on clothing and footwear.</li>
+    </ul>
+
+    <p style="margin-top:32px;font-size:14px;color:var(--gray-400);">Spotted something inaccurate? Tell us at <a href="mailto:arhan@rewovenapp.com">arhan@rewovenapp.com</a> and we'll review it.</p>
+  </div>
+  <footer>&copy; 2026 Rewoven. All rights reserved. · <a href="/">rewovenapp.com</a></footer>
+</body>
+</html>
