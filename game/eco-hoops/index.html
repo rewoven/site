@@ -609,7 +609,7 @@ function cpuShoot() {
     var bvx = dx / t;
     var bvy = (dy - 0.5 * GRAVITY * t * t) / t;
 
-    // CPU misses often — only ~40% make rate
+    // CPU misses often - only ~40% make rate
     var accuracy = 0.6 + Math.random() * 0.3;
     ball.vx = bvx * accuracy + (Math.random() - 0.5) * 4;
     ball.vy = bvy + (Math.random() - 0.5) * 4;
@@ -739,7 +739,7 @@ function checkHoopCollision(hoopX, rimY, scorer) {
         }
     }
 
-    // Rim collision — only bounce off if ball is NOT going through the hoop
+    // Rim collision - only bounce off if ball is NOT going through the hoop
     var inHoop = (ball.x > rimLeft + 2 && ball.x < rimRight - 2);
     if (!inHoop) {
         var dxL = ball.x - rimLeft;
@@ -846,7 +846,7 @@ window.useSpecial = function() {
     if (specialCooldown > 0 || specialActive) return;
 
     if (selectedArchetype === 'curry') {
-        // Auto 3-pointer — guaranteed score
+        // Auto 3-pointer - guaranteed score
         if (player.hasBall) {
             player.hasBall = false;
             ball.owner = null;
@@ -1223,9 +1223,9 @@ function drawFlash() {
 
 // ─── TRIVIA ───
 var TRIVIA = [
-    { q: "How much water to make 1 cotton t-shirt?", o: ["700L", "2,700L", "500L", "10,000L"], c: 1, f: "~2,700 litres — enough for one person for 2.5 years." },
+    { q: "How much water to make 1 cotton t-shirt?", o: ["700L", "2,700L", "500L", "10,000L"], c: 1, f: "~2,700 litres - enough for one person for 2.5 years." },
     { q: "What % of textiles end up in landfills?", o: ["25%", "45%", "73%", "90%"], c: 2, f: "73% end up in landfills or are incinerated." },
-    { q: "Fashion's share of global carbon emissions?", o: ["2%", "5%", "10%", "20%"], c: 2, f: "~10% — more than flights and shipping combined." },
+    { q: "Fashion's share of global carbon emissions?", o: ["2%", "5%", "10%", "20%"], c: 2, f: "~10% - more than flights and shipping combined." },
     { q: "How many times is a garment worn on average?", o: ["7", "20", "50", "100"], c: 0, f: "Just 7 times on average before being thrown away." },
     { q: "Which material takes longest to decompose?", o: ["Cotton", "Wool", "Polyester", "Linen"], c: 2, f: "Polyester takes up to 200 years." },
     { q: "What is circular fashion?", o: ["Round clothes", "Recycled into new", "Wearing in rotation", "Trend cycles"], c: 1, f: "Designing clothes to be reused, repaired, recycled." },
@@ -1233,7 +1233,7 @@ var TRIVIA = [
     { q: "Global textile waste per year?", o: ["10M tonnes", "50M tonnes", "92M tonnes", "200M tonnes"], c: 2, f: "Over 92 million tonnes annually." },
     { q: "What do synthetic clothes release when washed?", o: ["Vitamins", "Microplastics", "Fragrance", "Oxygen"], c: 1, f: "~700,000 microplastic fibres per wash." },
     { q: "Which fibre has lowest water footprint?", o: ["Cotton", "Polyester", "Linen", "Nylon"], c: 2, f: "Linen uses far less water than cotton." },
-    { q: "How many garments produced yearly?", o: ["10B", "50B", "100B", "150B"], c: 2, f: "100 billion — 14 for every person on Earth." },
+    { q: "How many garments produced yearly?", o: ["10B", "50B", "100B", "150B"], c: 2, f: "100 billion - 14 for every person on Earth." },
     { q: "What % of clothes are recycled?", o: ["<1%", "12%", "25%", "40%"], c: 0, f: "Less than 1% is recycled into new clothing." },
     { q: "Litres of water for one pair of jeans?", o: ["1,000", "3,500", "7,500", "15,000"], c: 2, f: "About 7,500 litres." },
     { q: "UAE textile waste annually?", o: ["100K tonnes", "500K tonnes", "1.5M tonnes", "5M tonnes"], c: 2, f: "Over 1.5 million tonnes every year." }

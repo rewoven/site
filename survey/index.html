@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rewoven — Sustainability Survey</title>
+  <title>Rewoven - Sustainability Survey</title>
   <meta name="description" content="Help us understand fashion sustainability in the UAE. Take our 3-minute survey." />
   <link rel="icon" href="../assets/logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -527,17 +527,17 @@
     let currentQ = 0;
     const answers = {};
 
-    // Insights shown after certain questions — makes it feel personal
+    // Insights shown after certain questions - makes it feel personal
     const insights = {
       clothing_frequency: {
-        'Weekly': 'That\'s about 52 shopping trips a year — the average garment is worn only 7 times before it\'s discarded.',
+        'Weekly': 'That\'s about 52 shopping trips a year - the average garment is worn only 7 times before it\'s discarded.',
         'Every 2 weeks': 'Around 26 shopping trips a year. Did you know the fashion industry uses 1.5 trillion litres of water annually?',
         'Monthly': 'Monthly shopping is pretty common. Each new item has a hidden water and carbon cost most people never see.',
         'Every few months': 'Less frequent shopping already helps! The most sustainable garment is the one you already own.',
         'Rarely (a few times a year)': 'You\'re already ahead of the curve. Fewer purchases = significantly less textile waste.'
       },
       waste_awareness: {
-        1: 'No worries — that\'s exactly why Rewoven exists. We make sustainability easy to understand.',
+        1: 'No worries - that\'s exactly why Rewoven exists. We make sustainability easy to understand.',
         2: 'You\'re starting to notice. The fashion industry is the 2nd largest polluter worldwide.',
         3: 'Good awareness! With the right tools, you can turn that knowledge into real action.',
         4: 'Strong awareness! The UAE alone generates thousands of tonnes of textile waste each year.',
@@ -545,7 +545,7 @@
       },
       uae_climate_concern: {
         1: 'Climate events like the 2024 UAE floods show how interconnected our environment really is.',
-        2: 'The UAE experienced record flooding in 2024 — climate change is already affecting us locally.',
+        2: 'The UAE experienced record flooding in 2024 - climate change is already affecting us locally.',
         3: 'Climate concern is growing across the UAE. Sustainable choices in fashion can make a real difference.',
         4: 'Your concern is shared by many. Fashion accounts for 10% of global carbon emissions.',
         5: 'The UAE is investing billions in sustainability. Individual action on fashion waste matters too.'
@@ -559,7 +559,7 @@
       return [
         {
           id: 'age_range', type: 'single',
-          question: `First things first${greeting} — how old are you?`,
+          question: `First things first${greeting} - how old are you?`,
           subtitle: 'This helps us tailor our content to the right audience.',
           options: [
             { text: 'Under 18', emoji: '🎒' },
@@ -573,7 +573,7 @@
         {
           id: 'location', type: 'single',
           question: 'Where in the UAE are you based?',
-          subtitle: 'Textile waste impacts vary by emirate — this helps us localise solutions.',
+          subtitle: 'Textile waste impacts vary by emirate - this helps us localise solutions.',
           options: [
             { text: 'Abu Dhabi', emoji: '🏛️' },
             { text: 'Dubai', emoji: '🏙️' },
@@ -588,7 +588,7 @@
         {
           id: 'clothing_frequency', type: 'single',
           question: `How often do you buy new clothes${greeting}?`,
-          subtitle: 'Be honest — no judgement here.',
+          subtitle: 'Be honest - no judgement here.',
           options: [
             { text: 'Weekly', emoji: '🛍️' },
             { text: 'Every 2 weeks', emoji: '📅' },
@@ -601,7 +601,7 @@
         {
           id: 'monthly_spend', type: 'single',
           question: 'How much do you typically spend on clothing per month?',
-          subtitle: 'Approximate is fine — this helps us understand fashion consumption patterns in the UAE.',
+          subtitle: 'Approximate is fine - this helps us understand fashion consumption patterns in the UAE.',
           options: [
             { text: 'Under AED 200', emoji: '💰' },
             { text: 'AED 200-500', emoji: '💳' },
@@ -613,7 +613,7 @@
         {
           id: 'discard_method', type: 'multi',
           question: 'What do you do with clothes you no longer wear?',
-          subtitle: 'Select all that apply — most people do more than one thing.',
+          subtitle: 'Select all that apply - most people do more than one thing.',
           options: [
             { text: 'Throw them away', emoji: '🗑️' },
             { text: 'Donate to charity', emoji: '🤝' },
@@ -641,7 +641,7 @@
         {
           id: 'fashion_climate_link', type: 'single',
           question: 'Do you think fast fashion contributes to environmental crises?',
-          subtitle: 'The fashion industry accounts for ~10% of global carbon emissions — more than aviation and shipping combined.',
+          subtitle: 'The fashion industry accounts for ~10% of global carbon emissions - more than aviation and shipping combined.',
           options: [
             { text: 'Strongly agree', emoji: '💯' },
             { text: 'Agree', emoji: '👍' },
@@ -654,19 +654,19 @@
         {
           id: 'sustainable_fashion_knowledge', type: 'single',
           question: 'How would you rate your sustainability knowledge?',
-          subtitle: 'There\'s no wrong answer — we\'re here to help everyone learn.',
+          subtitle: 'There\'s no wrong answer - we\'re here to help everyone learn.',
           options: [
-            { text: 'Expert — I actively practice and advocate', emoji: '🏆' },
-            { text: 'Good — I know the basics', emoji: '📗' },
-            { text: 'Some awareness — I\'ve heard about it', emoji: '💡' },
-            { text: 'Very little — I don\'t know much', emoji: '🌱' },
-            { text: 'None — this is new to me', emoji: '🆕' }
+            { text: 'Expert - I actively practice and advocate', emoji: '🏆' },
+            { text: 'Good - I know the basics', emoji: '📗' },
+            { text: 'Some awareness - I\'ve heard about it', emoji: '💡' },
+            { text: 'Very little - I don\'t know much', emoji: '🌱' },
+            { text: 'None - this is new to me', emoji: '🆕' }
           ]
         },
         {
           id: 'sustainability_barriers', type: 'multi',
           question: `What stops you from being more sustainable with fashion${greeting}?`,
-          subtitle: 'Select all that apply — understanding barriers helps us remove them.',
+          subtitle: 'Select all that apply - understanding barriers helps us remove them.',
           options: [
             { text: 'Sustainable options are too expensive', emoji: '💸' },
             { text: 'I don\'t know where to find sustainable brands', emoji: '🔍' },
@@ -674,7 +674,7 @@
             { text: 'I don\'t know what to do with old clothes', emoji: '🤷' },
             { text: 'I don\'t think my actions matter', emoji: '😔' },
             { text: 'Lack of information or education', emoji: '📖' },
-            { text: 'Nothing — I already try to be sustainable', emoji: '🌿' }
+            { text: 'Nothing - I already try to be sustainable', emoji: '🌿' }
           ]
         },
         {
@@ -686,7 +686,7 @@
         {
           id: 'desired_features', type: 'multi',
           question: 'Which features would you use most?',
-          subtitle: 'Select all that appeal to you — this directly shapes what we build next.',
+          subtitle: 'Select all that appeal to you - this directly shapes what we build next.',
           options: [
             { text: 'Scan clothing labels for sustainability info', emoji: '📸' },
             { text: 'Track your environmental impact', emoji: '📊' },
@@ -716,7 +716,7 @@
           subtitle: 'Think about clothes that have been sitting untouched for months.',
           options: [
             { text: 'Less than 10', emoji: '👕' },
-            { text: '10–20', emoji: '👗' },
+            { text: '10-20', emoji: '👗' },
             { text: '20+', emoji: '🗄️' }
           ]
         },
@@ -732,7 +732,7 @@
         },
         {
           id: 'additional_thoughts', type: 'text',
-          question: `Last one${greeting} — any thoughts you'd like to share?`,
+          question: `Last one${greeting} - any thoughts you'd like to share?`,
           subtitle: 'Anything about fashion, sustainability, the UAE, or what you\'d want from Rewoven. Totally optional.',
           placeholder: 'Type your thoughts here...'
         }

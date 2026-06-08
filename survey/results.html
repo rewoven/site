@@ -582,7 +582,7 @@
 
                 // For multi-select fields the % can exceed 100 because each
                 // response can be in multiple buckets. Use the responses
-                // total as the denominator either way — clearer for analysis.
+                // total as the denominator either way - clearer for analysis.
                 csv += `--- ${spec.title} (${spec.field}) ---\n`;
                 csv += 'Option,Count,% of responses\n';
                 entries.forEach(([label, count]) => {
@@ -726,7 +726,7 @@
                         const canvas = chart.canvas;
                         const sourceAspect = canvas.height / canvas.width;
 
-                        // Same sizing rule as before — preserve aspect ratio,
+                        // Same sizing rule as before - preserve aspect ratio,
                         // cap to whichever dimension hits first. (Word units
                         // here are EMU-ish via docx.js: pixels at 96 DPI.)
                         const maxW = 480;  // px in the doc
@@ -762,7 +762,7 @@
             // Footer
             children.push(new Paragraph({
                 children: [new TextRun({
-                    text: 'Generated from rewovenapp.com/survey/results — full row-level data is available via the CSV export.',
+                    text: 'Generated from rewovenapp.com/survey/results - full row-level data is available via the CSV export.',
                     italics: true,
                     color: '999999',
                     size: 18,
