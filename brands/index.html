@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Brand Directory | Rewoven</title>
-  <meta name="description" content="Search 500+ fashion brands and see how they rate on sustainability. Rewoven's brand directory rates brands on environmental impact, labor practices, transparency, and animal welfare." />
+  <meta name="description" content="Search 635 fashion brands and see how they rate on sustainability. Rewoven's brand directory rates brands on environmental impact, labor practices, transparency, and animal welfare." />
   <meta property="og:title" content="Brand Sustainability Directory | Rewoven" />
-  <meta property="og:description" content="Search 500+ fashion brands and see how they rate on sustainability." />
+  <meta property="og:description" content="Search 635 fashion brands and see how they rate on sustainability." />
   <meta property="og:image" content="../assets/rewoven-logo.jpeg" />
   <link rel="icon" href="../assets/logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -671,6 +671,7 @@
         <li><a href="/#how-it-works">How It Works</a></li>
         <li><a href="/game/">Games</a></li>
         <li><a href="/brands/" class="active">Brands</a></li>
+        <li><a href="/extension/">Extension</a></li>
         <li><a href="/donate/">Donate</a></li>
         <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">&#127769;</button></li>
         <li><a href="https://apps.apple.com/us/app/rewoven/id6759314001" class="nav-cta">Download App</a></li>
@@ -686,7 +687,7 @@
     <div class="container">
       <div class="hero-label">Brand Directory</div>
       <h1>Brand Sustainability <span class="highlight">Directory</span></h1>
-      <p>Search 500+ fashion brands and see how they rate on sustainability, ethics, and environmental impact.</p>
+      <p>Search 635 fashion brands and see how they rate on sustainability, ethics, and environmental impact.</p>
       <div class="hero-stats" id="heroStats">
         <div class="hero-stat">
           <div class="hero-stat-value" id="statBrands">--</div>
@@ -701,6 +702,9 @@
           <div class="hero-stat-label">Categories</div>
         </div>
       </div>
+      <p style="margin-top:28px;position:relative;">
+        <a href="/methodology/" style="font-size:14px;font-weight:600;color:var(--green-600);text-decoration:none;">How we score &rarr;</a>
+      </p>
     </div>
   </section>
 
@@ -808,7 +812,7 @@
   <footer>
     <div class="container">
       <p style="max-width:820px;margin:0 auto 32px;font-size:12.5px;line-height:1.6;color:var(--gray-400);text-align:center;">
-        Ratings are Rewoven's editorial assessments and expressions of opinion, not statements of fact, based on publicly available information and may not reflect a brand's most recent changes. Each brand includes a "Why this score" breakdown. Rewoven is not affiliated with the brands listed; trademarks belong to their respective owners. Brands can request a review at <a href="mailto:arhan@rewovenapp.com" style="color:var(--green-500);">arhan@rewovenapp.com</a>.
+        Ratings are Rewoven's editorial assessments and expressions of opinion, not statements of fact, based on publicly available information and may not reflect a brand's most recent changes. Each brand includes a "Why this score" breakdown. Rewoven is not affiliated with the brands listed; trademarks belong to their respective owners. Brands can request a review at <a href="mailto:arhan@rewovenapp.com" style="color:var(--green-500);">arhan@rewovenapp.com</a>. <a href="/methodology/" style="color:var(--green-500);font-weight:600;">How we score &rarr;</a>
       </p>
       <div class="footer-top">
         <div class="footer-brand">
@@ -821,6 +825,8 @@
             <li><a href="/#features">Features</a></li>
             <li><a href="/#impact">Impact</a></li>
             <li><a href="/#how-it-works">How It Works</a></li>
+            <li><a href="/extension/">Chrome Extension</a></li>
+            <li><a href="/api/">API</a></li>
             <li><a href="https://apps.apple.com/us/app/rewoven/id6759314001">Download</a></li>
           </ul>
         </div>
@@ -848,7 +854,10 @@
         Are you a school, NGO, or organization interested in partnering with us? Reach out at <a href="mailto:arhan@rewovenapp.com">arhan@rewovenapp.com</a>
       </div>
       <div class="footer-bottom">
-        <span>&copy; 2026 Rewoven</span>
+        <div style="display:flex;align-items:center;gap:18px;">
+          <span>&copy; 2026 Rewoven</span>
+          <a href="/privacy/" style="color:rgba(255,255,255,0.6);text-decoration:none;">Privacy</a>
+        </div>
         <div class="footer-social">
           <a href="https://instagram.com/rewoven.app" aria-label="Instagram"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
           <a href="mailto:arhan@rewovenapp.com" aria-label="Email"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>
@@ -1160,11 +1169,11 @@
     async function loadStats() {
       try {
         const stats = await apiFetch('/api/stats');
-        document.getElementById('statBrands').textContent = stats.total_brands || '500+';
+        document.getElementById('statBrands').textContent = stats.total_brands || '635';
         document.getElementById('statAvg').textContent = stats.average_score ? Math.round(stats.average_score) : '--';
         document.getElementById('statCategories').textContent = stats.total_categories || '8';
       } catch (err) {
-        document.getElementById('statBrands').textContent = '500+';
+        document.getElementById('statBrands').textContent = '635';
         document.getElementById('statAvg').textContent = '--';
         document.getElementById('statCategories').textContent = '8';
       }

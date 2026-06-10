@@ -172,9 +172,13 @@
       max-width: 520px;
     }
     .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px; }
+    .hero-stats-kicker {
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--green-500);
+      padding-top: 32px; border-top: 1px solid var(--gray-200);
+    }
     .hero-stats {
-      display: flex; gap: 48px; padding-top: 32px;
-      border-top: 1px solid var(--gray-200);
+      display: flex; gap: 48px; padding-top: 16px;
     }
     .hero-stat strong {
       display: block; font-size: 32px; font-weight: 800; color: var(--green-600);
@@ -566,7 +570,7 @@
     [data-theme="dark"] .hero::after {
       background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
     }
-    [data-theme="dark"] .hero-stats {
+    [data-theme="dark"] .hero-stats-kicker {
       border-top-color: #334155;
     }
     [data-theme="dark"] .phone-mockup {
@@ -767,6 +771,7 @@
         <li class="nav-quiz" data-premium-only style="display:none;"><a href="https://quiz.rewovenapp.com">Quiz</a></li>
         <li class="nav-curriculum" data-premium-only style="display:none;"><a href="https://curriculum.rewovenapp.com">Curriculum</a></li>
         <li><a href="/brands/">Brands</a></li>
+        <li><a href="/extension/">Extension</a></li>
         <li><a href="/donate/">Donate</a></li>
         <li><a href="/ambassadors/" style="font-weight:700;">Join Us</a></li>
         <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">&#127769;</button></li>
@@ -802,6 +807,7 @@
             Search Brands
           </a>
         </div>
+        <div class="hero-stats-kicker">So far</div>
         <div class="hero-stats">
           <div class="hero-stat">
             <strong>1.3M</strong>
@@ -849,7 +855,7 @@
     <div class="container">
       <span class="section-label fade-in">The Problem</span>
       <h2 class="section-title fade-in">Fashion Has a Waste Crisis</h2>
-      <p class="section-subtitle fade-in" style="margin: 0 auto;">The fashion industry produces massive environmental damage &mdash; and young people rarely learn about it until bad habits are already formed.</p>
+      <p class="section-subtitle fade-in" style="margin: 0 auto;">The fashion industry produces massive environmental damage - and young people rarely learn about it until bad habits are already formed.</p>
       <div class="problem-grid">
         <div class="problem-card fade-in">
           <div class="problem-number">92M</div>
@@ -861,13 +867,13 @@
           <div class="problem-number">2,700</div>
           <div class="problem-icon" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">💧</div>
           <h3>Litres Per T-Shirt</h3>
-          <p>A single cotton t-shirt requires 2,700 litres of water to produce &mdash; enough drinking water for 2.5 years.</p>
+          <p>A single cotton t-shirt requires 2,700 litres of water to produce - enough drinking water for 2.5 years.</p>
         </div>
         <div class="problem-card fade-in">
           <div class="problem-number">10%</div>
           <div class="problem-icon" style="background: linear-gradient(135deg, #ECFDF5, #A7F3D0);">🌍</div>
           <h3>Global Carbon</h3>
-          <p>Fashion accounts for 10% of global carbon emissions &mdash; more than international flights and maritime shipping combined.</p>
+          <p>Fashion accounts for 10% of global carbon emissions - more than international flights and maritime shipping combined.</p>
         </div>
       </div>
     </div>
@@ -1011,7 +1017,7 @@
         <div class="feature-content">
           <span class="section-label">Circular Fashion</span>
           <h3>Upcycle Marketplace &amp; Donate</h3>
-          <p>Browse products made from textile waste &mdash; tote bags, pencil cases, patchwork creations. Plus, log your clothing donations with photo proof and compete on the leaderboard.</p>
+          <p>Browse products made from textile waste - tote bags, pencil cases, patchwork creations. Plus, log your clothing donations with photo proof and compete on the leaderboard.</p>
           <ul class="feature-bullets">
             <li>Shop upcycled products from scrap fabric</li>
             <li>Support circular fashion entrepreneurship</li>
@@ -1053,9 +1059,9 @@
   <!-- Impact Section -->
   <section class="impact" id="impact">
     <div class="container">
-      <span class="section-label fade-in">Expected Impact</span>
+      <span class="section-label fade-in">Our Year-One Goals</span>
       <h2 class="section-title fade-in">Building a Sustainable Generation</h2>
-      <p class="section-subtitle fade-in">Within the first year, Rewoven aims to create measurable environmental and educational impact across the UAE.</p>
+      <p class="section-subtitle fade-in">These are targets, not yet results: within the first year, Rewoven aims to create measurable environmental and educational impact across the UAE.</p>
       <div class="impact-grid">
         <div class="impact-card fade-in">
           <div class="icon">👩‍🎓</div>
@@ -1154,13 +1160,13 @@
   <section class="cta" id="download">
     <div class="container">
       <h2 class="fade-in">Ready to Reweave the Future?</h2>
-      <p class="fade-in">Subscribe to help Rewoven make a difference.</p>
+      <p class="fade-in">Every premium feature is currently unlocked for all users.</p>
       <div class="cta-buttons fade-in" style="display:flex;flex-direction:column;align-items:center;">
         <a href="https://premium.rewovenapp.com" class="btn btn-primary">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          $4.99/mo
+          Free for everyone during our soft launch
         </a>
-        <p style="margin-top:14px;font-size:14px;color:rgba(255,255,255,0.55);font-weight:400;">This is completely optional and helps us cover our costs</p>
+        <p style="margin-top:14px;font-size:14px;color:rgba(255,255,255,0.55);font-weight:400;">No payment required - premium is free for all users while we soft launch</p>
       </div>
     </div>
   </section>
@@ -1179,6 +1185,8 @@
             <li><a href="#features">Features</a></li>
             <li><a href="#impact">Impact</a></li>
             <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="/extension/">Chrome Extension</a></li>
+            <li><a href="/api/">API</a></li>
             <li><a href="https://apps.apple.com/us/app/rewoven/id6759314001">Download</a></li>
           </ul>
         </div>
@@ -1206,7 +1214,10 @@
         Are you a school, NGO, or organization interested in partnering with us? Reach out at <a href="mailto:arhan@rewovenapp.com">arhan@rewovenapp.com</a>
       </div>
       <div class="footer-bottom">
-        <span>&copy; 2026 Rewoven</span>
+        <div style="display:flex;align-items:center;gap:18px;">
+          <span>&copy; 2026 Rewoven</span>
+          <a href="/privacy/" style="color:rgba(255,255,255,0.6);text-decoration:none;">Privacy</a>
+        </div>
         <div class="footer-social">
           <a href="https://instagram.com/rewoven.app" aria-label="Instagram"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
           <a href="mailto:arhan@rewovenapp.com" aria-label="Email"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></a>

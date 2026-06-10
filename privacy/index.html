@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy | Rewoven</title>
+  <meta name="description" content="Rewoven's privacy policy for the Chrome extension and website: what runs on your device, what gets sent to our API, and what we never collect." />
+  <link rel="icon" href="../assets/logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --green-600: #059669; --green-700: #047857; --green-800: #065F46;
+      --dark: #111827; --gray-600: #4B5563; --gray-400: #9CA3AF;
+      --gray-200: #E5E7EB; --bg: #F0FDF4; --surface: #FFFFFF;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--dark); background: var(--bg); line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 64px 24px 96px; }
+    .kicker { font-size: 13px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--green-600); }
+    h1 { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 800; margin: 8px 0 12px; color: var(--dark); }
+    .lede { font-size: 18px; color: var(--gray-600); margin-bottom: 8px; }
+    .effective { font-size: 14px; color: var(--gray-400); margin-bottom: 40px; }
+    h2 { font-size: 22px; font-weight: 800; margin: 40px 0 12px; padding-top: 28px; border-top: 1px solid var(--gray-200); color: var(--dark); }
+    h2:first-of-type { border-top: none; padding-top: 0; }
+    p { color: var(--gray-600); margin-bottom: 14px; }
+    ul { margin: 0 0 14px; padding-left: 20px; color: var(--gray-600); }
+    li { margin-bottom: 8px; }
+    a { color: var(--green-600); text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+    code { background: #E8F5E9; color: var(--green-800); padding: 2px 7px; border-radius: 6px; font-size: 14px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .callout { background: #FFF8E1; border: 1px solid #FDE68A; border-radius: 12px; padding: 16px 20px; margin: 20px 0; font-size: 15px; color: #78350F; }
+    footer { max-width: 760px; margin: 0 auto; padding: 24px; color: var(--gray-400); font-size: 13px; border-top: 1px solid var(--gray-200); }
+    footer a { color: var(--green-600); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">Privacy Policy</p>
+    <h1>Your data, plainly</h1>
+    <p class="lede">This policy covers the Rewoven Chrome extension and the Rewoven website (rewovenapp.com). It's written to be read, not skimmed past.</p>
+    <p class="effective">Effective date: June 2026</p>
+
+    <div class="callout">
+      <strong>The short version:</strong> the extension reads product pages on your device, sends only the detected brand name to our API, and keeps nothing about you. The website is a static site. We don't run analytics or trackers in the extension, and Rewoven sets no cookies.
+    </div>
+
+    <h2>1. The Chrome extension</h2>
+    <p><strong>What happens on your device.</strong> When you visit a fashion product page, the extension reads the page's content locally in your browser to detect the brand and, where listed, the fabric composition. That analysis happens entirely on-device. The contents of the pages you visit are never uploaded anywhere.</p>
+    <p><strong>What gets sent.</strong> To fetch a brand's sustainability rating, the extension sends only the detected brand name (as a slug, e.g. <code>patagonia</code>) to our public API at <code>api.rewovenapp.com</code>. That request contains:</p>
+    <ul>
+      <li>no personal data,</li>
+      <li>no browsing history,</li>
+      <li>no page URLs or page contents,</li>
+      <li>no identifiers tied to you - the extension requires no account or sign-in.</li>
+    </ul>
+    <p><strong>What we store.</strong> Nothing about you, server-side. The API serves the same public brand database to everyone and doesn't keep profiles of who asked for what. Your extension settings (for example, whether the overlay is enabled) stay in your browser's local storage on your device.</p>
+    <p><strong>No analytics, no trackers.</strong> The extension contains no analytics, advertising, or tracking code.</p>
+
+    <h2>2. The website</h2>
+    <p>rewovenapp.com is a static website hosted on GitHub Pages. Rewoven sets no cookies. A few practical notes:</p>
+    <ul>
+      <li>Your light/dark theme choice is saved in your browser's local storage and never leaves your device.</li>
+      <li>Pages load fonts from Google Fonts, and hosting is provided by GitHub Pages; like any web servers, those providers may keep standard technical logs on their end under their own policies.</li>
+      <li>If you choose to create a Rewoven account (used by the app and some site features), sign-in is handled by our backend provider, Supabase, and is covered by the consent you give at sign-up. Browsing this site requires no account.</li>
+    </ul>
+
+    <h2>3. Children</h2>
+    <p>Rewoven is built with young people in mind, which is exactly why the extension and website are designed to work without accounts, personal data, or tracking.</p>
+
+    <h2>4. Changes</h2>
+    <p>If this policy changes, we'll update this page and the effective date above. We won't quietly start collecting things this page says we don't.</p>
+
+    <h2>5. Contact</h2>
+    <p>Questions, concerns, or anything that looks off? Email <a href="mailto:arhan@rewovenapp.com">arhan@rewovenapp.com</a>.</p>
+
+    <p style="margin-top:32px;font-size:14px;color:var(--gray-400);">Curious how our ratings and estimates are made? That's all public too: <a href="/methodology/">read the methodology</a>.</p>
+  </div>
+  <footer>&copy; 2026 Rewoven</footer>
+</body>
+</html>
