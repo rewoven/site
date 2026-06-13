@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chrome Extension | Rewoven</title>
-  <meta name="description" content="The Rewoven Chrome extension shows a brand's sustainability grade right on fashion product pages, with material footprint estimates and higher-rated alternatives." />
+  <meta name="description" content="The Rewoven Chrome extension reads the actual product you're viewing - its materials and price - and shows the estimated carbon and water footprint, cost-per-wear, full material breakdown, and the brand's sustainability grade, right on the page." />
   <meta property="og:title" content="Rewoven Chrome Extension" />
-  <meta property="og:description" content="See how sustainable a brand is, right while you shop." />
+  <meta property="og:description" content="Know the footprint of what you're about to buy, right while you shop." />
   <meta property="og:image" content="../assets/rewoven-logo.jpeg" />
   <link rel="icon" href="../assets/logo.png" type="image/png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -244,6 +244,18 @@
     }
     .overlay-foot a { color: var(--green-600); font-weight: 600; text-decoration: none; }
     .overlay-foot a:hover { text-decoration: underline; }
+    .overlay-lens { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--green-600); margin-bottom: 3px; }
+    .overlay-product { font-size: 12.5px; font-weight: 700; color: var(--dark); margin-bottom: 4px; line-height: 1.3; }
+    .overlay-seclabel { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--green-600); margin: 13px 0 7px; }
+    .overlay-metric { display: flex; align-items: center; justify-content: space-between; font-size: 11.5px; padding: 3px 0; }
+    .overlay-metric .m-label { color: var(--gray-600); }
+    .overlay-metric .m-val { font-weight: 700; color: var(--dark); }
+    .overlay-mat { display: flex; align-items: center; gap: 8px; margin: 6px 0; }
+    .overlay-mat .mat-name { width: 62px; font-size: 11px; color: var(--dark); flex-shrink: 0; }
+    .overlay-mat .mat-track { flex: 1; height: 5px; background: var(--gray-200); border-radius: 3px; overflow: hidden; }
+    .overlay-mat .mat-fill { height: 100%; border-radius: 3px; }
+    .overlay-mat .mat-pct { width: 32px; text-align: right; font-size: 11px; font-weight: 700; color: var(--dark); }
+    .overlay-divider { border-top: 1px solid var(--gray-200); margin: 12px 0; }
     .mock-caption {
       grid-column: 1 / -1; text-align: center; font-size: 12.5px;
       color: var(--gray-400); padding: 4px 8px 0; line-height: 1.6;
@@ -381,8 +393,8 @@
     <div class="container">
       <div class="hero-content">
         <span class="section-label">Chrome Extension</span>
-        <h1>See how sustainable a brand is, <span class="highlight">right while you shop</span>.</h1>
-        <p>The Rewoven extension overlays a brand's sustainability grade - from our <strong><span id="brandCount">635</span>-brand database</strong> - directly on fashion product pages. When a page lists its fabric composition, it adds material footprint estimates from published research, and it suggests higher-rated alternatives in a similar style and price range.</p>
+        <h1>Know the footprint of <span class="highlight">what you're about to buy</span>.</h1>
+        <p>The Rewoven extension reads the actual product you're viewing - its materials, price, and brand - and shows what matters before checkout: estimated carbon and water footprint, cost-per-wear, the full material breakdown, the brand's grade from our <strong><span id="brandCount">635</span>-brand database</strong>, and higher-rated alternatives. All on the page, no popups.</p>
         <div class="hero-buttons">
           <button class="btn btn-disabled" disabled aria-disabled="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -413,6 +425,24 @@
               </div>
             </div>
             <div class="overlay-card">
+              <div class="overlay-lens">&#127811; Rewoven Shopping Lens</div>
+              <div class="overlay-product">Relaxed Linen-Blend Trousers</div>
+
+              <div class="overlay-seclabel">&#127757; Environmental footprint</div>
+              <div class="overlay-metric"><span class="m-label">Carbon</span><span class="m-val">~5.4 kg CO&#8322;</span></div>
+              <div class="overlay-metric"><span class="m-label">Water</span><span class="m-val">~1,400 L</span></div>
+              <div class="overlay-metric"><span class="m-label">Cost per wear</span><span class="m-val">~$0.42</span></div>
+
+              <div class="overlay-divider"></div>
+
+              <div class="overlay-seclabel">&#129525; Material analysis</div>
+              <div class="overlay-mat"><span class="mat-name">Linen</span><div class="mat-track"><div class="mat-fill" style="width:55%;background:var(--green-500);"></div></div><span class="mat-pct">55%</span></div>
+              <div class="overlay-mat"><span class="mat-name">Cotton</span><div class="mat-track"><div class="mat-fill" style="width:30%;background:var(--gold);"></div></div><span class="mat-pct">30%</span></div>
+              <div class="overlay-mat"><span class="mat-name">Polyester</span><div class="mat-track"><div class="mat-fill" style="width:15%;background:var(--gray-400);"></div></div><span class="mat-pct">15%</span></div>
+
+              <div class="overlay-divider"></div>
+
+              <div class="overlay-seclabel">&#127970; Brand rating</div>
               <div class="overlay-head">
                 <div class="overlay-brand">
                   <img src="../assets/logo.png" alt="Rewoven" onerror="this.style.display='none'" />
@@ -420,7 +450,7 @@
                 </div>
                 <div class="overlay-grade">A+</div>
               </div>
-              <div class="overlay-score"><strong>92</strong>/100 &middot; Rewoven sustainability rating</div>
+              <div class="overlay-score"><strong>92</strong>/100 &middot; Rewoven brand rating</div>
               <div class="overlay-bars">
                 <div class="overlay-bar-row">
                   <span class="overlay-bar-label">Environmental</span>
@@ -443,17 +473,11 @@
                   <span class="overlay-bar-val">88</span>
                 </div>
               </div>
-              <div class="overlay-certs">
-                <span class="overlay-cert">B Corp</span>
-                <span class="overlay-cert">Fair Trade</span>
-                <span class="overlay-cert">Bluesign</span>
-                <span class="overlay-cert">GOTS</span>
-              </div>
               <div class="overlay-foot">
-                Editorial rating, not a statement of fact. <a href="/methodology/">How we score &rarr;</a>
+                Footprint figures are estimates (~). Brand rating is editorial opinion, not a statement of fact. <a href="/methodology/">How we score &rarr;</a>
               </div>
             </div>
-            <p class="mock-caption">Illustration of the overlay. Patagonia's grade, scores, and certifications are the real values from our live database.</p>
+            <p class="mock-caption">Illustration of the overlay. The brand grade and dimension scores are real values from our live database; the product, its materials, and the footprint figures are an example - the extension calculates these from whatever product you're actually viewing.</p>
           </div>
         </div>
       </div>
@@ -465,22 +489,22 @@
     <div class="container">
       <span class="section-label fade-in">What It Does</span>
       <h2 class="section-title fade-in">Three things, honestly</h2>
-      <p class="section-subtitle fade-in" style="margin: 0 auto;">No popups, no nagging. Just the information you'd want before checkout.</p>
+      <p class="section-subtitle fade-in" style="margin: 0 auto;">It analyses the product in front of you - not just the logo on it. No popups, no nagging.</p>
       <div class="features-grid">
         <div class="feature-card fade-in">
+          <div class="feature-icon">&#127757;</div>
+          <h3>The footprint of the product</h3>
+          <p>Reads the product's fabric composition and price, then estimates its carbon and water footprint, cost-per-wear, and expected wears - the numbers that tell you whether something is actually worth buying. Every estimate is marked with a ~. <a href="/methodology/">See the sources</a>.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon">&#129525;</div>
+          <h3>Full material breakdown</h3>
+          <p>Pulls the exact fabric composition straight off the page - for example 55% linen, 30% cotton, 15% polyester - so you can see what a garment is really made of, with higher-impact synthetics flagged.</p>
+        </div>
+        <div class="feature-card fade-in">
           <div class="feature-icon">&#127991;&#65039;</div>
-          <h3>Brand grade on the page</h3>
-          <p>Detects the brand you're browsing and shows its A-F grade and 0-100 score from Rewoven's <span class="brand-count-inline">635</span>-brand database, with the four dimension scores behind it: environmental impact, labor practices, transparency, and animal welfare.</p>
-        </div>
-        <div class="feature-card fade-in">
-          <div class="feature-icon">&#128167;</div>
-          <h3>Material footprint estimates</h3>
-          <p>When a product page lists its fabric composition, the extension calculates estimated water and carbon footprints from published per-fibre research averages. Every estimate is marked with a ~ because that's what it is: an estimate, not a measurement. <a href="/methodology/">See the sources</a>.</p>
-        </div>
-        <div class="feature-card fade-in">
-          <div class="feature-icon">&#8635;</div>
-          <h3>Higher-rated alternatives</h3>
-          <p>For lower-scoring brands, it suggests better-rated brands in a similar category and price range, so a more sustainable choice is one click away instead of a research project.</p>
+          <h3>Brand grade + alternatives</h3>
+          <p>Shows the brand's A-F grade and 0-100 score across four dimensions - environmental, labor, transparency, animal welfare - from our <span class="brand-count-inline">635</span>-brand database, and suggests higher-rated alternatives one click away.</p>
         </div>
       </div>
     </div>
