@@ -169,6 +169,9 @@
       font-size: 19px; line-height: 1.7; color: var(--gray-600); margin-bottom: 36px;
       max-width: 520px;
     }
+    .hero-list { list-style: none; margin: 0 0 36px; max-width: 520px; }
+    .hero-list li { position: relative; padding-left: 28px; margin-bottom: 12px; font-size: 17px; color: var(--gray-600); line-height: 1.5; }
+    .hero-list li::before { content: '\2713'; position: absolute; left: 0; top: 0; color: var(--green-500); font-weight: 800; }
     .hero-buttons { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
     .install-note { font-size: 13px; color: var(--gray-400); line-height: 1.6; max-width: 440px; }
     .install-note a { color: var(--green-600); font-weight: 600; text-decoration: none; }
@@ -394,7 +397,14 @@
       <div class="hero-content">
         <span class="section-label">Chrome Extension</span>
         <h1>Know the footprint of <span class="highlight">what you're about to buy</span>.</h1>
-        <p>The Rewoven extension reads the actual product you're viewing - its materials, price, and brand - and shows what matters before checkout: estimated carbon and water footprint, cost-per-wear, the full material breakdown, the brand's grade from our <strong><span id="brandCount">635</span>-brand database</strong>, and higher-rated alternatives. All on the page, no popups.</p>
+        <p style="margin-bottom:18px;">The Rewoven shopping extension reads the actual product you're viewing and shows what matters before checkout:</p>
+        <ul class="hero-list">
+          <li>estimated carbon and water footprint</li>
+          <li>cost-per-wear</li>
+          <li>the full material breakdown</li>
+          <li>the brand's grade from our <span id="brandCount">635</span>-brand database</li>
+          <li>higher-rated alternatives</li>
+        </ul>
         <div class="hero-buttons">
           <button class="btn btn-disabled" disabled aria-disabled="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -477,7 +487,6 @@
                 Footprint figures are estimates (~). Brand rating is editorial opinion, not a statement of fact. <a href="/methodology/">How we score &rarr;</a>
               </div>
             </div>
-            <p class="mock-caption">Illustration of the overlay. The brand grade and dimension scores are real values from our live database; the product, its materials, and the footprint figures are an example - the extension calculates these from whatever product you're actually viewing.</p>
           </div>
         </div>
       </div>
