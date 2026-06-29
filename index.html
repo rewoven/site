@@ -1355,8 +1355,7 @@
 
   <!-- Floating podcast button -->
   <a href="#podcast" id="podcastFab" aria-label="Listen to the Rewoven Radio podcast">
-    <svg class="fab-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="12" x2="18" y2="12"/><polyline points="12 6 18 12 12 18"/></svg>
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a1 1 0 0 1 2 0 7 7 0 0 1-6 6.92V21h2a1 1 0 0 1 0 2H7a1 1 0 0 1 0-2h2v-3.08A7 7 0 0 1 5 11a1 1 0 0 1 2 0 5 5 0 0 0 10 0z"/></svg>
+    <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     <span>Listen to the Podcast</span>
   </a>
   <style>
@@ -1378,8 +1377,12 @@
     #podcastFab:hover { transform: translateY(-3px); background: rgba(255,255,255,0.65); box-shadow: 0 12px 36px rgba(17,24,39,0.22); }
     [data-theme="dark"] #podcastFab { background: rgba(30,41,59,0.45); border-color: var(--green-500); color: var(--green-400); box-shadow: 0 8px 32px rgba(0,0,0,0.45); }
     [data-theme="dark"] #podcastFab:hover { background: rgba(30,41,59,0.65); }
-    #podcastFab .fab-arrow { animation: fabArrow 1.1s ease-in-out infinite; }
-    @keyframes fabArrow { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+    #podcastFab .eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 15px; }
+    #podcastFab .eq i { width: 3px; height: 100%; background: currentColor; border-radius: 1px; transform-origin: bottom; animation: eqBar 0.9s ease-in-out infinite; }
+    #podcastFab .eq i:nth-child(2) { animation-delay: 0.22s; }
+    #podcastFab .eq i:nth-child(3) { animation-delay: 0.44s; }
+    #podcastFab .eq i:nth-child(4) { animation-delay: 0.13s; }
+    @keyframes eqBar { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
     .btn-spotify { background: #191414; color: #ffffff; box-shadow: 0 4px 16px rgba(0,0,0,0.28); }
     .btn-spotify:hover { background: #2a2422; transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.35); }
     #podcastFab.hidden { opacity: 0; visibility: hidden; transform: translateY(12px); pointer-events: none; }
