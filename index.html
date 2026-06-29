@@ -1168,8 +1168,8 @@
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           title="Rewoven Radio on Spotify"></iframe>
       </div>
-      <a href="https://open.spotify.com/show/033GbGQsFjPEIPnBIVBtwb" target="_blank" rel="noopener" class="btn btn-primary fade-in">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.43c-.18.3-.57.4-.87.22-2.38-1.45-5.38-1.78-8.91-.97-.34.08-.68-.13-.76-.47-.08-.34.13-.68.47-.76 3.86-.88 7.18-.5 9.85 1.13.3.18.4.57.22.85zm1.22-2.72c-.23.37-.71.48-1.08.26-2.72-1.67-6.87-2.16-10.09-1.18-.41.12-.85-.11-.97-.52-.12-.41.11-.85.52-.97 3.68-1.12 8.25-.57 11.38 1.35.36.22.48.71.24 1.06zm.11-2.84C14.7 8.95 9.39 8.77 6.3 9.71c-.49.15-1.01-.13-1.16-.62-.15-.49.13-1.01.62-1.16 3.55-1.08 9.42-.87 13.15 1.34.44.26.59.83.33 1.27-.26.44-.83.59-1.27.33z"/></svg>
+      <a href="https://open.spotify.com/show/033GbGQsFjPEIPnBIVBtwb" target="_blank" rel="noopener" class="btn btn-spotify fade-in">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1ED760"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.43c-.18.3-.57.4-.87.22-2.38-1.45-5.38-1.78-8.91-.97-.34.08-.68-.13-.76-.47-.08-.34.13-.68.47-.76 3.86-.88 7.18-.5 9.85 1.13.3.18.4.57.22.85zm1.22-2.72c-.23.37-.71.48-1.08.26-2.72-1.67-6.87-2.16-10.09-1.18-.41.12-.85-.11-.97-.52-.12-.41.11-.85.52-.97 3.68-1.12 8.25-.57 11.38 1.35.36.22.48.71.24 1.06zm.11-2.84C14.7 8.95 9.39 8.77 6.3 9.71c-.49.15-1.01-.13-1.16-.62-.15-.49.13-1.01.62-1.16 3.55-1.08 9.42-.87 13.15 1.34.44.26.59.83.33 1.27-.26.44-.83.59-1.27.33z"/></svg>
         Listen to Episode 1
       </a>
     </div>
@@ -1364,20 +1364,24 @@
       position: fixed; bottom: 24px; right: 24px; z-index: 95;
       display: inline-flex; align-items: center; gap: 8px;
       padding: 13px 22px; border-radius: 50px;
-      background: #191414;
+      background: rgba(255,255,255,0.45);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      backdrop-filter: blur(16px) saturate(180%);
       border: 2px solid var(--green-200);
-      color: #ffffff;
+      color: var(--green-700);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       font-weight: 600; font-size: 15px; text-decoration: none;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.30);
+      box-shadow: 0 8px 32px rgba(17,24,39,0.16);
       transition: transform .25s ease, opacity .25s ease, box-shadow .25s ease, background .25s ease, visibility .25s;
       animation: fabIn .4s ease;
     }
-    #podcastFab:hover { transform: translateY(-3px); background: #2a2422; box-shadow: 0 12px 34px rgba(0,0,0,0.38); }
-    [data-theme="dark"] #podcastFab { background: #191414; border-color: var(--green-200); color: #ffffff; box-shadow: 0 8px 32px rgba(0,0,0,0.55); }
-    [data-theme="dark"] #podcastFab:hover { background: #2a2422; }
+    #podcastFab:hover { transform: translateY(-3px); background: rgba(255,255,255,0.65); box-shadow: 0 12px 36px rgba(17,24,39,0.22); }
+    [data-theme="dark"] #podcastFab { background: rgba(30,41,59,0.45); border-color: var(--green-500); color: var(--green-400); box-shadow: 0 8px 32px rgba(0,0,0,0.45); }
+    [data-theme="dark"] #podcastFab:hover { background: rgba(30,41,59,0.65); }
     #podcastFab .fab-arrow { animation: fabArrow 1.1s ease-in-out infinite; }
     @keyframes fabArrow { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
+    .btn-spotify { background: #191414; color: #ffffff; box-shadow: 0 4px 16px rgba(0,0,0,0.28); }
+    .btn-spotify:hover { background: #2a2422; transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.35); }
     #podcastFab.hidden { opacity: 0; visibility: hidden; transform: translateY(12px); pointer-events: none; }
     @keyframes fabIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     @media (max-width: 600px) {
