@@ -1411,5 +1411,43 @@
     })();
   </script>
 
+  <script>
+    (function () {
+      var stats = document.querySelectorAll('.hero-stats .hero-stat strong');
+      var container = document.querySelector('.hero-stats');
+      if (!stats.length || !container) return;
+      var done = false;
+      function run() {
+        if (done) return; done = true;
+        stats.forEach(function (el) {
+          var original = el.textContent.trim();
+          var m = original.match(/^([\d.]+)(.*)$/);
+          if (!m) return;
+          var target = parseFloat(m[1]);
+          var suffix = m[2];
+          var decimals = (m[1].split('.')[1] || '').length;
+          var t0 = null, dur = 1500;
+          function step(ts) {
+            if (!t0) t0 = ts;
+            var p = Math.min(1, (ts - t0) / dur);
+            var eased = 1 - Math.pow(1 - p, 3);
+            var val = target * eased;
+            el.textContent = (decimals > 0 ? val.toFixed(decimals) : Math.round(val)) + suffix;
+            if (p < 1) requestAnimationFrame(step);
+            else el.textContent = original;
+          }
+          requestAnimationFrame(step);
+        });
+      }
+      function check() {
+        var r = container.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        if (r.top < vh * 0.9 && r.bottom > 0) { run(); window.removeEventListener('scroll', check); }
+      }
+      window.addEventListener('scroll', check, { passive: true });
+      check();
+    })();
+  </script>
+
 </body>
 </html>
