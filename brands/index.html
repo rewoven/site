@@ -1386,5 +1386,80 @@
     init();
   </script>
 
+  <style>
+    .search-bar { position: relative; }
+    .typeahead { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--white); border: 1px solid var(--gray-200); border-radius: 14px; box-shadow: 0 14px 36px rgba(0,0,0,0.12); padding: 6px; z-index: 60; max-height: 340px; overflow-y: auto; display: none; }
+    .typeahead.open { display: block; }
+    .ta-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; cursor: pointer; }
+    .ta-item:hover, .ta-item.active { background: var(--green-50); }
+    .ta-grade { width: 28px; height: 28px; flex: 0 0 auto; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; }
+    .ta-name { font-weight: 600; color: var(--dark); font-size: 15px; }
+    .ta-meta { font-size: 12px; color: var(--gray-400); margin-left: auto; white-space: nowrap; }
+    .ta-empty { padding: 14px 12px; color: var(--gray-400); font-size: 14px; }
+  </style>
+  <script>
+    (function () {
+      var input = document.getElementById('searchInput');
+      var bar = input ? input.closest('.search-bar') : null;
+      if (!input || !bar) return;
+      var box = document.createElement('div');
+      box.className = 'typeahead';
+      box.setAttribute('role', 'listbox');
+      bar.appendChild(box);
+      var active = -1, timer = null;
+      var gc = window.gradeColor || function () { return '#9CA3AF'; };
+      var esc = window.escapeHtml || function (s) { return s; };
+
+      function close() { box.classList.remove('open'); active = -1; }
+      function render(brands) {
+        if (!brands.length) { box.innerHTML = '<div class="ta-empty">No matching brands</div>'; box.classList.add('open'); return; }
+        box.innerHTML = brands.map(function (b) {
+          var g = b.grade || '';
+          return '<div class="ta-item" role="option" data-slug="' + esc(b.slug) + '">'
+            + '<span class="ta-grade" style="background:' + gc((g || '').charAt(0).toUpperCase()) + '">' + (esc(g) || '?') + '</span>'
+            + '<span class="ta-name">' + esc(b.name || '') + '</span>'
+            + '<span class="ta-meta">' + esc(b.category || '') + '</span>'
+            + '</div>';
+        }).join('');
+        active = -1;
+        box.classList.add('open');
+      }
+      function suggest(q) {
+        fetch('https://api.rewovenapp.com/api/brands?search=' + encodeURIComponent(q) + '&limit=6&sort=score_desc')
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (input.value.trim() === q) render(d.brands || []); })
+          .catch(function () { close(); });
+      }
+      input.addEventListener('input', function () {
+        var q = input.value.trim();
+        clearTimeout(timer);
+        if (q.length < 1) { close(); return; }
+        timer = setTimeout(function () { suggest(q); }, 160);
+      });
+      box.addEventListener('mousedown', function (e) {
+        var it = e.target.closest('.ta-item');
+        if (!it) return;
+        e.preventDefault();
+        var slug = it.getAttribute('data-slug');
+        close();
+        if (window.openModal) window.openModal(slug);
+      });
+      input.addEventListener('keydown', function (e) {
+        if (!box.classList.contains('open')) return;
+        var opts = box.querySelectorAll('.ta-item');
+        if (!opts.length) return;
+        if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, opts.length - 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, 0); }
+        else if (e.key === 'Enter') { if (active >= 0 && opts[active]) { e.preventDefault(); var slug = opts[active].getAttribute('data-slug'); close(); if (window.openModal) window.openModal(slug); } return; }
+        else if (e.key === 'Escape') { close(); return; }
+        else return;
+        opts.forEach(function (o, i) { o.classList.toggle('active', i === active); });
+        if (opts[active]) opts[active].scrollIntoView({ block: 'nearest' });
+      });
+      input.addEventListener('blur', function () { setTimeout(close, 120); });
+      document.addEventListener('click', function (e) { if (!bar.contains(e.target)) close(); });
+    })();
+  </script>
+
 </body>
 </html>
